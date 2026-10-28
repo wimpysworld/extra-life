@@ -341,6 +341,7 @@ in
     ++ lib.optional pkgs.stdenv.hostPlatform.isAarch pkgs.raspberrypiWirelessFirmware;
 
     boot = {
+      bcache.enable = false;
       kernelPackages = lib.mkDefault pkgs.linuxPackages;
       kernelModules = [
         "joydev"
@@ -555,11 +556,48 @@ in
     system = {
       activatable = false;
       disableInstallerTools = true;
+      nssModules = lib.mkForce [ ];
       stateVersion = lib.mkDefault "26.05";
     };
 
     users.mutableUsers = false;
     environment.defaultPackages = lib.mkForce [ ];
+    environment.corePackages =
+      with pkgs;
+      lib.mkForce [
+        bashInteractive
+        coreutils
+        gnugrep
+        gnused
+        iproute2
+        iputils
+        procps
+        shadow.su
+        systemd
+        util-linux
+      ];
+
+    programs = {
+      bash.completion.enable = false;
+      nano.enable = false;
+    };
+
+    fonts.fontconfig.enable = false;
+
+    xdg = {
+      autostart.enable = false;
+      icons.enable = false;
+      menus.enable = false;
+      mime.enable = false;
+      portal.enable = false;
+      sounds.enable = false;
+    };
+
+    services = {
+      logrotate.enable = false;
+      nscd.enable = false;
+    };
+
     systemd.services.systemd-importd.enable = false;
   };
 }
