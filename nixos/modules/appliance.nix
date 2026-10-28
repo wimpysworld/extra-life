@@ -166,7 +166,14 @@ let
           "$out/lib/firmware/mediatek/mt7987" \
           "$out/lib/firmware/mediatek/mt7981"* \
           "$out/lib/firmware/mediatek/mt7986"* \
-          "$out/lib/firmware/mediatek/mt7915"*
+          "$out/lib/firmware/mediatek/mt7915"* \
+          "$out/lib/firmware/nvidia/"*/gsp/*-535.113.01.bin* \
+          "$out/lib/firmware/nvidia/gv100" \
+          "$out/lib/firmware/nvidia/gp100" \
+          "$out/lib/firmware/nvidia/ga100" \
+          "$out/lib/firmware/nvidia/gh100" \
+          "$out/lib/firmware/nvidia/gb100" \
+          "$out/lib/firmware/nvidia/gb102"
         ${lib.optionalString pkgs.stdenv.hostPlatform.isx86_64 ''
           rm -rf \
             "$out/lib/firmware/qcom" \
