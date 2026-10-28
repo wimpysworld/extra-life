@@ -1,6 +1,6 @@
 # Extra Life architecture
 
-Extra Life (`extra-life`) is a NixOS retro game appliance built around Ludo and the Cage Wayland kiosk compositor. It gives extra life to classic games and hardware with a zero-jank, console-grade appliance experience across `x86_64` PCs, Raspberry Pi boards, and ARM handhelds.
+Extra Life (`extra-life`, `https://extralife.wimpys.world`) is a NixOS retro game appliance built around Ludo and the Cage Wayland kiosk compositor. It gives extra life to classic games and hardware with a zero-jank, console-grade appliance experience across `x86_64` PCs, Raspberry Pi boards, and ARM handhelds.
 
 ## Product principles
 
@@ -98,7 +98,7 @@ Extra Life bridges these calls with three NixOS mechanisms:
 Extra Life runs with `nix.enable = false` and ships zero Nix binaries, databases, or evaluators at runtime. Over-the-air (OTA) updates use the built-in `Updater` menu in Ludo, Cloudflare R2 storage, and an atomic swap in the initial RAM disk (`initrd`).
 
 1. **System identity**: `/etc/os-release` defines `ID=extra-life`, `VERSION_ID=<version>`, and `VARIANT_ID=<soc>` (for example `x86_64`, `rpi4`, `rpi5`, `rk3566`, or `h700`).
-2. **Ludo updater patch**: `pkgs/ludo` patches `ludos/releases.go` and `menu/scene_updater.go` to read `VARIANT_ID` and `VERSION_ID` from `/etc/os-release`. Ludo queries the Cloudflare R2 manifest (`https://updates.extralife.io/releases.json` or `EXTRA_LIFE_UPDATE_URL`) and matches `extra-life-<variant>-<version>.tar`. During the download to `/storage/.update/`, Ludo verifies the Secure Hash Algorithm 256 (SHA-256) digest with `grab.Request.SetChecksum`, then runs `/usr/sbin/shutdown -r now`.
+2. **Ludo updater patch**: `pkgs/ludo` patches `ludos/releases.go` and `menu/scene_updater.go` to read `VARIANT_ID` and `VERSION_ID` from `/etc/os-release`. Ludo queries the Cloudflare R2 manifest (`https://extralife-ota.wimpys.world/releases.json` or `EXTRA_LIFE_UPDATE_URL`) and matches `extra-life-<variant>-<version>.tar`. During the download to `/storage/.update/`, Ludo verifies the Secure Hash Algorithm 256 (SHA-256) digest with `grab.Request.SetChecksum`, then runs `/usr/sbin/shutdown -r now`.
 3. **Update archive contents**: Each `extra-life-<variant>-<version>.tar` bundle is a flat archive that contains `KERNEL`, `INITRD`, `SYSTEM`, and `SHA256SUMS`. `SYSTEM` is a read-only `zstd -19` SquashFS image of `/nix/store` that adds a `current-system -> <toplevel>` symlink through `pseudoFiles`. That symlink keeps the kernel command-line parameter `init=/nix/store/current-system/init` static across updates.
 4. **Early-boot application**: `boot.initrd.systemd.services.extra-life-apply-update` runs in `initrd` before the system mounts `/boot/SYSTEM`. The service checks `/storage/.update/extra-life-*.tar`, verifies `SHA256SUMS`, and renames existing `/boot/{KERNEL,INITRD,SYSTEM}` files to `.prev` for automatic rollback. It then moves the new `KERNEL`, `INITRD`, and `SYSTEM` files into `/boot`, deletes `/storage/.update/*.tar`, and boots into the new `SYSTEM` SquashFS.
 

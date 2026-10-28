@@ -1,0 +1,205 @@
+--- a/ludos/releases.go
++++ b/ludos/releases.go
+@@ -1,7 +1,11 @@
+ package ludos
+ 
+ import (
++	"bufio"
++	"crypto/sha256"
++	"encoding/hex"
+ 	"encoding/json"
++	"fmt"
+ 	"net/http"
+ 	"os"
+ 	"strings"
+@@ -14,60 +18,117 @@
+ 
+ // UpdatesDir is where releases should be saved to
+ const UpdatesDir = "/storage/.update/"
+-const releasesURL = "https://api.github.com/repos/libretro/LudOS/releases"
++const defaultReleasesURL = "https://extralife-ota.wimpys.world/releases.json"
+ 
+ var client = grab.NewClient()
+ var downloading bool
+ var progress float64
+ var done bool
+ 
+-// Arch is the cpu architecture of LudOS
+-var Arch = os.Getenv("LIBREELEC_ARCH")
++// Arch is the target device identifier (e.g. x86_64, rpi4, rpi5, rk3566)
++var Arch = detectArch()
+ 
+-// Version is the version tag of LudOS
+-var Version = os.Getenv("VERSION")
++// Version is the installed version tag of Extra Life
++var Version = detectVersion()
+ 
+ // GHAsset is an asset attached to a github release
+ type GHAsset struct {
+-	Name               string
++	Name               string `json:"name"`
++	Device             string `json:"device"`
++	SHA256             string `json:"sha256"`
+ 	BrowserDownloadURL string `json:"browser_download_url"`
+ }
+ 
+ // GHRelease is a LudOS release hosted on github
+ type GHRelease struct {
+-	Name   string
+-	Assets []GHAsset
++	Name   string    `json:"name"`
++	Assets []GHAsset `json:"assets"`
++}
++
++func detectArch() string {
++	if d := os.Getenv("EXTRA_LIFE_DEVICE"); d != "" {
++		return d
++	}
++	if a := os.Getenv("LIBREELEC_ARCH"); a != "" {
++		return a
++	}
++	return readOSReleaseKey("EXTRA_LIFE_DEVICE", "LIBREELEC_ARCH", "VARIANT_ID", "IMAGE_ID")
++}
++
++func detectVersion() string {
++	if v := os.Getenv("VERSION"); v != "" {
++		return strings.TrimPrefix(v, "v")
++	}
++	return strings.TrimPrefix(readOSReleaseKey("EXTRA_LIFE_VERSION", "VERSION_ID", "VERSION"), "v")
++}
++
++func readOSReleaseKey(keys ...string) string {
++	f, err := os.Open("/etc/os-release")
++	if err != nil {
++		return ""
++	}
++	defer f.Close()
++	vals := map[string]string{}
++	sc := bufio.NewScanner(f)
++	for sc.Scan() {
++		k, v, ok := strings.Cut(sc.Text(), "=")
++		if ok {
++			vals[k] = strings.Trim(v, `"'`)
++		}
++	}
++	for _, k := range keys {
++		if v := vals[k]; v != "" {
++			return v
++		}
++	}
++	return ""
++}
++
++func releasesEndpoint() string {
++	if u := os.Getenv("EXTRA_LIFE_UPDATE_URL"); u != "" {
++		return u
++	}
++	return defaultReleasesURL
+ }
+ 
+ // GetReleases will get and decode the json from github api, and return the
+ // list of LudOS releases
+ func GetReleases() (*[]GHRelease, error) {
+-	r, err := http.Get(releasesURL)
++	r, err := http.Get(releasesEndpoint())
+ 	if err != nil {
+ 		return nil, err
+ 	}
+ 	defer r.Body.Close()
++	if r.StatusCode < 200 || r.StatusCode >= 300 {
++		return nil, fmt.Errorf("update check HTTP %d", r.StatusCode)
++	}
+ 
+ 	releases := []GHRelease{}
+ 	err = json.NewDecoder(r.Body).Decode(&releases)
+ 	return &releases, err
+ }
+ 
+-// FilterAssets finds and return the asset matching the LIBREELEC_ARCH
++// FilterAssets finds and returns the asset matching Arch
+ func FilterAssets(assets []GHAsset) *GHAsset {
+-	for _, asset := range assets {
+-		if strings.Contains(asset.Name, Arch) {
+-			return &asset
++	if Arch == "" {
++		return nil
++	}
++	for i := range assets {
++		asset := &assets[i]
++		if asset.Device == Arch ||
++			strings.HasPrefix(asset.Name, "extra-life-"+Arch+"-") ||
++			strings.HasPrefix(asset.Name, "LudOS-"+Arch+"-") {
++			return asset
+ 		}
+ 	}
+ 	return nil
+ }
+ 
+ // DownloadRelease will download a LudOS release from github
+-func DownloadRelease(path, url string) {
++func DownloadRelease(path string, url string, sha256Hex string) error {
+ 	if downloading {
+ 		ntf.DisplayAndLog(ntf.Error, "Menu", "A download is already in progress")
+-		return
++		return fmt.Errorf("a download is already in progress")
+ 	}
+ 
+ 	n := ntf.DisplayAndLog(ntf.Info, "Menu", "Downloading update 0%")
+@@ -77,7 +138,15 @@
+ 	req, err := grab.NewRequest(path, url)
+ 	if err != nil {
+ 		n.Update(ntf.Error, err.Error())
+-		return
++		return err
++	}
++	if sha256Hex != "" {
++		sum, err := hex.DecodeString(strings.TrimSpace(sha256Hex))
++		if err != nil || len(sum) != sha256.Size {
++			n.Update(ntf.Error, "Invalid update SHA-256 checksum")
++			return fmt.Errorf("invalid update SHA-256 checksum")
++		}
++		req.SetChecksum(sha256.New(), sum, true)
+ 	}
+ 
+ 	resp := client.Do(req)
+@@ -104,10 +173,11 @@
+ 		n.Update(ntf.Error, err.Error())
+ 		downloading = false
+ 		done = false
+-		return
++		return err
+ 	}
+ 
+ 	n.Update(ntf.Success, "Done downloading. You can now reboot your system.")
++	return nil
+ }
+ 
+ // IsDownloading returns true if the updater is currently downloading a release
+--- a/menu/scene_updater.go
++++ b/menu/scene_updater.go
+@@ -4,6 +4,7 @@
+ 	"fmt"
+ 	"os/exec"
+ 	"path/filepath"
++	"strings"
+ 
+ 	"github.com/libretro/ludo/core"
+ 	"github.com/libretro/ludo/ludos"
+@@ -35,7 +36,7 @@
+ 		if len(*rels) > 0 {
+ 			rel := (*rels)[0]
+ 
+-			if rel.Name[1:] == ludos.Version {
++			if strings.TrimPrefix(rel.Name, "v") == strings.TrimPrefix(ludos.Version, "v") {
+ 				list.children[0].label = "Up to date"
+ 				list.children[0].icon = "subsetting"
+ 				return
+@@ -51,7 +52,7 @@
+ 				}
+ 				go func() {
+ 					path := filepath.Join(ludos.UpdatesDir, asset.Name)
+-					ludos.DownloadRelease(path, asset.BrowserDownloadURL)
++					_ = ludos.DownloadRelease(path, asset.BrowserDownloadURL, asset.SHA256)
+ 				}()
+ 			}
+ 		} else {

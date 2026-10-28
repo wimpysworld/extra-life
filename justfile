@@ -114,6 +114,17 @@ build-disk:
         nix build .#disk-image --out-link result-disk
     fi
 
+# Build the Extra Life OTA update bundle
+build-ota:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "OTA 󰏗 Building: .#ota-bundle"
+    if command -v nom >/dev/null 2>&1; then
+        nom build .#ota-bundle --out-link result-ota
+    else
+        nix build .#ota-bundle --out-link result-ota
+    fi
+
 # Build the ISO and boot it in vm-retro
 boot-iso: build-iso
     nix run .#vm-retro -- .vm/extra-life.iso
@@ -122,7 +133,7 @@ boot-iso: build-iso
 boot-disk: build-disk
     #!/usr/bin/env bash
     set -euo pipefail
-    disk_src=$(find -L result-disk -maxdepth 1 -name '*.img*' | head -n 1)
+    disk_src=$(find -L result-disk -maxdepth 1 \( -name '*.raw*' -o -name '*.img*' \) | head -n 1)
     if [[ -z "${disk_src}" ]]; then
         echo "No disk image found under result-disk" >&2
         exit 1

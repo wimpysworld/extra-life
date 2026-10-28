@@ -28,6 +28,10 @@ buildGoModule (_finalAttrs: {
     hash = "sha256-QV1LSYhe7JFKv/AVjFR8Yn1mR87RLuEetb1YeT64GZ8=";
   };
 
+  patches = [
+    ../../patches/ludo/extra-life-updater.patch
+  ];
+
   vendorHash = "sha256-ygteyccbRPHkAaMHw2R9geSQmKBTvOqRxLzVj5wJpmg=";
 
   subPackages = [ "." ];

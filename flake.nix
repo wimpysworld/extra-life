@@ -136,6 +136,7 @@
           inherit (pkgs) vm-retro;
           iso = self.nixosConfigurations."${archPrefix}-installer".config.system.build.isoImage;
           disk-image = self.nixosConfigurations."${archPrefix}-appliance".config.system.build.diskImage;
+          ota-bundle = self.nixosConfigurations."${archPrefix}-appliance".config.system.build.otaBundle;
           default = if pkgs.stdenv.hostPlatform.isLinux then pkgs.ludo else pkgs.vm-retro;
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
