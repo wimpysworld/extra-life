@@ -142,6 +142,40 @@ Extra Life constructs a unified core directory with `pkgs.symlinkJoin` (or `pkgs
 |`pcsx2_libretro`|`Sony - PlayStation 2`|`x86_64-linux` only|
 |`ppsspp_libretro`|`Sony - PlayStation Portable`|All targets|
 
+## Hardware enablement and device catalogue
+
+All hardware modules, kernels, U-Boot bootloaders, and device or case definitions live in this single monorepo. The repository places System on a Chip (SoC), board, and case modules in `nixos/modules/hardware/{soc,boards,cases}/` and image builders in `nixos/modules/images/`. Custom kernel and bootloader packages live in `pkgs/kernels/` and `pkgs/uboot/`, while `nixos/devices/devices.toml` defines the declarative device catalogue.
+
+The flake evaluates `lib.nixosSystem` once per SoC family rather than once per retail board. The target SoC families are `x86_64`, `bcm2711` (`rpi4`), `bcm2712` (`rpi5`), `bcm2710` (`rpi02w`), `rk3566`, `h700`, `sm8250`, `sm8550`, and `rk3326`. Nix parses `nixos/devices/devices.toml` with `builtins.fromTOML` so that `just check` stays fast across more than 80 boards and cases. Each board image derivation pairs the shared SoC closure with the U-Boot and Device Tree Blob (DTB) files for that board.
+
+### Shared SoC and per-board layers
+
+Extra Life models its hardware architecture on ROCKNIX so that every board in an SoC family shares one root filesystem closure. The bootloader selects the board DTB with U-Boot probing on the Successive Approximation Register Analogue-to-Digital Converter (SARADC), explicit `FDT` entries, or `OpenABL` Boot Loader Specification (BLS) entries. At boot, the system identifies the board from the device tree on ARM or Desktop Management Interface (DMI) attributes on `x86_64`. The runtime layer applies audio profiles for the Advanced Linux Sound Architecture (ALSA) Use Case Manager (UCM2) (`alsa-ucm-conf`) and panel orientation in the Direct Rendering Manager (DRM). Display drivers load panel timing firmware for Mobile Industry Processor Interface Display Serial Interface (MIPI-DSI) screens from `/lib/firmware/panels/*.panel`.
+
+| Layer | Scope | Artefacts and runtime mechanics |
+| --- | --- | --- |
+| Kernel and firmware | Shared per SoC | Linux kernel (`Image` or `bzImage`), built-in early firmware (`CONFIG_EXTRA_FIRMWARE`), and kernel modules build once per SoC family. |
+| Graphics and root filesystem | Shared per SoC | Every board in the SoC family shares the Mesa Graphics Processing Unit (GPU) stack (`radeonsi`, `iris`, `vc4`, `v3d`, `panfrost`, `freedreno`) and root filesystem closure. |
+| Bootloader and DTB selection | Per board | Boot partitions select the DTB through `FDTDIR /device_trees` with U-Boot SARADC or board auto-detection, explicit `FDT` entries, or `OpenABL` UEFI and BLS entries. |
+| Runtime board detection | Per board | Early boot detection reads `/sys/firmware/devicetree/base/model` and `/proc/device-tree/compatible` on ARM, or `/sys/class/dmi/id/{sys_vendor,product_name}` on `x86_64`. |
+| Controller abstraction | Per board | `InputPlumber` loads composite YAML profiles from `/usr/share/inputplumber/devices/*.yaml`, and `rocknix-joypad` with `SDL_GameControllerDB` maps legacy handheld controls. |
+| Audio and display quirks | Per board | ALSA UCM2 profiles (`alsa-ucm-conf`), MIPI-DSI timing firmware (`/lib/firmware/panels/*.panel`), and DRM panel orientation configure audio and display quirks. |
+
+### Target SoC family priority matrix
+
+Extra Life groups target SoC families into two waves. Wave 1 targets run on mainline Linux with open-source Mesa drivers. Wave 2 defers families that still require a vendor Board Support Package (BSP) kernel or closed graphics blobs.
+
+| Wave | SoC family | NixOS SoC key | Kernel and GPU stack | Representative hardware targets |
+| --- | --- | --- | --- | --- |
+| Wave 1 | `AMD64` (`x86_64`) | `x86_64` | Mainline Linux (`bzImage`) with Mesa `radeonsi` and `iris` | `x86_64` PCs, Steam Deck, ASUS ROG Ally, Lenovo Legion Go, AYANEO, and AYN Loki handhelds |
+| Wave 1 | Broadcom `BCM2711`, `BCM2712`, and `BCM2710` | `bcm2711` (`rpi4`), `bcm2712` (`rpi5`), `bcm2710` (`rpi02w`) | Mainline Linux (`Image`) with Mesa `vc4` and `v3d` | Raspberry Pi 4, 400, 5, and Zero 2 W, plus RetroFlag, DeskPi, and Waveshare cases |
+| Wave 1 | Rockchip `RK3566` | `rk3566` | Mainline Linux (`Image`) with Mesa `panfrost` | Anbernic RG353P, RG353V, RG353M, RG503, RG ARC, and Powkiddy RGB30, RGB20SX, RK2023, and X55 |
+| Wave 1 | Allwinner `H700` | `h700` | Mainline Linux (`Image`) with Mesa `panfrost` and built-in `.panel` firmware | Anbernic RG35XX Plus, 2024, H, SP, Pro, RG40XX H and V, RG CubeXX, RG28XX, and RG34XX |
+| Wave 1 | Qualcomm `SM8250` and `SM8550` | `sm8250`, `sm8550` | Mainline Linux (`Image`) with Mesa `freedreno` and `OpenABL` UEFI/BLS | Retroid Pocket 5, Flip 2, Mini, and 6, AYN Odin 2, and AYANEO Pocket S, DMG, and EVO |
+| Wave 1 | Rockchip `RK3326` | `rk3326` | Mainline Linux (`Image`) with Mesa `panfrost` | Odroid Go Advance and Super, Anbernic RG351M and RG351V, R36S, R33S, and Powkiddy RGB20S |
+| Wave 2 (deferred) | Rockchip `RK3588` | `rk3588` | Vendor Linux 6.1 BSP kernel with Mesa `panfrost` | GameForce Ace, Orange Pi 5, Retro Lite CM5, and RetrOLED CM5 |
+| Wave 2 (deferred) | Allwinner `A133` | `a133` | Legacy Linux 4.9 BSP kernel with closed PowerVR blobs | Trimui Smart Pro, Trimui Brick, Powkiddy V20 and V90S, and MagicX Zero 28 |
+
 ## Storage and partition layout
 
 Extra Life images use a two-partition GUID Partition Table (GPT) layout that separates boot artefacts from the system store and user library.
@@ -181,12 +215,15 @@ Delivery proceeds in three milestones that expand hardware coverage on top of th
 
 ### Milestone 2: Raspberry Pi family (`aarch64-linux`)
 
-- Build ready-to-flash Secure Digital (SD) card images for Raspberry Pi 4, Raspberry Pi 400, Raspberry Pi 5, and Raspberry Pi Zero 2 W.
-- Select `pcsx_rearmed_libretro` and platform-appropriate cores for ARM targets, and tune VideoCore KMS and Mesa drivers.
-- Add declarative hardware modules for RetroFlag cases (GPi Case, NESPi, SUPERPi, MegaPi, and PiStation), DeskPi cases, and Waveshare displays and cases.
+- Create the monorepo hardware tree (`nixos/modules/hardware/{soc,boards,cases}/`, `nixos/modules/images/`) and the `nixos/devices/devices.toml` catalogue.
+- Build Secure Digital (SD) card images from shared `bcm2711` (`rpi4`), `bcm2712` (`rpi5`), and `bcm2710` (`rpi02w`) SoC closures.
+- Select `pcsx_rearmed_libretro` and SoC core profiles for ARM targets. Tune VideoCore Kernel Mode Setting (KMS) and Mesa `vc4` and `v3d` drivers.
+- Add declarative modules in `nixos/modules/hardware/cases/` for RetroFlag (GPi Case, NESPi, SUPERPi, MegaPi, and PiStation), DeskPi, and Waveshare cases.
 
 ### Milestone 3: ARM handhelds and portable integration
 
-- Add `aarch64-linux` board support packages for ARM handhelds, first on mainline-supported Rockchip devices.
-- Map built-in GPIO and USB gamepads, sleep and wake power states, and stereo speaker and headphone outputs.
-- Integrate battery level indicators and backlight brightness controls directly into the Ludo heads-up display (HUD) and settings menu.
+- Add SoC closures for Wave 1 handhelds (`rk3566`, `h700`, `sm8250`, `sm8550`, and `rk3326`) with `pkgs/kernels/` and `pkgs/uboot/` packages.
+- Defer SoC families in Wave 2 (`rk3588` and `a133`) that require vendor BSP kernels or closed graphics blobs.
+- Detect boards at runtime to apply per-board DTB, MIPI-DSI `.panel` firmware, DRM panel orientation, and ALSA UCM2 audio quirks.
+- Configure `InputPlumber` YAML profiles and `rocknix-joypad` (`SDL_GameControllerDB`) for General-Purpose Input/Output (GPIO) and Universal Serial Bus (USB) gamepads.
+- Integrate sleep and wake states, battery indicators, and backlight controls into the Ludo heads-up display (HUD) and settings menu.
