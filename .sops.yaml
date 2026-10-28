@@ -1,0 +1,32 @@
+# Make a user key
+# mkdir -p ~/.config/sops/age
+# age-keygen -o ~/.config/sops/age/keys.txt
+
+# Display the user public key:
+# age-keygen -y ~/.config/sops/age/keys.txt
+
+# Make a host key:
+# sudo mkdir -p /var/lib/private/sops/age
+# sudo age-keygen -o /var/lib/private/sops/age/keys.txt
+
+# Display the host public key:
+# sudo age-keygen -y /var/lib/private/sops/age/keys.txt
+
+# Add secrets
+# sops secrets/secrets.yaml
+
+# Rekey secrets.yaml after editing recipients in .sops.yaml:
+# sops updatekeys secrets/secrets.yaml
+keys:
+  - &user_martin age1xfpzwdsz06243ndj39x4yr2qs4u3ja777r3xautdtm59j54wa3kssualcn
+  - &user_backup age1v5c455hd0shs745dhd3gl7kzw6zaqflnyl4v96pq56j96xyvvc5sgse0za
+  - &host_prime age1pyd2u05gah05us62wf3msjktsgu2vgv80c9cag88wwsy64qp6gvqhlj55k
+  - &host_backup age1ueuse0p74zqh7jcm5n97ajfw4az2cpf7pjl9q6zv475jdcepeujq8xlv23
+creation_rules:
+  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+    - age:
+      - *user_martin
+      - *user_backup
+      - *host_prime
+      - *host_backup

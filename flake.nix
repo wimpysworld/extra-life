@@ -173,19 +173,27 @@
         in
         {
           default = pkgs.mkShell {
-            packages = with pkgs; [
-              deadnix
-              findutils
-              git
-              jq
-              just
-              mcp-nixos
-              nix-output-monitor
-              nixfmt
-              nixfmt-tree
-              statix
-              vm-retro
-            ];
+            packages =
+              with pkgs;
+              [
+                actionlint
+                deadnix
+                findutils
+                git
+                jq
+                just
+                mcp-nixos
+                nix-output-monitor
+                nixfmt
+                nixfmt-tree
+                rclone
+                sops
+                statix
+                vm-retro
+                wrangler
+              ]
+              ++ import ./nix/loader.nix { inherit pkgs; };
+            shellHook = import ./nix/hooks.nix { inherit pkgs; };
           };
         }
       );

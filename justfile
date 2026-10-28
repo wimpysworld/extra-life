@@ -1,3 +1,5 @@
+import 'just/loader.just'
+
 # List recipes
 default:
     @just --list --unsorted
@@ -143,6 +145,46 @@ boot-disk: build-disk
 # Run or control vm-retro (--shutdown, --kill, --usb-device VID:PID)
 vm *args:
     nix run .#vm-retro -- {{ args }}
+
+# Provision the extralife-ota Cloudflare R2 bucket and custom domain via wrangler and sops
+cf-setup:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    secrets_file="secrets/secrets.yaml"
+    if [[ ! -f "${secrets_file}" ]]; then
+        echo "Error: ${secrets_file} not found" >&2
+        exit 1
+    fi
+    echo "Cloudflare 󰅟 Provisioning R2 bucket and extralife-ota.wimpys.world"
+    export CLOUDFLARE_ACCOUNT_ID
+    export CLOUDFLARE_API_TOKEN
+    CLOUDFLARE_ACCOUNT_ID="$(sops decrypt --extract '["cloudflare_account_id"]' "${secrets_file}")"
+    CLOUDFLARE_API_TOKEN="$(sops decrypt --extract '["cloudflare_api_token"]' "${secrets_file}")"
+    zone_id="$(sops decrypt --extract '["cloudflare_zone_id"]' "${secrets_file}")"
+    wrangler r2 bucket create extralife-ota || true
+    wrangler r2 bucket domain add extralife-ota --domain extralife-ota.wimpys.world --zone-id "${zone_id}" --force
+
+# Build and publish the OTA update bundle and manifest to Cloudflare R2 via rclone and sops
+publish-ota: build-ota
+    #!/usr/bin/env bash
+    set -euo pipefail
+    secrets_file="secrets/secrets.yaml"
+    if [[ ! -f "${secrets_file}" ]]; then
+        echo "Error: ${secrets_file} not found" >&2
+        exit 1
+    fi
+    echo "OTA 󰅟 Publishing result-ota to r2:extralife-ota"
+    account_id="$(sops decrypt --extract '["cloudflare_account_id"]' "${secrets_file}")"
+    export RCLONE_CONFIG_R2_TYPE="s3"
+    export RCLONE_CONFIG_R2_PROVIDER="Cloudflare"
+    export RCLONE_CONFIG_R2_REGION="auto"
+    export RCLONE_CONFIG_R2_NO_CHECK_BUCKET="true"
+    export RCLONE_CONFIG_R2_ENDPOINT="https://${account_id}.r2.cloudflarestorage.com"
+    export RCLONE_CONFIG_R2_ACCESS_KEY_ID
+    export RCLONE_CONFIG_R2_SECRET_ACCESS_KEY
+    RCLONE_CONFIG_R2_ACCESS_KEY_ID="$(sops decrypt --extract '["r2_access_key_id"]' "${secrets_file}")"
+    RCLONE_CONFIG_R2_SECRET_ACCESS_KEY="$(sops decrypt --extract '["r2_secret_access_key"]' "${secrets_file}")"
+    rclone copy --progress --s3-upload-cutoff 100M --s3-chunk-size 64M result-ota/ r2:extralife-ota/
 
 # Stop vm-retro if running, delete VM disk and NVRAM state, and remove build links
 clean:
