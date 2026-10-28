@@ -14,7 +14,7 @@ mcp:
 repository:
   description: "Give Extra Life to Classic Games 🕹️"
   homepage: "https://extralife.wimpys.world"
-  has_wiki: false
+  has_wiki: true
   has_discussions: false
   has_projects: false
   has_issues: true
@@ -129,7 +129,7 @@ ruleset:
 # branch: omit to use the current repository default branch.
 # cname: omit to preserve the domain, use "" to clear it, or set a domain.
 pages:
-  enabled: false
+  enabled: true
   generator: static
   path: pages
   links:
@@ -156,8 +156,8 @@ pages:
     kofi: ""
     email: ""
     feed: ""
+  cname: extralife.wimpys.world
   # branch: main
-  # cname: www.example.com
   # Static only. Omit links to leave the page unchanged; {} clears its marked links.
   # Use full HTTPS URLs, or a bare address for email. Empty values add no icon.
   # links:
