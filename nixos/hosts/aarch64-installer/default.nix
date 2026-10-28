@@ -21,7 +21,7 @@
     edition = "extra-life";
     makeEfiBootable = true;
     makeUsbBootable = true;
-    squashfsCompression = "zstd -Xcompression-level 6";
+    squashfsCompression = "zstd -Xcompression-level 19";
   };
 
   services.qemuGuest.enable = true;

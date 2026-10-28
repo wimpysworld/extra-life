@@ -58,7 +58,7 @@ in
   services.pipewire = {
     enable = true;
     alsa.enable = true;
-    alsa.support32Bit = pkgs.stdenv.hostPlatform.isx86_64;
+    alsa.support32Bit = false;
     pulse.enable = true;
     wireplumber.enable = true;
   };
@@ -257,4 +257,17 @@ in
     "nix-command"
     "flakes"
   ];
+
+  nixpkgs.flake = {
+    setFlakeRegistry = false;
+    setNixPath = false;
+  };
+
+  documentation = {
+    enable = false;
+    doc.enable = false;
+    info.enable = false;
+    man.enable = false;
+    nixos.enable = false;
+  };
 }

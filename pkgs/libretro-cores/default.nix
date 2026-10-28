@@ -3,8 +3,8 @@
   stdenv,
   fetchFromGitHub,
   libretro,
+  patchelf,
   runCommand,
-  unstable ? null,
 }:
 let
   chailove = libretro.mkLibretroCore {
@@ -27,29 +27,23 @@ let
     };
   };
 
-  pokemini =
-    libretro.pokemini or (
-      if unstable != null && unstable.libretro ? pokemini then
-        unstable.libretro.pokemini
-      else
-        libretro.mkLibretroCore {
-          core = "pokemini";
-          version = "0-unstable-2026-07-31";
-          src = fetchFromGitHub {
-            owner = "libretro";
-            repo = "PokeMini";
-            rev = "132111b76343559860532a1ccc094f93f1ed5650";
-            hash = "sha256-Gyany/aEzDlhLM/zowsOU8LLI4FdWEQ83B+mxHX56UI=";
-          };
-          makefile = "Makefile";
-          meta = {
-            description = "Obscure Nintendo handheld emulator";
-            homepage = "https://github.com/libretro/PokeMini";
-            license = lib.licenses.gpl3Only;
-            maintainers = with lib.maintainers; [ flexiondotorg ];
-          };
-        }
-    );
+  pokemini = libretro.mkLibretroCore {
+    core = "pokemini";
+    version = "0-unstable-2026-07-31";
+    src = fetchFromGitHub {
+      owner = "libretro";
+      repo = "PokeMini";
+      rev = "132111b76343559860532a1ccc094f93f1ed5650";
+      hash = "sha256-Gyany/aEzDlhLM/zowsOU8LLI4FdWEQ83B+mxHX56UI=";
+    };
+    makefile = "Makefile";
+    meta = {
+      description = "Obscure Nintendo handheld emulator";
+      homepage = "https://github.com/libretro/PokeMini";
+      license = lib.licenses.gpl3Only;
+      maintainers = with lib.maintainers; [ flexiondotorg ];
+    };
+  };
 
   cores = [
     libretro.atari800
@@ -90,6 +84,7 @@ let
 in
 runCommand "libretro-cores"
   {
+    nativeBuildInputs = [ patchelf ];
     passthru = {
       inherit chailove cores pokemini;
     };
@@ -105,6 +100,11 @@ runCommand "libretro-cores"
   ''
     mkdir -p "$out/lib/retroarch/cores"
     ${lib.concatMapStringsSep "\n" (core: ''
-      ln -s "${core}/lib/retroarch/cores/"*.so "$out/lib/retroarch/cores/"
+      cp -L "${core}/lib/retroarch/cores/"*.so "$out/lib/retroarch/cores/"
     '') cores}
+    chmod 0755 "$out/lib/retroarch/cores/"*.so
+    for so in "$out/lib/retroarch/cores/"*.so; do
+      patchelf --shrink-rpath "$so"
+    done
+    chmod 0555 "$out/lib/retroarch/cores/"*.so
   ''

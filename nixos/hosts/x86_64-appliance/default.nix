@@ -63,7 +63,7 @@
     label = "extralife-root";
     baseName = "extra-life-x86_64";
     diskSize = "auto";
-    additionalSpace = "1024M";
+    additionalSpace = "128M";
     copyChannel = false;
   };
 
