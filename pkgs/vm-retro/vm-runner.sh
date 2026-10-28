@@ -17,15 +17,16 @@ esac
 
 usage() {
 	cat <<EOF
-Usage: ${prog} [--shutdown] [--kill] [--usb-device VID:PID] [iso_path]
+Usage: ${prog} [--shutdown] [--kill] [--usb-device VID:PID] [--disk raw_disk_path] [iso_path]
 
 Launch or control the ${profile} QEMU virtual machine.
 
 Options:
-  --shutdown            Send an ACPI powerdown signal to the running VM and wait for exit.
-  --kill                Forcefully terminate the running VM process.
-  --usb-device VID:PID  Pass a host USB device through to the VM (may be specified multiple times).
-  -h, --help            Show this help.
+  --shutdown              Send an ACPI powerdown signal to the running VM and wait for exit.
+  --kill                  Forcefully terminate the running VM process.
+  --usb-device VID:PID    Pass a host USB device through to the VM (may be specified multiple times).
+  --disk raw_disk_path    Seed .vm/disk.qcow2 from a raw disk image (if missing) and boot it.
+  -h, --help              Show this help.
 EOF
 }
 
@@ -37,6 +38,7 @@ fail() {
 shutdown_vm=0
 kill_vm=0
 iso_path=""
+raw_disk_path=""
 usb_devices=()
 
 while [[ $# -gt 0 ]]; do
@@ -63,6 +65,16 @@ while [[ $# -gt 0 ]]; do
 		usb_devices+=("$2")
 		shift 2
 		;;
+	--disk)
+		if [[ $# -lt 2 ]]; then
+			fail "missing argument for --disk"
+		fi
+		if [[ ! -f "$2" ]]; then
+			fail "disk image file not found: $2"
+		fi
+		raw_disk_path="$(realpath -- "$2")"
+		shift 2
+		;;
 	--*)
 		fail "unknown option: $1"
 		;;
@@ -83,6 +95,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 disk_img="${state_dir}/disk.qcow2"
+disk_source="${state_dir}/disk.source"
 ovmf_vars="${state_dir}/OVMF_VARS.fd"
 pid_file="${state_dir}/qemu.pid"
 qga_sock="${state_dir}/qga.sock"
@@ -172,11 +185,25 @@ if [[ ! -f "$ovmf_vars" ]]; then
 	chmod 0644 -- "$ovmf_vars"
 fi
 
-if [[ ! -f "$disk_img" ]]; then
-	if [[ -z "$iso_path" ]]; then
-		fail "disk image not found at ${disk_img}. Pass an ISO path to install."
+if [[ -n "$raw_disk_path" ]]; then
+	current_source=""
+	if [[ -f "$disk_source" ]]; then
+		read -r current_source <"$disk_source" || true
 	fi
-	qemu-img create -q -f qcow2 -o preallocation=off "$disk_img" 64G
+	if [[ ! -f "$disk_img" || "$current_source" != "$raw_disk_path" ]]; then
+		printf '%s: seeding %s from %s (64G)\n' "$prog" "$disk_img" "$raw_disk_path"
+		cp -- "$OVMF_VARS" "$ovmf_vars"
+		chmod 0644 -- "$ovmf_vars"
+		qemu-img convert -f raw -O qcow2 "$raw_disk_path" "$disk_img"
+		qemu-img resize -q "$disk_img" 64G
+		printf '%s\n' "$raw_disk_path" >"$disk_source"
+	fi
+elif [[ ! -f "$disk_img" ]]; then
+	if [[ -n "$iso_path" ]]; then
+		qemu-img create -q -f qcow2 -o preallocation=off "$disk_img" 64G
+	else
+		fail "disk image not found at ${disk_img}. Pass an ISO path or --disk <raw_disk_path>."
+	fi
 fi
 
 host_os="$(uname -s)"

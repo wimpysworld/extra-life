@@ -115,10 +115,21 @@ build-disk:
     fi
 
 # Build the ISO and boot it in vm-retro
-vm-boot: build-iso
+boot-iso: build-iso
     nix run .#vm-retro -- .vm/extra-life.iso
 
-# Run or control vm-retro (--shutdown, --kill)
+# Build the UEFI GPT disk image and boot it in vm-retro
+boot-disk: build-disk
+    #!/usr/bin/env bash
+    set -euo pipefail
+    disk_src=$(find -L result-disk -maxdepth 1 -name '*.img*' | head -n 1)
+    if [[ -z "${disk_src}" ]]; then
+        echo "No disk image found under result-disk" >&2
+        exit 1
+    fi
+    nix run .#vm-retro -- --disk "${disk_src}"
+
+# Run or control vm-retro (--shutdown, --kill, --usb-device VID:PID)
 vm *args:
     nix run .#vm-retro -- {{ args }}
 

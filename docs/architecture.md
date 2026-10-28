@@ -155,7 +155,7 @@ Both `/nix/store` and `/storage/Retro` share the auto-expanding `ext4` root part
 
 ## Virtual machine development workflow (`vm-retro`)
 
-Extra Life provides a fast local test loop through the `vm-retro` target (`just vm-boot` or `nix run .#vm-retro`) across `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin` (Apple Silicon macOS with a `linux-builder` such as Determinate Nix).
+Extra Life provides a fast local test loop through the `vm-retro` target (`just boot-disk`, `just boot-iso`, or `nix run .#vm-retro`) across `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin` (Apple Silicon macOS with a `linux-builder` such as Determinate Nix).
 
 | Component | Configuration | Purpose |
 | --- | --- | --- |

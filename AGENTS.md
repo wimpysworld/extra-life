@@ -9,7 +9,7 @@ Extra Life (`extra-life`) is a NixOS retro game appliance flake that runs `ludo 
 - Build the default package (`ludo` on Linux, `vm-retro` on macOS): `nix build`
 - Build the `ludo` package on Linux: `nix build .#ludo`
 - Build the installer ISO or disk image for the host architecture (`x86_64` or `aarch64`): `just build-iso` or `just build-disk`
-- Run the local development VM (`kvm` on Linux, `hvf` with Cocoa on Apple Silicon macOS, and `linux-builder` on macOS for image builds): `just vm-boot` or `nix run .#vm-retro`
+- Boot the local development VM from the built disk image or ISO (`kvm` on Linux, `hvf` with Cocoa on Apple Silicon macOS, and `linux-builder` on macOS for image builds): `just boot-disk`, `just boot-iso`, or `nix run .#vm-retro`
 
 ## Architecture notes
 

@@ -28,13 +28,17 @@ Four product principles govern every decision in Extra Life.
 
 ### Run in a virtual machine
 
-Start the `vm-retro` target with `just` or Nix to build the live ISO and test the appliance locally.
+Start the `vm-retro` target with `just` or Nix to build and boot either the writable appliance disk image or the live ISO locally.
 
 ```bash
-just vm-boot
+# Build the UEFI GPT disk image, seed .vm/disk.qcow2 (64 GB), and boot it
+just boot-disk
+
+# Or build the live ISO and boot it
+just boot-iso
 ```
 
-The VM runs on `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin` (Apple Silicon macOS). On Linux, QEMU uses Kernel-based Virtual Machine (KVM), Unified Extensible Firmware Interface (UEFI) firmware, `virtio-vga-gl` or `virtio-gpu-gl-pci` OpenGL acceleration, the GTK display backend, and PipeWire audio. On Apple Silicon macOS, `just vm-boot` builds the `aarch64-linux` ISO through a `linux-builder` (such as Determinate Nix) and boots it in QEMU with Hypervisor.framework (`hvf`), the Cocoa display (`-display cocoa`), and CoreAudio. Pass `--usb-device VID:PID` to forward Universal Serial Bus (USB) gamepads on macOS or Linux. The runner keeps persistent state and `/storage/Retro` in `.vm/` inside the repository and forwards host port `2222` to Secure Shell (SSH) port `22` on the guest.
+The VM runs on `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin` (Apple Silicon macOS). On Linux, QEMU uses Kernel-based Virtual Machine (KVM), Unified Extensible Firmware Interface (UEFI) firmware, `virtio-vga-gl` or `virtio-gpu-gl-pci` OpenGL acceleration, the GTK display backend, and PipeWire audio. On Apple Silicon macOS, `just boot-disk` and `just boot-iso` build the `aarch64-linux` image through a `linux-builder` (such as Determinate Nix) and boot it in QEMU with Hypervisor.framework (`hvf`), the Cocoa display (`-display cocoa`), and CoreAudio. Pass `--usb-device VID:PID` to forward Universal Serial Bus (USB) gamepads on macOS or Linux. The runner keeps persistent state and `/storage/Retro` in `.vm/` inside the repository and forwards host port `2222` to Secure Shell (SSH) port `22` on the guest.
 
 ```bash
 # Copy ROM files into the running virtual machine over SSH
