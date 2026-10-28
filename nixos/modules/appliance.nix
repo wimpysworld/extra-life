@@ -30,6 +30,43 @@ let
     thumbnail_dir = "/storage/Retro/thumbnails"
     thumbnails_dir = "/storage/Retro/thumbnails"
   '';
+
+  compressedLinuxFirmware = pkgs.compressFirmwareZstd pkgs.linux-firmware;
+
+  trimmedLinuxFirmware =
+    pkgs.runCommand "linux-firmware-trimmed"
+      {
+        passthru.compressFirmware = false;
+      }
+      ''
+        mkdir -p "$out"
+        cp -r --no-preserve=mode "${compressedLinuxFirmware}/lib" "$out/lib"
+        rm -rf \
+          "$out/lib/firmware/mellanox" \
+          "$out/lib/firmware/mrvl/prestera" \
+          "$out/lib/firmware/qed" \
+          "$out/lib/firmware/netronome" \
+          "$out/lib/firmware/dpaa2" \
+          "$out/lib/firmware/cxgb4" \
+          "$out/lib/firmware/bnx2x" \
+          "$out/lib/firmware/liquidio" \
+          "$out/lib/firmware/vxge" \
+          "$out/lib/firmware/phanfw.bin"*
+        ${lib.optionalString pkgs.stdenv.hostPlatform.isx86_64 ''
+          rm -rf "$out/lib/firmware/qcom"
+        ''}
+        find "$out/lib/firmware" -xtype l -delete
+      '';
+
+  trimmedMesa = pkgs.runCommand "mesa-opengl" { } ''
+    cp -r --no-preserve=mode "${pkgs.mesa}" "$out"
+    rm -rf \
+      "$out/lib/libvulkan_"*.so* \
+      "$out/lib/libteflon.so"* \
+      "$out/lib/libVkLayer_"*.so* \
+      "$out/share/vulkan"
+    find "$out" -type f -exec grep -l "${pkgs.mesa}" {} + | xargs -r sed -i "s|${pkgs.mesa}|$out|g"
+  '';
 in
 {
   networking.hostName = lib.mkDefault "extra-life";
@@ -42,9 +79,24 @@ in
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-  hardware.graphics.enable = true;
+  hardware.graphics = {
+    enable = true;
+    package = trimmedMesa;
+  };
   hardware.uinput.enable = true;
-  hardware.enableRedistributableFirmware = lib.mkDefault true;
+  hardware.enableRedistributableFirmware = lib.mkForce false;
+  hardware.wirelessRegulatoryDatabase = lib.mkDefault true;
+  hardware.firmware = [
+    trimmedLinuxFirmware
+    pkgs.ipw2200-firmware
+    pkgs.rtl8192su-firmware
+    pkgs.rt5677-firmware
+    pkgs.rtl8761b-firmware
+    pkgs.zd1211fw
+    pkgs.alsa-firmware
+    pkgs.sof-firmware
+  ]
+  ++ lib.optional pkgs.stdenv.hostPlatform.isAarch pkgs.raspberrypiWirelessFirmware;
 
   boot.kernelModules = [
     "joydev"

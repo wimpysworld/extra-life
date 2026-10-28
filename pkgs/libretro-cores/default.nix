@@ -84,7 +84,10 @@ let
 in
 runCommand "libretro-cores"
   {
-    nativeBuildInputs = [ patchelf ];
+    nativeBuildInputs = [
+      patchelf
+      stdenv.cc.bintools
+    ];
     passthru = {
       inherit chailove cores pokemini;
     };
@@ -103,6 +106,7 @@ runCommand "libretro-cores"
       cp -L "${core}/lib/retroarch/cores/"*.so "$out/lib/retroarch/cores/"
     '') cores}
     chmod 0755 "$out/lib/retroarch/cores/"*.so
+    ${stdenv.cc.bintools.targetPrefix}strip --strip-unneeded "$out/lib/retroarch/cores/"*.so
     for so in "$out/lib/retroarch/cores/"*.so; do
       patchelf --shrink-rpath "$so"
     done

@@ -56,6 +56,8 @@
   services.qemuGuest.enable = true;
   services.spice-vdagentd.enable = true;
 
+  system.disableInstallerTools = true;
+
   system.build.diskImage = import "${modulesPath}/../lib/make-disk-image.nix" {
     inherit config lib pkgs;
     partitionTableType = "efi";
