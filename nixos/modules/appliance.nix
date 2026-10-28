@@ -411,12 +411,14 @@ in
       lib.mkDefault "extra-life-${hostVariant}";
     networking.useDHCP = lib.mkDefault false;
     networking.networkmanager.enable = lib.mkDefault false;
+    networking.resolvconf.enable = false;
     networking.firewall = {
       enable = lib.mkDefault true;
       allowPing = lib.mkDefault true;
     };
 
     # Disable text console prompts on tty1-tty6 for a pure appliance boot.
+    console.enable = false;
     services.getty.autologinUser = lib.mkDefault null;
     systemd.services."getty@tty1".enable = false;
     systemd.services."autovt@tty1".enable = false;
@@ -442,6 +444,11 @@ in
 
     boot = {
       bcache.enable = false;
+      kexec.enable = false;
+      initrd.systemd = {
+        fido2.enable = false;
+        tpm2.enable = false;
+      };
       kernelPackages = lib.mkDefault pkgs.linuxPackages;
       kernelModules = [
         "joydev"
@@ -658,9 +665,17 @@ in
       disableInstallerTools = true;
       nssModules = lib.mkForce [ ];
       stateVersion = lib.mkDefault "26.05";
+      switch.enable = false;
     };
 
+    i18n = {
+      defaultLocale = "C.UTF-8";
+      supportedLocales = [ "C.UTF-8/UTF-8" ];
+    };
+
+    security.sudo.enable = false;
     users.mutableUsers = false;
+    environment.variables.PAGER = lib.mkForce "cat";
     environment.defaultPackages = lib.mkForce [ ];
     environment.corePackages =
       with pkgs;
@@ -679,6 +694,8 @@ in
 
     programs = {
       bash.completion.enable = false;
+      fuse.enable = false;
+      less.enable = lib.mkForce false;
       nano.enable = false;
     };
 
@@ -695,9 +712,13 @@ in
 
     services = {
       logrotate.enable = false;
+      lvm.enable = false;
       nscd.enable = false;
     };
 
+    systemd.coredump.enable = false;
+    systemd.oomd.enable = false;
+    systemd.shutdownRamfs.enable = false;
     systemd.services.systemd-importd.enable = false;
   };
 }
