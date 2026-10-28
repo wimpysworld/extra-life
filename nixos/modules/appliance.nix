@@ -105,7 +105,10 @@ in
       lib.mkDefault "extra-life-${hostVariant}";
     networking.useDHCP = lib.mkDefault false;
     networking.networkmanager.enable = lib.mkDefault false;
-    networking.firewall.enable = lib.mkDefault false;
+    networking.firewall = {
+      enable = lib.mkDefault true;
+      allowPing = lib.mkDefault true;
+    };
 
     # Disable text console prompts on tty1-tty6 for a pure appliance boot.
     services.getty.autologinUser = lib.mkDefault null;
@@ -168,6 +171,7 @@ in
     # SSH server, gated by Ludo's /storage/.cache/services/sshd.conf toggle.
     services.openssh = {
       enable = true;
+      openFirewall = true;
       settings = {
         PermitRootLogin = lib.mkDefault "yes";
         PasswordAuthentication = lib.mkDefault true;
