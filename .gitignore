@@ -1,0 +1,7 @@
+result
+result-*
+.direnv/
+.vm/
+*.img
+*.iso
+*.qcow2
