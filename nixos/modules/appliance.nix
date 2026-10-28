@@ -328,4 +328,6 @@ in
     man.enable = false;
     nixos.enable = false;
   };
+
+  system.stateVersion = lib.mkDefault "26.05";
 }

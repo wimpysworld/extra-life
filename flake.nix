@@ -89,6 +89,10 @@
 
       nixosModules = {
         appliance = import ./nixos/modules/appliance.nix;
+        disk-efi = import ./nixos/modules/images/disk-efi.nix;
+        iso = import ./nixos/modules/images/iso.nix;
+        pc = import ./nixos/modules/hardware/pc.nix;
+        qemu-guest = import ./nixos/modules/hardware/qemu-guest.nix;
         default = self.nixosModules.appliance;
       };
 
