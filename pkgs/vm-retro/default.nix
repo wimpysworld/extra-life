@@ -1,5 +1,6 @@
 {
   lib,
+  stdenv,
   writeShellApplication,
   symlinkJoin,
   coreutils,
@@ -9,17 +10,20 @@
   OVMF,
 }:
 let
+  isAarch64 = stdenv.hostPlatform.isAarch64;
   shellApplication = writeShellApplication {
     name = "vm-retro";
     runtimeInputs = [
       coreutils
       qemu_kvm
       socat
-      systemd
-    ];
+    ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [ systemd ];
     runtimeEnv = {
-      OVMF_CODE = "${OVMF.fd}/FV/OVMF_CODE.fd";
-      OVMF_VARS = "${OVMF.fd}/FV/OVMF_VARS.fd";
+      OVMF_CODE =
+        if isAarch64 then "${qemu_kvm}/share/qemu/edk2-aarch64-code.fd" else "${OVMF.fd}/FV/OVMF_CODE.fd";
+      OVMF_VARS =
+        if isAarch64 then "${qemu_kvm}/share/qemu/edk2-arm-vars.fd" else "${OVMF.fd}/FV/OVMF_VARS.fd";
     };
     text = builtins.readFile ./vm-runner.sh;
   };
@@ -35,6 +39,10 @@ symlinkJoin {
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ flexiondotorg ];
     mainProgram = "vm-retro";
-    platforms = [ "x86_64-linux" ];
+    platforms = [
+      "x86_64-linux"
+      "aarch64-linux"
+      "aarch64-darwin"
+    ];
   };
 }

@@ -11,7 +11,7 @@ Four product principles govern every architectural decision in Extra Life.
 | Pure appliance | The system boots straight into `cage` and runs `ludo -ludos` on Wayland (`-tags wayland`). | The appliance exposes no desktop environment escape hatch, no text console prompts, and no RetroArch user interface. |
 | Invisible Nix | Over-the-air (OTA) updates pull signed NixOS system closures from a binary cache with `nix-store --realise` and `switch-to-configuration`. | Users flash an image, copy read-only memory (ROM) files, and play with zero on-device Nix evaluation. |
 | Opinionated emulation | The image ships a curated farm of Libretro cores that are symlinked into a single `cores_dir` directory. | Every supported playlist in Ludo (`CoreForPlaylist`) works out of the box without manual core downloads. |
-| Universal hardware reach | A single flake builds `x86_64-linux` PC and virtual machine (VM) images alongside `aarch64-linux` board and handheld images. | The same appliance configuration runs on QEMU, PC hardware, Raspberry Pi 4, 400, 5, and Zero 2 W, and ARM handhelds. |
+| Universal hardware reach | A single flake builds `x86_64-linux` PC and virtual machine (VM) images alongside `aarch64-linux` board, handheld, and VM images, and runs `vm-retro` on `aarch64-darwin`. | The same appliance configuration runs on QEMU across Linux and Apple Silicon macOS, PC hardware, Raspberry Pi 4, 400, 5, and Zero 2 W, and ARM handhelds. |
 
 ## System overview
 
@@ -155,14 +155,15 @@ Both `/nix/store` and `/storage/Retro` share the auto-expanding `ext4` root part
 
 ## Virtual machine development workflow (`vm-retro`)
 
-Extra Life provides a fast local test loop through the `vm-retro` target (`just vm-boot` or `nix run .#vm-retro`).
+Extra Life provides a fast local test loop through the `vm-retro` target (`just vm-boot` or `nix run .#vm-retro`) across `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin` (Apple Silicon macOS with a `linux-builder` such as Determinate Nix).
 
 | Component | Configuration | Purpose |
 | --- | --- | --- |
-| Hypervisor | QEMU with Kernel-based Virtual Machine (KVM) and Unified Extensible Firmware Interface (UEFI) (OVMF) | Matches physical `x86_64` UEFI boot behaviour at native CPU speed |
-| Graphics | `virtio-vga-gl` with host OpenGL acceleration | Runs Cage, Wayland, and OpenGL Libretro cores at 60 frames per second |
-| Display client | QEMU GTK display (`-display gtk,gl=on,zoom-to-fit=on`) | Renders OpenGL frames directly and forwards keyboard and controller input |
-| Audio | PipeWire backend | Routes appliance game audio to the host PipeWire session |
+| Hypervisor | QEMU with Kernel-based Virtual Machine (KVM) on Linux or Hypervisor.framework (`hvf`) on macOS, plus Unified Extensible Firmware Interface (UEFI) (OVMF or EDK2 ARM) | Matches physical `x86_64` and `aarch64` UEFI boot behaviour at native CPU speed |
+| Graphics | `virtio-vga-gl` (`x86_64-linux`), `ramfb` + `virtio-gpu-gl-pci` (`aarch64-linux`), or `ramfb` + `virtio-gpu-pci` (`aarch64-darwin`) | Runs Cage, Wayland, and Libretro cores across Linux OpenGL and macOS Cocoa |
+| Display client | QEMU GTK display (`-display gtk,gl=on,zoom-to-fit=on`) on Linux or Cocoa display (`-display cocoa`) on macOS | Renders appliance frames and forwards keyboard, pointer, and controller input |
+| Input passthrough | Automatic `virtio-input-host-pci` evdev passthrough on Linux, and `--usb-device VID:PID` (`usb-host`) on macOS and Linux | Connects host gamepads directly to the appliance |
+| Audio | PipeWire backend on Linux or CoreAudio backend on macOS | Routes appliance game audio to the host audio session |
 | Network and SSH | User-mode network with host port `2222` forwarded to guest port `22` | Allows SSH access and `rsync` or `scp` ROM transfers during local tests |
 | Persistent state | `.vm/` (git-ignored inside the repository) | Preserves the writable disk image, `/storage/Retro` library, and UEFI NVRAM across runs |
 

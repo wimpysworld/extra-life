@@ -92,11 +92,11 @@ build-pkg pkg="ludo":
 build-iso:
     #!/usr/bin/env bash
     set -euo pipefail
-    echo "ISO 󰗮 Building: x86_64-installer"
+    echo "ISO 󰗮 Building: .#iso"
     if command -v nom >/dev/null 2>&1; then
-        nom build .#nixosConfigurations.x86_64-installer.config.system.build.isoImage --out-link result-iso
+        nom build .#iso --out-link result-iso
     else
-        nix build .#nixosConfigurations.x86_64-installer.config.system.build.isoImage --out-link result-iso
+        nix build .#iso --out-link result-iso
     fi
     mkdir -p .vm
     iso_src=$(find -L result-iso/iso -maxdepth 1 -name '*.iso*' | head -n 1)
@@ -107,11 +107,11 @@ build-iso:
 build-disk:
     #!/usr/bin/env bash
     set -euo pipefail
-    echo "Disk 󰋊 Building: x86_64-appliance"
+    echo "Disk 󰋊 Building: .#disk-image"
     if command -v nom >/dev/null 2>&1; then
-        nom build .#nixosConfigurations.x86_64-appliance.config.system.build.diskImage --out-link result-disk
+        nom build .#disk-image --out-link result-disk
     else
-        nix build .#nixosConfigurations.x86_64-appliance.config.system.build.diskImage --out-link result-disk
+        nix build .#disk-image --out-link result-disk
     fi
 
 # Build the ISO and boot it in vm-retro

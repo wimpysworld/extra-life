@@ -17,14 +17,15 @@ esac
 
 usage() {
 	cat <<EOF
-Usage: ${prog} [--shutdown] [--kill] [iso_path]
+Usage: ${prog} [--shutdown] [--kill] [--usb-device VID:PID] [iso_path]
 
 Launch or control the ${profile} QEMU virtual machine.
 
 Options:
-  --shutdown  Send an ACPI powerdown signal to the running VM and wait for exit.
-  --kill      Forcefully terminate the running VM process.
-  -h, --help  Show this help.
+  --shutdown            Send an ACPI powerdown signal to the running VM and wait for exit.
+  --kill                Forcefully terminate the running VM process.
+  --usb-device VID:PID  Pass a host USB device through to the VM (may be specified multiple times).
+  -h, --help            Show this help.
 EOF
 }
 
@@ -36,6 +37,7 @@ fail() {
 shutdown_vm=0
 kill_vm=0
 iso_path=""
+usb_devices=()
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
@@ -50,6 +52,16 @@ while [[ $# -gt 0 ]]; do
 	--kill)
 		kill_vm=1
 		shift
+		;;
+	--usb-device)
+		if [[ $# -lt 2 ]]; then
+			fail "missing argument for --usb-device"
+		fi
+		if [[ ! "$2" =~ ^[0-9a-fA-F]{4}:[0-9a-fA-F]{4}$ ]]; then
+			fail "invalid --usb-device value '$2' (expected VID:PID in hex, for example 045e:028e)"
+		fi
+		usb_devices+=("$2")
+		shift 2
 		;;
 	--*)
 		fail "unknown option: $1"
@@ -167,12 +179,25 @@ if [[ ! -f "$disk_img" ]]; then
 	qemu-img create -q -f qcow2 -o preallocation=off "$disk_img" 64G
 fi
 
-cpus=$(($(nproc) / 2))
+host_os="$(uname -s)"
+host_arch="$(uname -m)"
+
+case "$host_os" in
+Darwin)
+	total_cpus="$(sysctl -n hw.ncpu)"
+	;;
+Linux)
+	total_cpus="$(nproc)"
+	;;
+*)
+	fail "unsupported host OS: ${host_os}"
+	;;
+esac
+
+cpus=$((total_cpus / 2))
 if ((cpus < 2)); then
 	cpus=2
 fi
-
-gpu_dev="virtio-vga-gl,hostmem=4G,blob=true"
 
 disk_bootindex=1
 if [[ -n "$iso_path" ]]; then
@@ -183,15 +208,52 @@ qemu_args=(
 	-name "${profile},process=vm-${profile}"
 	-pidfile "${pid_file}"
 	-qmp "unix:${qmp_sock},server=on,wait=off"
-	-machine "q35,accel=kvm,smm=on,memory-backend=mem"
-	-cpu host
 	-smp "${cpus}"
-	-m 16G
-	-object "memory-backend-memfd,id=mem,size=16G,share=on"
 	-drive "if=pflash,format=raw,unit=0,file=${OVMF_CODE},readonly=on"
 	-drive "if=pflash,format=raw,unit=1,file=${ovmf_vars}"
-	-display "gtk,gl=on,zoom-to-fit=on"
-	-device "${gpu_dev}"
+)
+
+case "${host_os}:${host_arch}" in
+Linux:x86_64)
+	qemu_bin="qemu-system-x86_64"
+	qemu_args+=(
+		-machine "q35,accel=kvm,smm=on,memory-backend=mem"
+		-cpu host
+		-m 16G
+		-object "memory-backend-memfd,id=mem,size=16G,share=on"
+		-display "gtk,gl=on,zoom-to-fit=on"
+		-device "virtio-vga-gl,hostmem=4G,blob=true"
+	)
+	;;
+Linux:aarch64)
+	qemu_bin="qemu-system-aarch64"
+	qemu_args+=(
+		-machine "virt,accel=kvm,highmem=on,memory-backend=mem"
+		-cpu host
+		-m 8G
+		-object "memory-backend-memfd,id=mem,size=8G,share=on"
+		-display "gtk,gl=on,zoom-to-fit=on"
+		-device "ramfb"
+		-device "virtio-gpu-gl-pci,hostmem=4G,blob=true"
+	)
+	;;
+Darwin:arm64 | Darwin:aarch64)
+	qemu_bin="qemu-system-aarch64"
+	qemu_args+=(
+		-machine "virt,accel=hvf,highmem=on"
+		-cpu host
+		-m 8G
+		-display "cocoa"
+		-device "ramfb"
+		-device "virtio-gpu-pci"
+	)
+	;;
+*)
+	fail "unsupported host platform: ${host_os}/${host_arch}"
+	;;
+esac
+
+qemu_args+=(
 	-device "qemu-xhci,id=xhci"
 	-device "usb-tablet,bus=xhci.0"
 	-device "usb-kbd,bus=xhci.0"
@@ -201,25 +263,40 @@ qemu_args=(
 	-device "virtio-serial-pci"
 	-chardev "socket,id=qga0,path=${qga_sock},server=on,wait=off"
 	-device "virtserialport,chardev=qga0,name=org.qemu.guest_agent.0"
-	-chardev "qemu-vdagent,id=vdagent,name=vdagent,clipboard=on"
-	-device "virtserialport,chardev=vdagent,name=com.redhat.spice.0"
 	-drive "id=disk0,file=${disk_img},format=qcow2,if=none,discard=unmap,detect-zeroes=unmap"
 	-device "virtio-blk-pci,drive=disk0,bootindex=${disk_bootindex}"
 )
 
-if [[ -n "${XDG_RUNTIME_DIR:-}" && -d "${XDG_RUNTIME_DIR}" ]]; then
+if [[ "$host_os" == "Darwin" ]]; then
 	qemu_args+=(
-		-audiodev "pipewire,id=snd0"
+		-audiodev "coreaudio,id=snd0"
 		-device "ich9-intel-hda"
 		-device "hda-duplex,audiodev=snd0"
 	)
+elif [[ "$host_os" == "Linux" ]]; then
+	qemu_args+=(
+		-chardev "qemu-vdagent,id=vdagent,name=vdagent,clipboard=on"
+		-device "virtserialport,chardev=vdagent,name=com.redhat.spice.0"
+	)
+	if [[ -n "${XDG_RUNTIME_DIR:-}" && -d "${XDG_RUNTIME_DIR}" ]]; then
+		qemu_args+=(
+			-audiodev "pipewire,id=snd0"
+			-device "ich9-intel-hda"
+			-device "hda-duplex,audiodev=snd0"
+		)
+	fi
+	for evdev in /dev/input/event*; do
+		if [[ -r "$evdev" ]] && udevadm info --query=property --name="$evdev" 2>/dev/null | grep -q '^ID_INPUT_JOYSTICK=1$'; then
+			printf '%s: passing through controller %s\n' "$prog" "$evdev"
+			qemu_args+=(-device "virtio-input-host-pci,evdev=${evdev}")
+		fi
+	done
 fi
 
-for evdev in /dev/input/event*; do
-	if [[ -r "$evdev" ]] && udevadm info --query=property --name="$evdev" 2>/dev/null | grep -q '^ID_INPUT_JOYSTICK=1$'; then
-		printf '%s: passing through controller %s\n' "$prog" "$evdev"
-		qemu_args+=(-device "virtio-input-host-pci,evdev=${evdev}")
-	fi
+for usb_dev in "${usb_devices[@]}"; do
+	vid="${usb_dev%%:*}"
+	pid="${usb_dev##*:}"
+	qemu_args+=(-device "usb-host,bus=xhci.0,vendorid=0x${vid},productid=0x${pid}")
 done
 
 if [[ -n "$iso_path" ]]; then
@@ -229,4 +306,4 @@ if [[ -n "$iso_path" ]]; then
 	)
 fi
 
-qemu-system-x86_64 "${qemu_args[@]}"
+"$qemu_bin" "${qemu_args[@]}"

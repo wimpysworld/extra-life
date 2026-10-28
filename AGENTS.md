@@ -1,14 +1,15 @@
 # Extra Life
 
-Extra Life (`extra-life`) is a NixOS retro game appliance flake that runs `ludo -ludos` in the `cage` Wayland kiosk compositor on `x86_64-linux` and `aarch64-linux`.
+Extra Life (`extra-life`) is a NixOS retro game appliance flake that runs `ludo -ludos` in the `cage` Wayland kiosk compositor on `x86_64-linux` and `aarch64-linux`, with local virtual machine (VM) support on `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin`.
 
 ## Build and test
 
-- Check the flake and evaluate outputs: `nix flake check`
-- Format Nix files: `nix fmt`
-- Build the default package or image: `nix build`
-- Build the `ludo` package: `nix build .#ludo`
-- Run the local development virtual machine (VM): `nix run .#vm-retro`
+- Check the flake and evaluate outputs: `just check`
+- Format Nix files: `just fmt`
+- Build the default package (`ludo` on Linux, `vm-retro` on macOS): `nix build`
+- Build the `ludo` package on Linux: `nix build .#ludo`
+- Build the installer ISO or disk image for the host architecture (`x86_64` or `aarch64`): `just build-iso` or `just build-disk`
+- Run the local development VM (`kvm` on Linux, `hvf` with Cocoa on Apple Silicon macOS, and `linux-builder` on macOS for image builds): `just vm-boot` or `nix run .#vm-retro`
 
 ## Architecture notes
 

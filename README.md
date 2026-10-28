@@ -22,7 +22,7 @@ Four product principles govern every decision in Extra Life.
 | Pure appliance | The system boots straight into `cage` and runs `ludo -ludos` on native Wayland. | You get a console experience with no desktop escape hatch, no text console prompts, and no RetroArch interface. |
 | Invisible Nix | Over-the-air (OTA) updates pull signed NixOS closures from a binary cache with `nix-store --realise` and `switch-to-configuration`. | You flash an image, copy read-only memory (ROM) files, and play with zero on-device Nix evaluation. |
 | Opinionated emulation | The image ships 33 curated Libretro cores in a single `cores_dir` directory. | Every supported playlist in Ludo (`CoreForPlaylist`) runs out of the box without manual core downloads. |
-| Universal hardware reach | One flake builds `x86_64-linux` PC and virtual machine (VM) images alongside `aarch64-linux` board and handheld images. | The same configuration runs on QEMU, PC hardware, Raspberry Pi boards, and ARM handhelds. |
+| Universal hardware reach | One flake builds `x86_64-linux` PC and virtual machine (VM) images alongside `aarch64-linux` board and handheld images, and supports `aarch64-darwin` hosts. | The same configuration runs on QEMU across Linux and Apple Silicon macOS, PC hardware, Raspberry Pi boards, and ARM handhelds. |
 
 ## Quick start
 
@@ -34,7 +34,7 @@ Start the `vm-retro` target with `just` or Nix to build the live ISO and test th
 just vm-boot
 ```
 
-The VM uses QEMU with Kernel-based Virtual Machine (KVM), Unified Extensible Firmware Interface (UEFI) through OVMF, `virtio-vga-gl` OpenGL acceleration, and the QEMU GTK display backend (`-display gtk,gl=on,zoom-to-fit=on`), while PipeWire routes game audio to the host. The runner keeps persistent state and `/storage/Retro` in `.vm/` inside the repository. It forwards host port `2222` to Secure Shell (SSH) port `22` on the guest.
+The VM runs on `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin` (Apple Silicon macOS). On Linux, QEMU uses Kernel-based Virtual Machine (KVM), Unified Extensible Firmware Interface (UEFI) firmware, `virtio-vga-gl` or `virtio-gpu-gl-pci` OpenGL acceleration, the GTK display backend, and PipeWire audio. On Apple Silicon macOS, `just vm-boot` builds the `aarch64-linux` ISO through a `linux-builder` (such as Determinate Nix) and boots it in QEMU with Hypervisor.framework (`hvf`), the Cocoa display (`-display cocoa`), and CoreAudio. Pass `--usb-device VID:PID` to forward Universal Serial Bus (USB) gamepads on macOS or Linux. The runner keeps persistent state and `/storage/Retro` in `.vm/` inside the repository and forwards host port `2222` to Secure Shell (SSH) port `22` on the guest.
 
 ```bash
 # Copy ROM files into the running virtual machine over SSH
@@ -43,14 +43,16 @@ rsync -avP -e "ssh -p 2222" ./roms/ ludo@localhost:/storage/Retro/roms/
 
 ### Build appliance images
 
-Build bootable disk or installer images from the flake outputs for your target hardware.
+Build bootable disk or installer images for the host architecture (`x86_64-linux` or `aarch64-linux`), or select a specific NixOS configuration.
 
 ```bash
-# Build the x86_64-linux disk image
-nix build .#nixosConfigurations.x86_64-appliance.config.system.build.diskImage
+# Build the disk image or installer ISO for the current architecture
+just build-disk
+just build-iso
 
-# Build the x86_64-linux installer ISO
-nix build .#nixosConfigurations.x86_64-installer.config.system.build.isoImage
+# Build specific x86_64-linux or aarch64-linux images directly
+nix build .#nixosConfigurations.x86_64-appliance.config.system.build.diskImage
+nix build .#nixosConfigurations.aarch64-appliance.config.system.build.diskImage
 ```
 
 For full design details, read the [Extra Life architecture guide](docs/architecture.md).

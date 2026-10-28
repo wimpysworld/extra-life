@@ -19,6 +19,7 @@
       supportedSystems = [
         "x86_64-linux"
         "aarch64-linux"
+        "aarch64-darwin"
       ];
 
       forAllSystems = lib.genAttrs supportedSystems;
@@ -105,22 +106,36 @@
             ./nixos/hosts/x86_64-installer
           ];
         };
+
+        aarch64-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/aarch64-appliance
+          ];
+        };
+
+        aarch64-installer = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/aarch64-installer
+          ];
+        };
       };
 
       packages = forAllSystems (
         system:
         let
           pkgs = pkgsFor system;
+          archPrefix = if pkgs.stdenv.hostPlatform.isAarch64 then "aarch64" else "x86_64";
         in
         {
-          inherit (pkgs)
-            ludo
-            libretro-cores
-            vm-retro
-            ;
-          iso = self.nixosConfigurations.x86_64-installer.config.system.build.isoImage;
-          disk-image = self.nixosConfigurations.x86_64-appliance.config.system.build.diskImage;
-          default = pkgs.ludo;
+          inherit (pkgs) vm-retro;
+          iso = self.nixosConfigurations."${archPrefix}-installer".config.system.build.isoImage;
+          disk-image = self.nixosConfigurations."${archPrefix}-appliance".config.system.build.diskImage;
+          default = if pkgs.stdenv.hostPlatform.isLinux then pkgs.ludo else pkgs.vm-retro;
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
+          inherit (pkgs) ludo libretro-cores;
         }
       );
 
@@ -153,21 +168,19 @@
         in
         {
           default = pkgs.mkShell {
-            packages =
-              with pkgs;
-              [
-                deadnix
-                findutils
-                git
-                jq
-                just
-                mcp-nixos
-                nix-output-monitor
-                nixfmt
-                nixfmt-tree
-                statix
-              ]
-              ++ lib.optional pkgs.stdenv.hostPlatform.isx86_64 pkgs.vm-retro;
+            packages = with pkgs; [
+              deadnix
+              findutils
+              git
+              jq
+              just
+              mcp-nixos
+              nix-output-monitor
+              nixfmt
+              nixfmt-tree
+              statix
+              vm-retro
+            ];
           };
         }
       );
