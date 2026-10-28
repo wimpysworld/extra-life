@@ -116,16 +116,37 @@ let
         find "$out/lib/firmware" -xtype l -delete
       '';
 
-  trimmedMesa = pkgs.runCommand "mesa-opengl" { } ''
-    cp -r --no-preserve=mode "${pkgs.mesa}" "$out"
-    rm -rf \
-      "$out/bin" \
-      "$out/lib/libvulkan_"*.so* \
-      "$out/lib/libteflon.so"* \
-      "$out/lib/libVkLayer_"*.so* \
-      "$out/share/vulkan"
-    find "$out" -type f -exec grep -l "${pkgs.mesa}" {} + | xargs -r sed -i "s|${pkgs.mesa}|$out|g"
-  '';
+  trimmedMesa =
+    pkgs.runCommand "mesa-opengl"
+      {
+        nativeBuildInputs = [ pkgs.patchelf ];
+      }
+      ''
+        cp -r --no-preserve=mode "${pkgs.mesa}" "$out"
+        chmod -R u+w "$out"
+        rm -rf \
+          "$out/bin" \
+          "$out/lib/libvulkan_"*.so* \
+          "$out/lib/libteflon.so"* \
+          "$out/lib/libVkLayer_"*.so* \
+          "$out/share/vulkan"
+        for gallium in "$out"/lib/libgallium*.so*; do
+          if [ -f "$gallium" ] && [ ! -L "$gallium" ]; then
+            rpath="$(patchelf --print-rpath "$gallium")"
+            IFS=':' read -ra rpath_entries <<< "$rpath"
+            for entry in "''${rpath_entries[@]}"; do
+              case "$entry" in
+                *-llvm-*-lib/lib)
+                  cp -P --no-preserve=mode "$entry"/libLLVM*.so* "$out/lib/"
+                  new_rpath="''${rpath//$entry/$out/lib}"
+                  patchelf --set-rpath "$new_rpath" "$gallium"
+                  ;;
+              esac
+            done
+          fi
+        done
+        find "$out" -type f -exec grep -l "${pkgs.mesa}" {} + | xargs -r sed -i "s|${pkgs.mesa}|$out|g"
+      '';
 
   trimmedSamba =
     pkgs.runCommand "samba-trimmed"
