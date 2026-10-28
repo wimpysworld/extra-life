@@ -99,20 +99,113 @@ let
       ''
         mkdir -p "$out"
         cp -r --no-preserve=mode "${compressedLinuxFirmware}/lib" "$out/lib"
+        chmod -R u+w "$out/lib"
         rm -rf \
           "$out/lib/firmware/mellanox" \
           "$out/lib/firmware/mrvl/prestera" \
           "$out/lib/firmware/qed" \
           "$out/lib/firmware/netronome" \
           "$out/lib/firmware/dpaa2" \
+          "$out/lib/firmware/cxgb3" \
           "$out/lib/firmware/cxgb4" \
+          "$out/lib/firmware/bnx2" \
           "$out/lib/firmware/bnx2x" \
           "$out/lib/firmware/liquidio" \
           "$out/lib/firmware/vxge" \
-          "$out/lib/firmware/phanfw.bin"*
+          "$out/lib/firmware/phanfw.bin"* \
+          "$out/lib/firmware/qlogic" \
+          "$out/lib/firmware/ql2"*_fw.bin* \
+          "$out/lib/firmware/cbfw"* \
+          "$out/lib/firmware/ctfw"* \
+          "$out/lib/firmware/ct2fw"* \
+          "$out/lib/firmware/myri10ge"* \
+          "$out/lib/firmware/slicoss" \
+          "$out/lib/firmware/tehuti" \
+          "$out/lib/firmware/cavium" \
+          "$out/lib/firmware/isci" \
+          "$out/lib/firmware/advansys" \
+          "$out/lib/firmware/hfi1_"*.fw* \
+          "$out/lib/firmware/ueagle-atm" \
+          "$out/lib/firmware/go7007" \
+          "$out/lib/firmware/moxa" \
+          "$out/lib/firmware/dvb"* \
+          "$out/lib/firmware/sms1xxx"* \
+          "$out/lib/firmware/isdbt"* \
+          "$out/lib/firmware/cmmb"* \
+          "$out/lib/firmware/tdmb"* \
+          "$out/lib/firmware/tlg2300"* \
+          "$out/lib/firmware/f2255"* \
+          "$out/lib/firmware/amdgpu/isp"* \
+          "$out/lib/firmware/amdgpu/arcturus_"* \
+          "$out/lib/firmware/amdgpu/aldebaran_"* \
+          "$out/lib/firmware/amdgpu/vega20_"* \
+          "$out/lib/firmware/amdgpu/gc_9_4_3_"* \
+          "$out/lib/firmware/amdgpu/gc_9_4_4_"* \
+          "$out/lib/firmware/amdgpu/psp_13_0_6_"* \
+          "$out/lib/firmware/amdgpu/psp_13_0_12_"* \
+          "$out/lib/firmware/amdgpu/psp_13_0_14_"* \
+          "$out/lib/firmware/amdgpu/sdma_4_4_2"* \
+          "$out/lib/firmware/amdgpu/sdma_4_4_5"* \
+          "$out/lib/firmware/amdgpu/vcn_4_0_3"* \
+          "$out/lib/firmware/amdgpu/smu_13_0_6"* \
+          "$out/lib/firmware/amdgpu/smu_13_0_14"* \
+          "$out/lib/firmware/intel/vsc" \
+          "$out/lib/firmware/intel/ipu" \
+          "$out/lib/firmware/intel/qat" \
+          "$out/lib/firmware/intel/ice" \
+          "$out/lib/firmware/qat_"* \
+          "$out/lib/firmware/ath10k/QCA4019" \
+          "$out/lib/firmware/ath10k/QCA99"* \
+          "$out/lib/firmware/ath10k/QCA9888" \
+          "$out/lib/firmware/ath11k/IPQ"* \
+          "$out/lib/firmware/ath11k/QCN9074" \
+          "$out/lib/firmware/ath12k/IPQ"* \
+          "$out/lib/firmware/ath12k/QCN9274" \
+          "$out/lib/firmware/mediatek/mt7996" \
+          "$out/lib/firmware/mediatek/mt7988" \
+          "$out/lib/firmware/mediatek/mt7987" \
+          "$out/lib/firmware/mediatek/mt7981"* \
+          "$out/lib/firmware/mediatek/mt7986"* \
+          "$out/lib/firmware/mediatek/mt7915"*
         ${lib.optionalString pkgs.stdenv.hostPlatform.isx86_64 ''
-          rm -rf "$out/lib/firmware/qcom"
+          rm -rf \
+            "$out/lib/firmware/qcom" \
+            "$out/lib/firmware/amlogic" \
+            "$out/lib/firmware/meson" \
+            "$out/lib/firmware/amphion" \
+            "$out/lib/firmware/arm" \
+            "$out/lib/firmware/powervr" \
+            "$out/lib/firmware/rockchip" \
+            "$out/lib/firmware/s5p-mfc"* \
+            "$out/lib/firmware/nvidia/tegra"* \
+            "$out/lib/firmware/nvidia/gk20a" \
+            "$out/lib/firmware/nvidia/gm20b" \
+            "$out/lib/firmware/nvidia/gp10b"
         ''}
+        declare -A max_rev
+        for f in "$out"/lib/firmware/iwlwifi-*.ucode.zst "$out"/lib/firmware/intel/iwlwifi/iwlwifi-*.ucode.zst; do
+          [ -e "$f" ] && [ ! -L "$f" ] || continue
+          base="$(basename "$f" .ucode.zst)"
+          prefix="''${base%-*}"
+          rev="''${base##*-}"
+          num="''${rev#c}"
+          if [[ "$num" =~ ^[0-9]+$ ]] && (( num <= 100 )); then
+            cur="''${max_rev[$prefix]:--1}"
+            if (( num > cur )); then
+              max_rev[$prefix]="$num"
+            fi
+          fi
+        done
+        for f in "$out"/lib/firmware/iwlwifi-*.ucode.zst "$out"/lib/firmware/intel/iwlwifi/iwlwifi-*.ucode.zst; do
+          [ -e "$f" ] && [ ! -L "$f" ] || continue
+          base="$(basename "$f" .ucode.zst)"
+          prefix="''${base%-*}"
+          rev="''${base##*-}"
+          num="''${rev#c}"
+          if ! ( [[ "$num" =~ ^[0-9]+$ ]] && (( num == ''${max_rev[$prefix]:--1} )) ); then
+            rm -f "$f"
+          fi
+        done
         find "$out/lib/firmware" -xtype l -delete
       '';
 
