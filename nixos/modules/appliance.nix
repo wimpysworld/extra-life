@@ -305,10 +305,13 @@ in
     '';
   };
 
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
+  nix = {
+    channel.enable = false;
+    settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+  };
 
   nixpkgs.flake = {
     setFlakeRegistry = false;
