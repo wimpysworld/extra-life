@@ -415,6 +415,7 @@ in
     networking.firewall = {
       enable = lib.mkDefault true;
       allowPing = lib.mkDefault true;
+      logRefusedConnections = lib.mkDefault false;
     };
 
     # Disable text console prompts on tty1-tty6 for a pure appliance boot.
@@ -445,6 +446,7 @@ in
     boot = {
       bcache.enable = false;
       kexec.enable = false;
+      swraid.enable = false;
       initrd.systemd = {
         fido2.enable = false;
         tpm2.enable = false;
@@ -663,6 +665,14 @@ in
     system = {
       activatable = false;
       disableInstallerTools = true;
+      forbiddenDependenciesRegexes = [
+        "perl"
+        "python3"
+        "gtk\\+3"
+        "xwayland"
+        "retroarch"
+        "llvm-.*-lib"
+      ];
       nssModules = lib.mkForce [ ];
       stateVersion = lib.mkDefault "26.05";
       switch.enable = false;
@@ -674,7 +684,11 @@ in
     };
 
     security.sudo.enable = false;
-    users.mutableUsers = false;
+    users = {
+      manageLingering = false;
+      mutableUsers = false;
+    };
+    environment.stub-ld.enable = false;
     environment.variables.PAGER = lib.mkForce "cat";
     environment.defaultPackages = lib.mkForce [ ];
     environment.corePackages =
