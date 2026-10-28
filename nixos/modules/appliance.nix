@@ -119,12 +119,142 @@ let
   trimmedMesa = pkgs.runCommand "mesa-opengl" { } ''
     cp -r --no-preserve=mode "${pkgs.mesa}" "$out"
     rm -rf \
+      "$out/bin" \
       "$out/lib/libvulkan_"*.so* \
       "$out/lib/libteflon.so"* \
       "$out/lib/libVkLayer_"*.so* \
       "$out/share/vulkan"
     find "$out" -type f -exec grep -l "${pkgs.mesa}" {} + | xargs -r sed -i "s|${pkgs.mesa}|$out|g"
   '';
+
+  trimmedSamba =
+    pkgs.runCommand "samba-trimmed"
+      {
+        nativeBuildInputs = [
+          pkgs.patchelf
+          pkgs.bintools
+        ];
+      }
+      ''
+        mkdir -p "$out/bin" "$out/lib/samba" "$out/libexec/samba"
+        ln -s bin "$out/sbin"
+
+        for bin in smbd nmbd smbpasswd smbcontrol testparm; do
+          cp --no-preserve=mode "${pkgs.samba}/bin/$bin" "$out/bin/$bin"
+        done
+
+        for helper in \
+          rpcd_classic \
+          rpcd_epmapper \
+          rpcd_fsrvp \
+          rpcd_lsad \
+          rpcd_mdssvc \
+          rpcd_rpcecho \
+          rpcd_spoolss \
+          rpcd_winreg \
+          samba-bgqd \
+          samba-dcerpcd; do
+          if [ -e "${pkgs.samba}/libexec/samba/$helper" ]; then
+            cp --no-preserve=mode "${pkgs.samba}/libexec/samba/$helper" "$out/libexec/samba/$helper"
+          fi
+        done
+
+        if [ -d "${pkgs.samba}/share/samba" ]; then
+          mkdir -p "$out/share"
+          cp -r --no-preserve=mode "${pkgs.samba}/share/samba" "$out/share/samba"
+          find "$out/share/samba" -name '*.py' -delete
+        fi
+
+        cp -P --no-preserve=mode \
+          "${pkgs.talloc}"/lib/libtalloc.so* \
+          "${pkgs.talloc}"/lib/libtalloc-compat1*.so \
+          "${pkgs.tdb}"/lib/libtdb.so* \
+          "${pkgs.tevent}"/lib/libtevent.so* \
+          "$out/lib/"
+
+        for modDir in auth idmap krb5 ldb nss_info pdb vfs; do
+          if [ -d "${pkgs.samba}/lib/samba/$modDir" ]; then
+            cp -r --no-preserve=mode "${pkgs.samba}/lib/samba/$modDir" "$out/lib/samba/$modDir"
+          fi
+        done
+
+        changed=1
+        while [ "$changed" -eq 1 ]; do
+          changed=0
+          while IFS= read -r -d "" elf; do
+            for needed in $(patchelf --print-needed "$elf" 2>/dev/null); do
+              case "$needed" in
+                *python*|*pytalloc*|*pyldb*|*smbtorture*)
+                  continue
+                  ;;
+              esac
+              if [ -e "$out/lib/$needed" ] || [ -e "$out/lib/samba/$needed" ]; then
+                continue
+              fi
+              if [ -e "${pkgs.samba}/lib/$needed" ]; then
+                base="''${needed%%.so*}"
+                cp -P --no-preserve=mode "${pkgs.samba}/lib/$base".so* "$out/lib/"
+                changed=1
+              elif [ -e "${pkgs.samba}/lib/samba/$needed" ]; then
+                cp -P --no-preserve=mode "${pkgs.samba}/lib/samba/$needed" "$out/lib/samba/"
+                changed=1
+              fi
+            done
+          done < <(find "$out/bin" "$out/libexec" "$out/lib" -type f -print0)
+        done
+
+        while IFS= read -r -d "" elf; do
+          chmod 0755 "$elf"
+          rpath=$(patchelf --print-rpath "$elf" 2>/dev/null || true)
+          if [ -n "$rpath" ]; then
+            cleaned=$(echo "$rpath" | sed \
+              -e "s|${pkgs.samba}/lib/samba||g" \
+              -e "s|${pkgs.samba}/lib||g" \
+              -e "s|${pkgs.talloc}/lib||g" \
+              -e "s|${pkgs.tdb}/lib||g" \
+              -e "s|${pkgs.tevent}/lib||g" \
+              -e 's|::*|:|g' \
+              -e 's|^:||' \
+              -e 's|:$||')
+            patchelf --set-rpath "$out/lib:$out/lib/samba''${cleaned:+:$cleaned}" "$elf"
+            patchelf --shrink-rpath "$elf"
+          fi
+          strip --strip-unneeded "$elf"
+        done < <(find "$out/bin" "$out/libexec" "$out/lib" -type f -print0)
+
+        find "$out" -type f -exec grep -l "${pkgs.samba}" {} + | xargs -r sed -i "s|${pkgs.samba}|$out|g"
+
+        for bin in "$out"/sbin/* "$out"/bin/* "$out"/libexec/samba/*; do
+          echo "Checking ldd for $bin"
+          ldd_out=$(ldd "$bin")
+          if echo "$ldd_out" | grep -q "not found"; then
+            echo "Missing libraries for $bin:"
+            echo "$ldd_out"
+            exit 1
+          fi
+        done
+
+        if grep -rn "${pkgs.samba}" "$out"; then
+          echo "ERROR: residual reference to ${pkgs.samba}"
+          exit 1
+        fi
+        if grep -rn "${pkgs.python3}" "$out"; then
+          echo "ERROR: residual reference to ${pkgs.python3}"
+          exit 1
+        fi
+        if grep -rn "${pkgs.talloc}" "$out"; then
+          echo "ERROR: residual reference to ${pkgs.talloc}"
+          exit 1
+        fi
+        if grep -rn "${pkgs.tdb}" "$out"; then
+          echo "ERROR: residual reference to ${pkgs.tdb}"
+          exit 1
+        fi
+        if grep -rn "${pkgs.tevent}" "$out"; then
+          echo "ERROR: residual reference to ${pkgs.tevent}"
+          exit 1
+        fi
+      '';
 in
 {
   options.extraLife = {
@@ -239,7 +369,10 @@ in
     # Samba file share for /storage/Retro, gated by Ludo's /storage/.cache/services/samba.conf toggle.
     services.samba = {
       enable = true;
+      package = trimmedSamba;
       openFirewall = true;
+      nmbd.enable = false;
+      winbindd.enable = false;
       settings = {
         global = {
           workgroup = "WORKGROUP";
@@ -259,6 +392,9 @@ in
           "directory mask" = "0775";
         };
       };
+    };
+    security.wrappers = lib.mkIf config.services.samba.enable {
+      "mount.cifs".enable = false;
     };
     systemd.services.samba-smbd = {
       aliases = [ "smbd.service" ];
