@@ -6,11 +6,37 @@ let
       config.allowUnfree = true;
     };
 
-    cage = prev.cage.overrideAttrs (oldAttrs: {
-      patches = (oldAttrs.patches or [ ]) ++ [
-        ../patches/cage/teardown-order.patch
-      ];
-    });
+    connman = prev.connman.override {
+      enableOpenconnect = false;
+      enableOpenvpn = false;
+      enableVpnc = false;
+      enablePptp = false;
+      enableWireguard = false;
+      enableOfono = false;
+      enableDundee = false;
+      enableNeard = false;
+    };
+
+    wlroots_0_20 =
+      (prev.wlroots_0_20.override {
+        enableXWayland = false;
+      }).overrideAttrs
+        (oldAttrs: {
+          postFixup = (oldAttrs.postFixup or "") + ''
+            rm -rf "$out/nix-support"
+          '';
+        });
+
+    cage =
+      (prev.cage.override {
+        inherit (final) wlroots_0_20;
+        xwayland = null;
+      }).overrideAttrs
+        (oldAttrs: {
+          patches = (oldAttrs.patches or [ ]) ++ [
+            ../patches/cage/teardown-order.patch
+          ];
+        });
 
     ludo = final.callPackage ../pkgs/ludo { };
 
@@ -28,12 +54,38 @@ in
     };
   };
 
-  modifiedPackages = _final: prev: {
-    cage = prev.cage.overrideAttrs (oldAttrs: {
-      patches = (oldAttrs.patches or [ ]) ++ [
-        ../patches/cage/teardown-order.patch
-      ];
-    });
+  modifiedPackages = final: prev: {
+    connman = prev.connman.override {
+      enableOpenconnect = false;
+      enableOpenvpn = false;
+      enableVpnc = false;
+      enablePptp = false;
+      enableWireguard = false;
+      enableOfono = false;
+      enableDundee = false;
+      enableNeard = false;
+    };
+
+    wlroots_0_20 =
+      (prev.wlroots_0_20.override {
+        enableXWayland = false;
+      }).overrideAttrs
+        (oldAttrs: {
+          postFixup = (oldAttrs.postFixup or "") + ''
+            rm -rf "$out/nix-support"
+          '';
+        });
+
+    cage =
+      (prev.cage.override {
+        inherit (final) wlroots_0_20;
+        xwayland = null;
+      }).overrideAttrs
+        (oldAttrs: {
+          patches = (oldAttrs.patches or [ ]) ++ [
+            ../patches/cage/teardown-order.patch
+          ];
+        });
   };
 
   localPackages = final: _prev: {
