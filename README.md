@@ -6,7 +6,7 @@
 
 <p align="center"><b>Give Extra Life to Classic Games and Hardware 🕹</b></p>
 
-Extra Life (`extra-life`, <https://extralife.wimpys.world>) is a retro game appliance on NixOS that boots directly into Ludo on the Cage Wayland compositor. It gives extra life to classic games and hardware across `x86_64-linux` personal computers (PCs), Raspberry Pi boards, and ARM handhelds. The appliance has no desktop environment, no text consoles, no RetroArch menus, and no runtime Nix binaries, databases, or evaluators.
+Extra Life (`extra-life`, <https://extralife.wimpys.world>) is a retro game appliance built with [NixOS](https://nixos.org/) that boots directly into [Ludo](https://ludo.libretro.com/) running in a Wayland kiosk using the [Cage](https://www.hjdskes.nl/projects/cage/) compositor. It gives extra life to classic games across `x86_64-linux` personal computers (PCs), Raspberry Pi boards, and ARM handhelds. The appliance has no desktop environment, no text consoles, no RetroArch menus, and no runtime Nix binaries, databases, or evaluators.
 
 ```bash
 # Run the appliance in a local QEMU virtual machine
