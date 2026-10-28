@@ -9,9 +9,9 @@ Four product principles govern every architectural decision in Extra Life.
 | Principle | Architectural rule | User impact |
 | --- | --- | --- |
 | Pure appliance | The system boots straight into `cage` and runs `ludo -ludos` on Wayland (`-tags wayland`). | The appliance exposes no desktop environment escape hatch, no text console prompts, and no RetroArch user interface. |
-| Invisible Nix | Over-the-air (OTA) updates pull signed NixOS system closures from a binary cache with `nix-store --realise` and `switch-to-configuration`. | Users flash an image, copy read-only memory (ROM) files, and play with zero on-device Nix evaluation. |
+| Invisible Nix | Continuous Integration (CI) runs Nix at build time only. The appliance sets `nix.enable = false` and updates from Cloudflare R2 through `/storage/.update/` in `initrd`. | Users flash an image, copy read-only memory (ROM) files, and apply updates with zero Nix binaries, databases, or evaluators at runtime. |
 | Opinionated emulation | The image ships a curated farm of Libretro cores that are symlinked into a single `cores_dir` directory. | Every supported playlist in Ludo (`CoreForPlaylist`) works out of the box without manual core downloads. |
-| Universal hardware reach | A single flake builds `x86_64-linux` PC and virtual machine (VM) images alongside `aarch64-linux` board, handheld, and VM images, and runs `vm-retro` on `aarch64-darwin`. | The same appliance configuration runs on QEMU across Linux and Apple Silicon macOS, PC hardware, Raspberry Pi 4, 400, 5, and Zero 2 W, and ARM handhelds. |
+| Universal hardware reach | A single flake builds `x86_64-linux` PC and virtual machine (VM) images alongside `aarch64-linux` board, handheld, and VM images, and runs `vm-retro` on `aarch64-darwin`. | The same configuration runs on QEMU across Linux and Apple Silicon macOS, PC hardware, Raspberry Pi 4, 400, 5, and Zero 2 W, and handhelds. |
 
 ## System overview
 
@@ -91,16 +91,16 @@ Extra Life bridges these calls with three NixOS mechanisms:
 
 1. **Path resolution**: `pkgs/ludo` patches `/usr/bin/*` and `/usr/sbin/*` to `/run/current-system/sw/bin/*`, or `systemd.tmpfiles.rules` links `/usr/bin/systemctl`, `/usr/bin/connmanctl`, `/usr/bin/bash`, and `/usr/sbin/shutdown`.
 2. **Conditional service activation**: Systemd drop-in units on `sshd.service`, `samba-smbd.service`, and `bluetooth.service` set `ConditionPathExists=/storage/.cache/services/*.conf`. This configuration persists user service choices across reboots while `/etc` remains immutable.
-3. **Polkit authorisation**: Polkit rules let user `ludo` (UID 1000) manage `sshd.service`, `samba-smbd.service`, `bluetooth.service`, `extra-life-update.service`, ConnMan, and systemd power actions without a password.
+3. **Polkit authorisation**: Polkit rules let user `ludo` (UID 1000) manage `sshd.service`, `samba-smbd.service`, `bluetooth.service`, ConnMan, and systemd power actions without a password.
 
-### Over-the-air updates (`extra-life-update`)
+### Over-the-air updates
 
-Extra Life adapts the Ludo updater in `ludos/releases.go` so that the appliance never evaluates Nix expressions locally.
+Extra Life runs with `nix.enable = false` and ships zero Nix binaries, databases, or evaluators at runtime. Over-the-air (OTA) updates use the built-in `Updater` menu in Ludo, Cloudflare R2 storage, and an atomic swap in the initial RAM disk (`initrd`).
 
-1. Ludo queries the Extra Life release manifest endpoint for the target hardware architecture (`x86_64-linux` or `aarch64-linux`).
-2. Each release entry publishes a semantic version tag and a signed Nix store path for the complete NixOS system closure.
-3. When the user triggers an update in the Ludo interface, Ludo starts `extra-life-update.service` via `systemctl`.
-4. The `extra-life-update` unit runs `nix-store --realise <store-path>` from the binary cache, updates `/nix/var/nix/profiles/system`, and runs `<store-path>/bin/switch-to-configuration switch`.
+1. **System identity**: `/etc/os-release` defines `ID=extra-life`, `VERSION_ID=<version>`, and `VARIANT_ID=<soc>` (for example `x86_64`, `rpi4`, `rpi5`, `rk3566`, or `h700`).
+2. **Ludo updater patch**: `pkgs/ludo` patches `ludos/releases.go` and `menu/scene_updater.go` to read `VARIANT_ID` and `VERSION_ID` from `/etc/os-release`. Ludo queries the Cloudflare R2 manifest (`https://updates.extralife.io/releases.json` or `EXTRA_LIFE_UPDATE_URL`) and matches `extra-life-<variant>-<version>.tar`. During the download to `/storage/.update/`, Ludo verifies the Secure Hash Algorithm 256 (SHA-256) digest with `grab.Request.SetChecksum`, then runs `/usr/sbin/shutdown -r now`.
+3. **Update archive contents**: Each `extra-life-<variant>-<version>.tar` bundle is a flat archive that contains `KERNEL`, `INITRD`, `SYSTEM`, and `SHA256SUMS`. `SYSTEM` is a read-only `zstd -19` SquashFS image of `/nix/store` that adds a `current-system -> <toplevel>` symlink through `pseudoFiles`. That symlink keeps the kernel command-line parameter `init=/nix/store/current-system/init` static across updates.
+4. **Early-boot application**: `boot.initrd.systemd.services.extra-life-apply-update` runs in `initrd` before the system mounts `/boot/SYSTEM`. The service checks `/storage/.update/extra-life-*.tar`, verifies `SHA256SUMS`, and renames existing `/boot/{KERNEL,INITRD,SYSTEM}` files to `.prev` for automatic rollback. It then moves the new `KERNEL`, `INITRD`, and `SYSTEM` files into `/boot`, deletes `/storage/.update/*.tar`, and boots into the new `SYSTEM` SquashFS.
 
 ## Default Libretro core matrix
 
@@ -150,7 +150,7 @@ The flake evaluates `lib.nixosSystem` once per SoC family rather than once per r
 
 ### Shared SoC and per-board layers
 
-Extra Life models its hardware architecture on ROCKNIX so that every board in an SoC family shares one root filesystem closure. The bootloader selects the board DTB with U-Boot probing on the Successive Approximation Register Analogue-to-Digital Converter (SARADC), explicit `FDT` entries, or `OpenABL` Boot Loader Specification (BLS) entries. At boot, the system identifies the board from the device tree on ARM or Desktop Management Interface (DMI) attributes on `x86_64`. The runtime layer applies audio profiles for the Advanced Linux Sound Architecture (ALSA) Use Case Manager (UCM2) (`alsa-ucm-conf`) and panel orientation in the Direct Rendering Manager (DRM). Display drivers load panel timing firmware for Mobile Industry Processor Interface Display Serial Interface (MIPI-DSI) screens from `/lib/firmware/panels/*.panel`.
+Extra Life models its hardware architecture on ROCKNIX so that every board in an SoC family shares one root filesystem closure. U-Boot selects the board DTB with Successive Approximation Register Analogue-to-Digital Converter (SARADC) probing or explicit `FDT` entries. `OpenABL` targets use Unified Extensible Firmware Interface (UEFI) and Boot Loader Specification (BLS) entries. At boot, the system identifies the board from the device tree on ARM or Desktop Management Interface (DMI) attributes on `x86_64`. The runtime layer applies Advanced Linux Sound Architecture (ALSA) Use Case Manager (UCM2) (`alsa-ucm-conf`) audio profiles and Direct Rendering Manager (DRM) panel orientation. Display drivers load panel timing firmware for Mobile Industry Processor Interface Display Serial Interface (MIPI-DSI) screens from `/lib/firmware/panels/*.panel`.
 
 | Layer | Scope | Artefacts and runtime mechanics |
 | --- | --- | --- |
@@ -178,22 +178,22 @@ Extra Life groups target SoC families into two waves. Wave 1 targets run on main
 
 ## Storage and partition layout
 
-Extra Life images use a two-partition GUID Partition Table (GPT) layout that separates boot artefacts from the system store and user library.
+Extra Life images use a two-partition GUID Partition Table (GPT) layout that separates immutable boot and system artefacts from mutable user data.
 
-| Partition | Filesystem | Mount point | Contents and behaviour |
+| Partition | Filesystem and label | Mount point | Contents and behaviour |
 | --- | --- | --- | --- |
-| Partition 1 | `vfat` (EFI System Partition (ESP) / boot firmware) | `/boot` | Holds systemd-boot or U-Boot payloads, kernel images, initrd, and device-tree blobs on ARM targets. |
-| Partition 2 | `ext4` (labelled `extralife-root`) | `/` | Expands automatically on first boot (`boot.growPartition = true`) and holds `/nix/store`, `/storage/.cache`, and `/storage/Retro`. |
+| Partition 1 | `vfat` (labelled `EXTRALIFE`) | `/boot` | Holds the bootloader (UEFI `BOOTX64.EFI` or `BOOTAA64.EFI`, U-Boot, or Raspberry Pi firmware) and `.dtb` files. Also stores `KERNEL`, `INITRD`, `SYSTEM` (read-only `zstd` SquashFS mounted at `/nix/store`), and `.prev` rollback files. |
+| Partition 2 | `ext4` (labelled `STORAGE`) | `/storage` | Expands automatically on first boot and holds `/storage/Retro/{playlists,roms,savefiles,savestates,screenshots,system,thumbnails}`, `/storage/.cache/{services,connman}`, `/storage/.config`, and `/storage/.update`. |
 
-Both `/nix/store` and `/storage/Retro` share the auto-expanding `ext4` root partition, so fixed partition boundaries never limit system updates or ROM collections. First-boot `systemd.tmpfiles.rules` create `/storage/Retro/{playlists,roms,savefiles,savestates,screenshots,system,thumbnails}` and `/storage/.cache/{services,connman}` with ownership set to `ludo:users`.
+At boot, `initrd` mounts `/boot/SYSTEM` read-only at `/nix/store` so that sudden power loss cannot corrupt the operating system store. First-boot `systemd.tmpfiles.rules` create `/storage/Retro/{playlists,roms,savefiles,savestates,screenshots,system,thumbnails}`, `/storage/.cache/{services,connman}`, `/storage/.config`, and `/storage/.update` with ownership set to `ludo:users`.
 
 ## Virtual machine development workflow (`vm-retro`)
 
-Extra Life provides a fast local test loop through the `vm-retro` target (`just boot-disk`, `just boot-iso`, or `nix run .#vm-retro`) across `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin` (Apple Silicon macOS with a `linux-builder` such as Determinate Nix).
+Extra Life provides a fast local test loop through the `vm-retro` target (`just boot-disk`, `just boot-iso`, or `nix run .#vm-retro`). The target runs across `x86_64-linux`, `aarch64-linux`, and `aarch64-darwin` (Apple Silicon macOS with a `linux-builder` such as Determinate Nix).
 
 | Component | Configuration | Purpose |
 | --- | --- | --- |
-| Hypervisor | QEMU with Kernel-based Virtual Machine (KVM) on Linux or Hypervisor.framework (`hvf`) on macOS, plus Unified Extensible Firmware Interface (UEFI) (OVMF or EDK2 ARM) | Matches physical `x86_64` and `aarch64` UEFI boot behaviour at native CPU speed |
+| Hypervisor | QEMU with Kernel-based Virtual Machine (KVM) on Linux or Hypervisor.framework (`hvf`) on macOS, plus UEFI (OVMF or EDK2 ARM) | Matches physical `x86_64` and `aarch64` UEFI boot behaviour at native CPU speed |
 | Graphics | `virtio-vga-gl` (`x86_64-linux`), `ramfb` + `virtio-gpu-gl-pci` (`aarch64-linux`), or `ramfb` + `virtio-gpu-pci` (`aarch64-darwin`) | Runs Cage, Wayland, and Libretro cores across Linux OpenGL and macOS Cocoa |
 | Display client | QEMU GTK display (`-display gtk,gl=on,zoom-to-fit=on`) on Linux or Cocoa display (`-display cocoa`) on macOS | Renders appliance frames and forwards keyboard, pointer, and controller input |
 | Input passthrough | Automatic `virtio-input-host-pci` evdev passthrough on Linux, and `--usb-device VID:PID` (`usb-host`) on macOS and Linux | Connects host gamepads directly to the appliance |
@@ -211,7 +211,7 @@ Delivery proceeds in three milestones that expand hardware coverage on top of th
 - Package `pkgs/ludo` (`v0.22.5`, commit `7a2dc452c72e43dc06b5ecc711c3d03c8aeeb261`, `fetchSubmodules = true`, `tags = [ "wayland" ]`).
 - Assemble the default Libretro core farm so that every core matches the `CoreForPlaylist` map in Ludo.
 - Configure the Cage kiosk session, `/etc/ludo.toml`, `/storage/Retro` directories, and `-ludos` integration for ConnMan, BlueZ, Samba, OpenSSH, PipeWire, and Polkit.
-- Deliver the `x86_64-linux` installer ISO, disk image, `vm-retro` workflow, and `extra-life-update` binary cache OTA service.
+- Deliver the `x86_64-linux` installer ISO, disk image, `vm-retro` workflow, and Nix-free `/boot/SYSTEM` SquashFS OTA update pipeline.
 
 ### Milestone 2: Raspberry Pi family (`aarch64-linux`)
 
