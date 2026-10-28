@@ -374,6 +374,7 @@ in
     ];
 
     nix = {
+      enable = lib.mkForce false;
       channel.enable = false;
       settings.experimental-features = [
         "nix-command"
@@ -387,13 +388,21 @@ in
     };
 
     documentation = {
-      enable = false;
-      doc.enable = false;
-      info.enable = false;
-      man.enable = false;
-      nixos.enable = false;
+      enable = lib.mkForce false;
+      doc.enable = lib.mkForce false;
+      info.enable = lib.mkForce false;
+      man.enable = lib.mkForce false;
+      nixos.enable = lib.mkForce false;
     };
 
-    system.stateVersion = lib.mkDefault "26.05";
+    system = {
+      activatable = false;
+      disableInstallerTools = true;
+      stateVersion = lib.mkDefault "26.05";
+    };
+
+    users.mutableUsers = false;
+    environment.defaultPackages = lib.mkForce [ ];
+    systemd.services.systemd-importd.enable = false;
   };
 }

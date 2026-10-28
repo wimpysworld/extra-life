@@ -82,8 +82,6 @@ in
     "${modulesPath}/image/repart.nix"
   ];
 
-  nix.enable = false;
-
   boot = {
     bootspec.enable = false;
     kernelParams = [
@@ -99,18 +97,12 @@ in
   };
 
   system = {
-    activatable = false;
-    disableInstallerTools = true;
     etc.overlay.enable = true;
     image = {
       id = "extra-life-${variantId}";
       version = versionId;
     };
   };
-
-  users.mutableUsers = false;
-  environment.defaultPackages = lib.mkForce [ ];
-  systemd.services.systemd-importd.enable = false;
 
   fileSystems = {
     "/" = {
