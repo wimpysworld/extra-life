@@ -98,12 +98,15 @@ in
   ]
   ++ lib.optional pkgs.stdenv.hostPlatform.isAarch pkgs.raspberrypiWirelessFirmware;
 
-  boot.kernelModules = [
-    "joydev"
-    "uinput"
-    "virtio_input"
-    "xpad"
-  ];
+  boot = {
+    kernelPackages = lib.mkDefault pkgs.linuxPackages;
+    kernelModules = [
+      "joydev"
+      "uinput"
+      "virtio_input"
+      "xpad"
+    ];
+  };
 
   # Audio stack via PipeWire.
   security.rtkit.enable = true;
