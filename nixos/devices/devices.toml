@@ -87,3 +87,30 @@ dt_model = "Powkiddy RK2023"
 dt_compatibles = ["powkiddy,rk2023", "rockchip,rk3566"]
 dtb = "rockchip/rk3566-powkiddy-rk2023.dtb"
 panel_orientation = "normal"
+
+[devices.mangmi-air-x-mq65]
+name = "Mangmi Air X (MQ65)"
+soc = "sm6115"
+arch = "aarch64-linux"
+dt_model = "MANGMI Air X MQ65"
+dt_compatibles = ["mangmi,sm6115-air-x-mq65", "qcom,sm6115"]
+dtb = "qcom/sm6115-mangmi-air-x-mq65.dtb"
+panel_orientation = "270"
+
+[devices.mangmi-air-x-mq66]
+name = "Mangmi Air X (MQ66)"
+soc = "sm6115"
+arch = "aarch64-linux"
+dt_model = "MANGMI Air X MQ66"
+dt_compatibles = ["mangmi,sm6115-air-x-mq66", "qcom,sm6115"]
+dtb = "qcom/sm6115-mangmi-air-x-mq66.dtb"
+panel_orientation = "270"
+
+[devices.mangmi-air-x-mq66b]
+name = "Mangmi Air X (MQ66B)"
+soc = "sm6115"
+arch = "aarch64-linux"
+dt_model = "MANGMI Air X MQ66B"
+dt_compatibles = ["mangmi,sm6115-air-x-mq66b", "qcom,sm6115"]
+dtb = "qcom/sm6115-mangmi-air-x-mq66b.dtb"
+panel_orientation = "270"

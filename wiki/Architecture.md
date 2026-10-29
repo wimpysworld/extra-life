@@ -107,7 +107,7 @@ Extra Life runs with `nix.enable = false` and ships zero Nix binaries, databases
 
 All hardware modules, kernels, U-Boot bootloaders, and device or case definitions live in this single monorepo. The repository places System on a Chip (SoC), board, and case modules in `nixos/modules/hardware/{soc,boards,cases}/` and image builders in `nixos/modules/images/`. Custom kernel and bootloader packages live in `pkgs/kernels/` and `pkgs/uboot/`, while `nixos/devices/devices.toml` defines the declarative device catalogue.
 
-The flake evaluates `lib.nixosSystem` once per SoC family rather than once per retail board. The target SoC families are `x86_64`, `bcm2711` (`rpi4`), `bcm2712` (`rpi5`), `bcm2710` (`rpi02w`), `rk3566`, `h700`, `sm8250`, `sm8550`, and `rk3326`. Nix parses `nixos/devices/devices.toml` with `builtins.fromTOML` so that `just check` stays fast across more than 80 boards and cases. Each board image derivation pairs the shared SoC closure with the U-Boot and Device Tree Blob (DTB) files for that board.
+The flake evaluates `lib.nixosSystem` once per SoC family rather than once per retail board. The target SoC families are `x86_64`, `bcm2711` (`rpi4`), `bcm2712` (`rpi5`), `bcm2710` (`rpi02w`), `rk3566`, `h700`, `sm6115`, `sm8250`, `sm8550`, and `rk3326`. Nix parses `nixos/devices/devices.toml` with `builtins.fromTOML` so that `just check` stays fast across more than 80 boards and cases. Each board image derivation pairs the shared SoC closure with the U-Boot and Device Tree Blob (DTB) files for that board.
 
 ### Shared SoC and per-board layers
 
@@ -132,7 +132,7 @@ Extra Life groups target SoC families into two waves. Wave 1 targets run on main
 | Wave 1 | Broadcom `BCM2711`, `BCM2712`, and `BCM2710` | `bcm2711` (`rpi4`), `bcm2712` (`rpi5`), `bcm2710` (`rpi02w`) | Mainline Linux (`Image`) with Mesa `vc4` and `v3d` | Raspberry Pi 4, 400, 5, and Zero 2 W, plus RetroFlag, DeskPi, and Waveshare cases |
 | Wave 1 | Rockchip `RK3566` | `rk3566` | Mainline Linux (`Image`) with Mesa `panfrost` | Anbernic RG353P, RG353V, RG353M, RG503, RG ARC, and Powkiddy RGB30, RGB20SX, RK2023, and X55 |
 | Wave 1 | Allwinner `H700` | `h700` | Mainline Linux (`Image`) with Mesa `panfrost` and built-in `.panel` firmware | Anbernic RG35XX Plus, 2024, H, SP, Pro, RG40XX H and V, RG CubeXX, RG28XX, and RG34XX |
-| Wave 1 | Qualcomm `SM8250` and `SM8550` | `sm8250`, `sm8550` | Mainline Linux (`Image`) with Mesa `freedreno` and `OpenABL` UEFI/BLS | Retroid Pocket 5, Flip 2, Mini, and 6, AYN Odin 2, and AYANEO Pocket S, DMG, and EVO |
+| Wave 1 | Qualcomm `SM6115`, `SM8250`, and `SM8550` | `sm6115`, `sm8250`, `sm8550` | Mainline Linux (`Image`) with Mesa `freedreno` and `OpenABL` UEFI/BLS | Mangmi Air X, Retroid Pocket 5, Flip 2, Mini, and 6, AYN Odin 2, and AYANEO Pocket S, DMG, and EVO |
 | Wave 1 | Rockchip `RK3326` | `rk3326` | Mainline Linux (`Image`) with Mesa `panfrost` | Odroid Go Advance and Super, Anbernic RG351M and RG351V, R36S, R33S, and Powkiddy RGB20S |
 | Wave 2 (deferred) | Rockchip `RK3588` | `rk3588` | Vendor Linux 6.1 BSP kernel with Mesa `panfrost` | GameForce Ace, Orange Pi 5, Retro Lite CM5, and RetrOLED CM5 |
 | Wave 2 (deferred) | Allwinner `A133` | `a133` | Legacy Linux 4.9 BSP kernel with closed PowerVR blobs | Trimui Smart Pro, Trimui Brick, Powkiddy V20 and V90S, and MagicX Zero 28 |
@@ -158,7 +158,7 @@ Delivery proceeds in three milestones that expand hardware coverage on top of th
 
 ### Milestone 3: ARM handhelds and portable integration
 
-- Add SoC closures for Wave 1 handhelds (`rk3566`, `h700`, `sm8250`, `sm8550`, and `rk3326`) with `pkgs/kernels/` and `pkgs/uboot/` packages.
+- Add SoC closures for Wave 1 handhelds (`rk3566`, `h700`, `sm6115`, `sm8250`, `sm8550`, and `rk3326`) with `pkgs/kernels/` and `pkgs/uboot/` packages.
 - Defer SoC families in Wave 2 (`rk3588` and `a133`) that require vendor BSP kernels or closed graphics blobs.
 - Detect boards at runtime to apply per-board DTB, MIPI-DSI `.panel` firmware, DRM panel orientation, and ALSA UCM2 audio quirks.
 - Configure `InputPlumber` YAML profiles and `rocknix-joypad` (`SDL_GameControllerDB`) for General-Purpose Input/Output (GPIO) and Universal Serial Bus (USB) gamepads.
