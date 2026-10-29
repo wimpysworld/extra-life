@@ -38,14 +38,52 @@ panel_orientation = "normal"
 name = "Anbernic RG353M"
 soc = "rk3566"
 arch = "aarch64-linux"
-dt_compatibles = ["anbernic,rg353m", "rockchip,rk3566"]
-dtb = "rockchip/rk3566-anbernic-rg353m.dtb"
+dt_model = "Anbernic RG353M"
+dt_compatibles = ["anbernic,rg353m", "anbernic,rg353p", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-anbernic-rg353p.dtb"
+panel_orientation = "normal"
+
+[devices.anbernic-rg353p]
+name = "Anbernic RG353P"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG353P"
+dt_compatibles = ["anbernic,rg353p", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-anbernic-rg353p.dtb"
+panel_orientation = "normal"
+
+[devices.anbernic-rg353v]
+name = "Anbernic RG353V"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG353V"
+dt_compatibles = ["anbernic,rg353v", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-anbernic-rg353v.dtb"
+panel_orientation = "normal"
+
+[devices.anbernic-rg503]
+name = "Anbernic RG503"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG503"
+dt_compatibles = ["anbernic,rg503", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-anbernic-rg503.dtb"
 panel_orientation = "normal"
 
 [devices.powkiddy-rgb30]
 name = "Powkiddy RGB30"
 soc = "rk3566"
 arch = "aarch64-linux"
+dt_model = "Powkiddy RGB30"
 dt_compatibles = ["powkiddy,rgb30", "rockchip,rk3566"]
 dtb = "rockchip/rk3566-powkiddy-rgb30.dtb"
+panel_orientation = "normal"
+
+[devices.powkiddy-rk2023]
+name = "Powkiddy RK2023"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Powkiddy RK2023"
+dt_compatibles = ["powkiddy,rk2023", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-powkiddy-rk2023.dtb"
 panel_orientation = "normal"

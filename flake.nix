@@ -83,6 +83,8 @@
           inherit (prevWithUnstable) unstable;
           ludo = applied.ludo or (final.callPackage ./pkgs/ludo { });
           libretro-cores = applied.libretro-cores or (final.callPackage ./pkgs/libretro-cores { });
+          ubootAnbernicRgxx3 =
+            applied.ubootAnbernicRgxx3 or (final.callPackage ./pkgs/uboot/anbernic-rgxx3.nix { });
           vm-retro = applied.vm-retro or (final.callPackage ./pkgs/vm-retro { });
         }
         // applied;
@@ -91,9 +93,11 @@
         appliance = import ./nixos/modules/appliance.nix;
         boards = import ./nixos/modules/hardware/boards;
         disk-efi = import ./nixos/modules/images/disk-efi.nix;
+        disk-rk3566 = import ./nixos/modules/images/disk-rk3566.nix;
         iso = import ./nixos/modules/images/iso.nix;
         pc = import ./nixos/modules/hardware/pc.nix;
         qemu-guest = import ./nixos/modules/hardware/qemu-guest.nix;
+        soc-rk3566 = import ./nixos/modules/hardware/soc/rk3566.nix;
         soc-x86_64 = import ./nixos/modules/hardware/soc/x86_64.nix;
         default = self.nixosModules.appliance;
       };
@@ -126,6 +130,15 @@
             ./nixos/hosts/aarch64-installer
           ];
         };
+
+        rk3566-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/rk3566-appliance
+          ];
+        };
+
+        rk3566 = self.nixosConfigurations.rk3566-appliance;
       };
 
       packages = forAllSystems (
@@ -143,6 +156,9 @@
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
           inherit (pkgs) ludo libretro-cores;
+        }
+        // lib.optionalAttrs (system == "aarch64-linux") {
+          inherit (pkgs) ubootAnbernicRgxx3;
         }
       );
 

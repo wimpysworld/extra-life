@@ -14,11 +14,28 @@ let
     else
       "${config.extraLife.variantId}-generic";
 
+  dtModelDevices = lib.filterAttrs (_id: dev: (dev.dt_model or "") != "") devices;
   dtDevices = lib.filterAttrs (_id: dev: (dev.dt_compatibles or [ ]) != [ ]) devices;
   dmiDevices = lib.filterAttrs (
     _id: dev: (dev ? dmi_vendor) && ((dev.dmi_products or [ ]) != [ ])
   ) devices;
   usbFallbackDevices = lib.filterAttrs (_id: dev: (dev.usb_fallbacks or [ ]) != [ ]) devices;
+
+  dtModelBranches = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (
+      id: dev:
+      let
+        orient = dev.panel_orientation or "normal";
+      in
+      ''
+        ${lib.escapeShellArg dev.dt_model})
+          board_id=${lib.escapeShellArg id}
+          panel_orientation=${lib.escapeShellArg orient}
+          matched=1
+          ;;
+      ''
+    ) dtModelDevices
+  );
 
   dtBranches = lib.concatStringsSep "\n" (
     lib.mapAttrsToList (
@@ -94,7 +111,14 @@ let
     panel_orientation="normal"
     matched=""
 
-    if [[ -r /proc/device-tree/compatible ]]; then
+    if [[ -r /proc/device-tree/model ]]; then
+      dt_model="$(tr -d '\0' < /proc/device-tree/model)"
+      case "$dt_model" in
+        ${dtModelBranches}
+      esac
+    fi
+
+    if [[ -z "$matched" && -r /proc/device-tree/compatible ]]; then
       while IFS= read -r compat; do
         [[ -n "$compat" ]] || continue
         case "$compat" in

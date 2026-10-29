@@ -114,6 +114,8 @@ let
     ludo = final.callPackage ../pkgs/ludo { };
 
     libretro-cores = final.callPackage ../pkgs/libretro-cores { };
+
+    ubootAnbernicRgxx3 = final.callPackage ../pkgs/uboot/anbernic-rgxx3.nix { };
   };
 in
 {
@@ -237,5 +239,6 @@ in
   localPackages = final: _prev: {
     ludo = final.callPackage ../pkgs/ludo { };
     libretro-cores = final.callPackage ../pkgs/libretro-cores { };
+    ubootAnbernicRgxx3 = final.callPackage ../pkgs/uboot/anbernic-rgxx3.nix { };
   };
 }
