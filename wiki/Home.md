@@ -5,7 +5,8 @@ Extra Life (`extra-life`, <https://extralife.wimpys.world>) is a retro game appl
 ## Wiki guides
 
 - [Supported Systems](Supported-Systems): Read the grouped system summary, the 33-core `CoreForPlaylist` matrix, and the `/storage/Retro` directory layout.
-- [Architecture](Architecture): Read the system stack, flake design, `-ludos` integration, two-partition storage layout, over-the-air (OTA) update pipeline, hardware catalogue, and milestones.
+- [Supported Hardware](Supported-Hardware): Read the active System on a Chip (SoC) targets, supported boards and handhelds, the hardware roadmap, and excluded hardware.
+- [Architecture](Architecture): Read the system stack, flake design, `-ludos` integration, two-partition storage layout, over-the-air (OTA) update pipeline, and SoC hardware layers.
 - [Development](Development): Set up `nix develop`, run `just` recipes, boot `vm-retro` on Linux or macOS, and pass controllers through.
 
 ## Product principles

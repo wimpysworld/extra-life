@@ -54,12 +54,7 @@ Detailed reference tables, system layouts, and developer workflows live in the [
 
 - [Extra Life Wiki: Home](https://github.com/wimpysworld/extra-life/wiki): Overview of the appliance, product principles, and ROM and Basic Input/Output System (BIOS) transfers.
 - [Supported Systems](https://github.com/wimpysworld/extra-life/wiki/Supported-Systems): The grouped system summary, the full 33-core `CoreForPlaylist` matrix, and the `/storage/Retro` directory structure.
-- [Architecture](https://github.com/wimpysworld/extra-life/wiki/Architecture): The kiosk stack, Ludo `-ludos` integration, two-partition `EXTRALIFE` + `STORAGE` layout, Cloudflare R2 OTA pipeline, and SoC hardware catalogue.
+- [Supported Hardware](https://github.com/wimpysworld/extra-life/wiki/Supported-Hardware): The active System on a Chip (SoC) targets, supported boards and handhelds, the hardware roadmap, and excluded hardware.
+- [Architecture](https://github.com/wimpysworld/extra-life/wiki/Architecture): The kiosk stack, Ludo `-ludos` integration, two-partition `EXTRALIFE` + `STORAGE` layout, Cloudflare R2 OTA pipeline, and SoC hardware layers.
 - [Development](https://github.com/wimpysworld/extra-life/wiki/Development): The `nix develop` shell, `justfile` commands, `vm-retro` on Linux and Apple Silicon macOS, and USB and `evdev` controller passthrough.
 - [Local architecture reference (`docs/architecture.md`)](docs/architecture.md): Complete repository architecture reference.
-
-## Roadmap
-
-- **Milestone 1 (`x86_64-linux` appliance)**: Ship the `nixos-26.05` flake, Wayland `ludo` (`v0.22.5`), 33-core farm, `-ludos` services, `vm-retro`, and SquashFS OTA updates.
-- **Milestone 2 (Raspberry Pi)**: Ship Secure Digital (SD) images for Raspberry Pi 4, 400, 5, and Zero 2 W, plus RetroFlag, DeskPi, and Waveshare cases.
-- **Milestone 3 (ARM handhelds)**: Ship Wave 1 mainline handheld closures (`rk3566`, `h700`, `sm8250`, `sm8550`, `rk3326`), `InputPlumber` profiles, and Ludo battery and backlight controls.

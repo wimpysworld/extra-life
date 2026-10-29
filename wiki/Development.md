@@ -23,12 +23,12 @@ Run `just` with no arguments to list all recipes in the repository `justfile`.
 | `just check` | Evaluates every `nixosConfigurations.<name>.config.system.build.toplevel.drvPath` and every per-system package and formatter derivation for the host system. |
 | `just fmt` | Runs `deadnix`, `statix fix`, and `nix fmt` (`nixfmt-tree`) across the repository or on specific paths. |
 | `just build-pkg [pkg]` | Builds a single package from the flake (defaults to `ludo`) and writes the symlink to `result-<pkg>`. |
-| `just build-disk` | Builds the Unified Extensible Firmware Interface (UEFI) GUID Partition Table (GPT) disk image (`.#disk-image`) into `result-disk`. |
+| `just build-disk [target]` | Builds the GUID Partition Table (GPT) disk image into `result-disk` or `result-disk-<target>` (see [Supported Hardware](Supported-Hardware) for System on a Chip (SoC) target keys). |
 | `just build-iso` | Builds the live bootable ISO image (`.#iso`) into `result-iso` and copies it to `.vm/extra-life.iso`. |
 | `just boot-disk` | Builds `.#disk-image`, seeds a writable 64 GB `.vm/disk.qcow2` image if needed, and boots `vm-retro`. |
 | `just boot-iso` | Builds `.#iso` and boots `.vm/extra-life.iso` in `vm-retro`. |
 | `just vm *args` | Passes arguments (`--shutdown`, `--kill`, `--usb-device VID:PID`) directly to `nix run .#vm-retro`. |
-| `just build-ota` | Builds the OTA update bundle (`.#ota-bundle`) into `result-ota`. |
+| `just build-ota [target]` | Builds the OTA update bundle into `result-ota` or `result-ota-<target>` (see [Supported Hardware](Supported-Hardware) for SoC target keys). |
 | `just publish-ota` | Builds `.#ota-bundle`, decrypts Cloudflare R2 credentials from `secrets/secrets.yaml` with `sops`, and uploads `result-ota/` to `r2:extralife-ota/` (`extralife-ota.wimpys.world`) with `rclone`. |
 | `just cf-setup` | Decrypts Cloudflare credentials from `secrets/secrets.yaml` with `sops` and provisions the `extralife-ota` R2 bucket and `extralife-ota.wimpys.world` custom domain with `wrangler`. |
 | `just update` | Updates `flake.lock` inputs (`just update [input] [lock_only] [override_url]`). |
@@ -50,7 +50,7 @@ just build-ota
 
 ## Virtual machine workflow (`vm-retro`)
 
-The `vm-retro` package (`pkgs/vm-retro`) launches and controls a local QEMU appliance VM. It stores runtime state, UEFI Non-Volatile Random-Access Memory (NVRAM) (`OVMF_VARS.fd`), and the writable 64 GB `disk.qcow2` drive inside `.vm/` (or `EXTRA_LIFE_VM_DIR`).
+The `vm-retro` package (`pkgs/vm-retro`) launches and controls a local QEMU appliance VM. It stores runtime state, Unified Extensible Firmware Interface (UEFI) Non-Volatile Random-Access Memory (NVRAM) (`OVMF_VARS.fd`), and the writable 64 GB `disk.qcow2` drive inside `.vm/` (or `EXTRA_LIFE_VM_DIR`).
 
 | Host platform | QEMU binary and accelerator | Display and GPU device | Audio backend |
 | --- | --- | --- | --- |
