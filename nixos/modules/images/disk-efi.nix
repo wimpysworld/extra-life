@@ -83,7 +83,6 @@ in
   ];
 
   boot = {
-    bootspec.enable = false;
     kernelParams = [
       "quiet"
       "splash"
@@ -96,12 +95,9 @@ in
     };
   };
 
-  system = {
-    etc.overlay.enable = true;
-    image = {
-      id = "extra-life-${variantId}";
-      version = versionId;
-    };
+  system.image = {
+    id = "extra-life-${variantId}";
+    version = versionId;
   };
 
   fileSystems = {
@@ -220,6 +216,7 @@ in
       ];
       before = [
         "sysroot-nix-store.mount"
+        "initrd-find-etc.service"
         "initrd-find-nixos-closure.service"
       ];
       unitConfig = {

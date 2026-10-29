@@ -30,6 +30,7 @@ buildGoModule (_finalAttrs: {
 
   patches = [
     ../../patches/ludo/extra-life-updater.patch
+    ../../patches/ludo/gamepad-mappings.patch
   ];
 
   vendorHash = "sha256-ygteyccbRPHkAaMHw2R9geSQmKBTvOqRxLzVj5wJpmg=";

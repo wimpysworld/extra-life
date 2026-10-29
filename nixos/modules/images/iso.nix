@@ -11,7 +11,6 @@
   ];
 
   boot = {
-    bootspec.enable = false;
     initrd.systemd.enable = true;
     loader = {
       grub.enable = lib.mkForce false;
@@ -20,7 +19,6 @@
     kernelParams = [ "quiet" ];
   };
 
-  system.etc.overlay.enable = true;
   systemd.services.register-nix-paths.enable = false;
 
   isoImage = {

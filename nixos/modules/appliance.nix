@@ -217,7 +217,7 @@ let
       '';
 
   trimmedMesa =
-    pkgs.runCommand "mesa-opengl"
+    pkgs.runCommand "mesa-${pkgs.mesa.version}"
       {
         nativeBuildInputs = [ pkgs.patchelf ];
       }
@@ -245,11 +245,29 @@ let
             done
           fi
         done
-        find "$out" -type f -exec grep -l "${pkgs.mesa}" {} + | xargs -r sed -i "s|${pkgs.mesa}|$out|g"
+        while IFS= read -r -d "" elf; do
+          rpath="$(patchelf --print-rpath "$elf" 2>/dev/null || true)"
+          if [[ "$rpath" == *"${pkgs.mesa}"* ]]; then
+            patchelf --set-rpath "$(echo "$rpath" | sed "s|${pkgs.mesa}|$out|g")" "$elf"
+          fi
+        done < <(find "$out/lib" -type f -name '*.so*' -print0)
+        find "$out/share" -type f -exec grep -l "${pkgs.mesa}" {} + | xargs -r sed -i "s|${pkgs.mesa}|$out|g"
+        find "$out/lib" -type f -name '*.so*' -exec grep -l "${pkgs.mesa}" {} + | xargs -r sed -i "s|${pkgs.mesa}|$out|g"
+        if grep -rn "${pkgs.mesa}" "$out"; then
+          echo "ERROR: residual reference to ${pkgs.mesa}"
+          exit 1
+        fi
+        while IFS= read -r -d "" link; do
+          target="$(readlink "$link")"
+          if [[ "$target" == *"${pkgs.mesa}"* ]]; then
+            echo "ERROR: symlink $link points to $target"
+            exit 1
+          fi
+        done < <(find "$out" -type l -print0)
       '';
 
   trimmedSamba =
-    pkgs.runCommand "samba-trimmed"
+    pkgs.runCommand "samba-${pkgs.samba.version}"
       {
         nativeBuildInputs = [
           pkgs.patchelf
@@ -665,6 +683,7 @@ in
     system = {
       activatable = false;
       disableInstallerTools = true;
+      etc.overlay.enable = true;
       forbiddenDependenciesRegexes = [
         "perl"
         "python3"
@@ -673,6 +692,7 @@ in
         "retroarch"
         "llvm-.*-lib"
       ];
+      nixos-init.enable = true;
       nssModules = lib.mkForce [ ];
       stateVersion = lib.mkDefault "26.05";
       switch.enable = false;
@@ -728,6 +748,7 @@ in
       logrotate.enable = false;
       lvm.enable = false;
       nscd.enable = false;
+      userborn.enable = true;
     };
 
     systemd.coredump.enable = false;
