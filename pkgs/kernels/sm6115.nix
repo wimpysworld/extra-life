@@ -110,7 +110,7 @@ let
         postPatch = (oldAttrs.postPatch or "") + ''
           cp -v ${rocknix-sm6115}/projects/ROCKNIX/devices/SM6115/linux/dts/qcom/*.dts* arch/arm64/boot/dts/qcom/
           if ! grep -q "sm6115-mangmi-air-x-mq65.dtb" arch/arm64/boot/dts/qcom/Makefile; then
-            echo "dtb-\$(CONFIG_ARCH_QCOM) += sm6115-mangmi-air-x-mq65.dtb sm6115-mangmi-air-x-mq66.dtb sm6115-mangmi-air-x-mq66b.dtb" >> arch/arm64/boot/dts/qcom/Makefile
+            echo "dtb-\$(CONFIG_ARCH_QCOM) += sm6115-mangmi-air-x-mq65.dtb sm6115-mangmi-air-x-mq66.dtb sm6115-mangmi-air-x-mq66b.dtb sm6115-mangmi-air-y.dtb" >> arch/arm64/boot/dts/qcom/Makefile
           fi
         '';
       });

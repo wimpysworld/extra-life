@@ -170,7 +170,7 @@ in
   config = {
     services.udev = {
       extraRules = ''
-        SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Goodix Capacitive TouchScreen", ATTR{[dmi/id]sys_vendor}=="GPD", ATTR{[dmi/id]product_name}=="WIN2|G1619-01|G1619-02|G1619-03", ENV{LIBINPUT_CALIBRATION_MATRIX}="0 1 0 -1 0 1"
+        SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Goodix Capacitive TouchScreen", ATTR{[dmi/id]sys_vendor}=="GPD", ATTR{[dmi/id]product_name}=="WIN2|G1619-01|G1619-02|G1619-03|G1618-03|G1617-01", ENV{LIBINPUT_CALIBRATION_MATRIX}="0 1 0 -1 0 1"
         SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="Goodix Capacitive TouchScreen", ATTR{[dmi/id]sys_vendor}=="Default string", ATTR{[dmi/id]product_name}=="Default string", ENV{LIBINPUT_CALIBRATION_MATRIX}="0 1 0 -1 0 1"
       '';
 

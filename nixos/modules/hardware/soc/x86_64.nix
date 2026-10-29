@@ -37,4 +37,10 @@
     amd.updateMicrocode = lib.mkDefault pkgs.stdenv.hostPlatform.isx86_64;
     intel.updateMicrocode = lib.mkDefault pkgs.stdenv.hostPlatform.isx86_64;
   };
+
+  services.inputplumber.enable = lib.mkDefault pkgs.stdenv.hostPlatform.isx86_64;
+
+  environment.pathsToLink = lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [
+    "/share/inputplumber"
+  ];
 }

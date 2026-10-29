@@ -18,6 +18,14 @@ let
       "$out/share/alsa/ucm2/conf.d/sm4250/MangmiAirX.conf"
     cp ${rocknixSm6115}/projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2/conf.d/sm4250/MangmiAirX.conf \
       "$out/share/alsa/ucm2/conf.d/qrb4210-rb2-snd/MangmiAirX.conf"
+    cp ${rocknixSm6115}/projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2/Qualcomm/sm6115/MangmiAirY.conf \
+      "$out/share/alsa/ucm2/Qualcomm/sm6115/MangmiAirY.conf"
+    cp ${rocknixSm6115}/projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2/Qualcomm/sm6115/HiFi-MangmiAirY.conf \
+      "$out/share/alsa/ucm2/Qualcomm/sm6115/HiFi-MangmiAirY.conf"
+    cp ${rocknixSm6115}/projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2/conf.d/sm4250/MangmiAirY.conf \
+      "$out/share/alsa/ucm2/conf.d/sm4250/MangmiAirY.conf"
+    cp ${rocknixSm6115}/projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2/conf.d/sm4250/MangmiAirY.conf \
+      "$out/share/alsa/ucm2/conf.d/qrb4210-rb2-snd/MangmiAirY.conf"
   '';
 in
 {
@@ -56,10 +64,14 @@ in
   services.inputplumber.enable = true;
 
   environment.etc = {
+    "inputplumber/devices.d/39-mangmi_airy.yaml".source =
+      "${rocknixSm6115}/projects/ROCKNIX/devices/SM6115/filesystem/usr/share/inputplumber/devices/39-mangmi_airy.yaml";
     "inputplumber/devices.d/40-mangmi_airx.yaml".source =
       "${rocknixSm6115}/projects/ROCKNIX/devices/SM6115/filesystem/usr/share/inputplumber/devices/40-mangmi_airx.yaml";
     "inputplumber/capability_maps.d/mangmi_airx.yaml".source =
       "${rocknixSm6115}/projects/ROCKNIX/devices/SM6115/filesystem/usr/share/inputplumber/capability_maps/mangmi_airx.yaml";
+    "inputplumber/capability_maps.d/mangmi_airy.yaml".source =
+      "${rocknixSm6115}/projects/ROCKNIX/devices/SM6115/filesystem/usr/share/inputplumber/capability_maps/mangmi_airy.yaml";
     "wireplumber/wireplumber.conf.d/90-sm6115-s16le.conf".source =
       "${rocknixSm6115}/projects/ROCKNIX/devices/SM6115/filesystem/usr/share/wireplumber/wireplumber.conf.d/90-sm6115-s16le.conf";
     "wireplumber/wireplumber.conf.d/91-suspend-on-idle.conf".source =

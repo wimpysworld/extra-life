@@ -31,7 +31,49 @@ name = "GPD WIN Max 2"
 soc = "x86_64"
 arch = "x86_64-linux"
 dmi_vendor = "GPD"
-dmi_products = ["G1619-04"]
+dmi_products = ["G1619-04", "G1619-05"]
+panel_orientation = "normal"
+
+[devices.gpd-win-3]
+name = "GPD WIN 3"
+soc = "x86_64"
+arch = "x86_64-linux"
+dmi_vendor = "GPD"
+dmi_products = ["G1618-03"]
+panel_orientation = "270"
+touchscreen_matrix = "0 1 0 -1 0 1"
+
+[devices.gpd-win-4]
+name = "GPD WIN 4"
+soc = "x86_64"
+arch = "x86_64-linux"
+dmi_vendor = "GPD"
+dmi_products = ["G1618-04"]
+panel_orientation = "normal"
+
+[devices.gpd-win-5]
+name = "GPD WIN 5"
+soc = "x86_64"
+arch = "x86_64-linux"
+dmi_vendor = "GPD"
+dmi_products = ["G1618-05"]
+panel_orientation = "normal"
+
+[devices.gpd-win-mini-2023]
+name = "GPD WIN Mini (2023)"
+soc = "x86_64"
+arch = "x86_64-linux"
+dmi_vendor = "GPD"
+dmi_products = ["G1617-01"]
+panel_orientation = "270"
+touchscreen_matrix = "0 1 0 -1 0 1"
+
+[devices.gpd-win-mini-2024]
+name = "GPD WIN Mini (2024)"
+soc = "x86_64"
+arch = "x86_64-linux"
+dmi_vendor = "GPD"
+dmi_products = ["G1617-02", "G1617-02-L"]
 panel_orientation = "normal"
 
 [devices.anbernic-rg353m]
@@ -52,6 +94,15 @@ dt_compatibles = ["anbernic,rg353p", "rockchip,rk3566"]
 dtb = "rockchip/rk3566-anbernic-rg353p.dtb"
 panel_orientation = "normal"
 
+[devices.anbernic-rg353ps]
+name = "Anbernic RG353PS"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG353PS"
+dt_compatibles = ["anbernic,rg353ps", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-anbernic-rg353ps.dtb"
+panel_orientation = "normal"
+
 [devices.anbernic-rg353v]
 name = "Anbernic RG353V"
 soc = "rk3566"
@@ -59,6 +110,15 @@ arch = "aarch64-linux"
 dt_model = "Anbernic RG353V"
 dt_compatibles = ["anbernic,rg353v", "rockchip,rk3566"]
 dtb = "rockchip/rk3566-anbernic-rg353v.dtb"
+panel_orientation = "normal"
+
+[devices.anbernic-rg353vs]
+name = "Anbernic RG353VS"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG353VS"
+dt_compatibles = ["anbernic,rg353vs", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-anbernic-rg353vs.dtb"
 panel_orientation = "normal"
 
 [devices.anbernic-rg503]
@@ -69,6 +129,33 @@ dt_model = "Anbernic RG503"
 dt_compatibles = ["anbernic,rg503", "rockchip,rk3566"]
 dtb = "rockchip/rk3566-anbernic-rg503.dtb"
 panel_orientation = "normal"
+
+[devices.anbernic-rg-arc-d]
+name = "Anbernic RG ARC-D"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG ARC-D"
+dt_compatibles = ["anbernic,rg-arc-d", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-anbernic-rg-arc-d.dtb"
+panel_orientation = "90"
+
+[devices.anbernic-rg-arc-s]
+name = "Anbernic RG ARC-S"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG ARC-S"
+dt_compatibles = ["anbernic,rg-arc-s", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-anbernic-rg-arc-s.dtb"
+panel_orientation = "90"
+
+[devices.powkiddy-rgb10max3]
+name = "Powkiddy RGB10MAX3"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Powkiddy RGB10MAX3"
+dt_compatibles = ["powkiddy,rgb10max3", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-powkiddy-rgb10max3.dtb"
+panel_orientation = "270"
 
 [devices.powkiddy-rgb30]
 name = "Powkiddy RGB30"
@@ -114,3 +201,12 @@ dt_model = "MANGMI Air X MQ66B"
 dt_compatibles = ["mangmi,sm6115-air-x-mq66b", "qcom,sm6115"]
 dtb = "qcom/sm6115-mangmi-air-x-mq66b.dtb"
 panel_orientation = "270"
+
+[devices.mangmi-air-y]
+name = "Mangmi Air Y"
+soc = "sm6115"
+arch = "aarch64-linux"
+dt_model = "MANGMI Air Y"
+dt_compatibles = ["mangmi,sm6115-air-y", "qcom,sm6115"]
+dtb = "qcom/sm6115-mangmi-air-y.dtb"
+panel_orientation = "normal"

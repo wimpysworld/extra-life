@@ -72,6 +72,24 @@ let
         target_event:
           gamepad:
             button: DPadRight
+      - name: C Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_C
+              value_type: button
+        target_event:
+          gamepad:
+            button: RightStick
+      - name: Z Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_Z
+              value_type: button
+        target_event:
+          gamepad:
+            button: LeftStick
   '';
 in
 {
@@ -93,9 +111,12 @@ in
       "phy_rockchip_inno_dsidphy"
       "rockchipdrm"
       "panfrost"
+      "panel_magnachip_d53e6ea8966"
       "panel_newvision_nv3051d"
+      "panel_sitronix_st7701"
       "panel_sitronix_st7703"
       "pwm_bl"
+      "spi_gpio"
       "usbhid"
     ];
 
@@ -105,9 +126,12 @@ in
       "analogix_dp"
       "dw_hdmi_qp_rockchip"
       "phy_rockchip_inno_dsidphy"
+      "panel_magnachip_d53e6ea8966"
       "panel_newvision_nv3051d"
+      "panel_sitronix_st7701"
       "panel_sitronix_st7703"
       "pwm_bl"
+      "spi_gpio"
       "rockchip_saradc"
       "industrialio_mux"
       "mux_gpio"
