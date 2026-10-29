@@ -131,6 +131,8 @@ let
       hash = "sha256-4xnHG+Ix8s/nPWeoqKhy52G8+3hIVGHXUfxMntcZOYw=";
     };
 
+    linuxPackages_rpi = final.callPackage ../pkgs/kernels/rpi.nix { };
+
     linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
   };
 in
@@ -268,6 +270,7 @@ in
       ];
       hash = "sha256-4xnHG+Ix8s/nPWeoqKhy52G8+3hIVGHXUfxMntcZOYw=";
     };
+    linuxPackages_rpi = final.callPackage ../pkgs/kernels/rpi.nix { };
     linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
   };
 }

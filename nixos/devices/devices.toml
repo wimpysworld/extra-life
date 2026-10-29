@@ -210,3 +210,180 @@ dt_model = "MANGMI Air Y"
 dt_compatibles = ["mangmi,sm6115-air-y", "qcom,sm6115"]
 dtb = "qcom/sm6115-mangmi-air-y.dtb"
 panel_orientation = "normal"
+
+[devices.rpi-zero-2-w]
+name = "Raspberry Pi Zero 2 W"
+soc = "rpi02w"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,model-zero-2-w", "brcm,bcm2837"]
+dtb = "broadcom/bcm2710-rpi-zero-2-w.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-3-b]
+name = "Raspberry Pi 3 Model B"
+soc = "rpi02w"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,3-model-b", "brcm,bcm2837"]
+dtb = "broadcom/bcm2710-rpi-3-b.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-3-b-plus]
+name = "Raspberry Pi 3 Model B+"
+soc = "rpi02w"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,3-model-b-plus", "brcm,bcm2837"]
+dtb = "broadcom/bcm2710-rpi-3-b-plus.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-3-a-plus]
+name = "Raspberry Pi 3 Model A+"
+soc = "rpi02w"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,3-model-a-plus", "brcm,bcm2837"]
+dtb = "broadcom/bcm2710-rpi-3-a-plus.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-cm3]
+name = "Raspberry Pi Compute Module 3 / 3+"
+soc = "rpi02w"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,3-compute-module", "brcm,bcm2837"]
+dtb = "broadcom/bcm2710-rpi-cm3.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-4-b]
+name = "Raspberry Pi 4 Model B"
+soc = "rpi4"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,4-model-b", "brcm,bcm2711"]
+dtb = "broadcom/bcm2711-rpi-4-b.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-400]
+name = "Raspberry Pi 400"
+soc = "rpi4"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,400", "brcm,bcm2711"]
+dtb = "broadcom/bcm2711-rpi-400.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-cm4]
+name = "Raspberry Pi Compute Module 4"
+soc = "rpi4"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,4-compute-module", "brcm,bcm2711"]
+dtb = "broadcom/bcm2711-rpi-cm4.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-cm4s]
+name = "Raspberry Pi Compute Module 4S"
+soc = "rpi4"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,4-compute-module-s", "brcm,bcm2711"]
+dtb = "broadcom/bcm2711-rpi-cm4s.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-5-b]
+name = "Raspberry Pi 5"
+soc = "rpi5"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,5-model-b", "brcm,bcm2712"]
+dtb = "broadcom/bcm2712-rpi-5-b.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-500]
+name = "Raspberry Pi 500"
+soc = "rpi5"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,500", "brcm,bcm2712"]
+dtb = "broadcom/bcm2712-rpi-500.dtb"
+panel_orientation = "normal"
+
+[devices.rpi-cm5]
+name = "Raspberry Pi Compute Module 5"
+soc = "rpi5"
+arch = "aarch64-linux"
+dt_compatibles = ["raspberrypi,5-compute-module", "brcm,bcm2712"]
+dtb = "broadcom/bcm2712-rpi-cm5-cm5io.dtb"
+panel_orientation = "normal"
+
+[cases.retroflag-nespi]
+name = "RetroFlag NESPi Case+ / NESPi 4 Case"
+profile = "retroflag"
+socs = ["rpi02w", "rpi4"]
+dtoverlays = [
+  "gpio-poweroff,gpiopin=4,active_low=1,input=1",
+  "gpio-shutdown,gpio_pin=3,active_low=1,gpio_pull=up",
+]
+
+[cases.retroflag-superpi]
+name = "RetroFlag SUPERPi Case"
+profile = "retroflag"
+socs = ["rpi02w", "rpi4"]
+dtoverlays = [
+  "gpio-poweroff,gpiopin=4,active_low=1,input=1",
+  "gpio-shutdown,gpio_pin=3,active_low=1,gpio_pull=up",
+]
+
+[cases.retroflag-megapi]
+name = "RetroFlag MegaPi Case"
+profile = "retroflag"
+socs = ["rpi02w"]
+dtoverlays = [
+  "gpio-poweroff,gpiopin=4,active_low=1,input=1",
+  "gpio-shutdown,gpio_pin=3,active_low=1,gpio_pull=up",
+]
+
+[cases.retroflag-pistation]
+name = "RetroFlag PiStation Case"
+profile = "retroflag"
+socs = ["rpi4"]
+dtoverlays = [
+  "gpio-poweroff,gpiopin=4,active_low=1,input=1",
+  "gpio-shutdown,gpio_pin=3,active_low=1,gpio_pull=up",
+]
+
+[cases.retroflag-gpi-case]
+name = "RetroFlag GPi Case v1"
+profile = "gpi-case"
+socs = ["rpi02w"]
+dtoverlays = [
+  "dpi24",
+  "pwm-audio-pi-zero",
+  "gpio-poweroff,gpiopin=26,active_low=1,input=1",
+  "gpio-shutdown,gpio_pin=27,active_low=1,gpio_pull=up",
+]
+
+[cases.retroflag-gpi-case-2]
+name = "RetroFlag GPi Case 2"
+profile = "gpi-case-2"
+socs = ["rpi4"]
+dtoverlays = [
+  "dpi24",
+  "audremap,pins_18_19",
+  "gpio-poweroff,gpiopin=26,active_low=1,input=1",
+  "gpio-shutdown,gpio_pin=27,active_low=1,gpio_pull=up",
+]
+
+[cases.retroflag-gpi-case-2w]
+name = "RetroFlag GPi Case 2W"
+profile = "gpi-case-2w"
+socs = ["rpi02w"]
+dtoverlays = [
+  "dpi24",
+  "pwm-audio-pi-zero",
+  "gpio-poweroff,gpiopin=26,active_low=1,input=1",
+  "gpio-shutdown,gpio_pin=27,active_low=1,gpio_pull=up",
+]
+
+[cases.deskpi-pro]
+name = "DeskPi Pro v1 / v2"
+profile = "deskpi-pro"
+socs = ["rpi4"]
+dtoverlays = ["dwc2,dr_mode=host"]
+
+[cases.argon-one]
+name = "Argon ONE v2 / v3"
+profile = "argon-one"
+socs = ["rpi4", "rpi5"]
+dtoverlays = ["gpio-shutdown,gpio_pin=4,active_low=0,gpio_pull=down"]

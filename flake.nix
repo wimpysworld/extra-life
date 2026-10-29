@@ -86,6 +86,7 @@
           pd-mapper = applied.pd-mapper or (final.callPackage ./pkgs/pd-mapper { });
           ubootAnbernicRgxx3 =
             applied.ubootAnbernicRgxx3 or (final.callPackage ./pkgs/uboot/anbernic-rgxx3.nix { });
+          linuxPackages_rpi = applied.linuxPackages_rpi or (final.callPackage ./pkgs/kernels/rpi.nix { });
           linuxPackages_sm6115 =
             applied.linuxPackages_sm6115 or (final.callPackage ./pkgs/kernels/sm6115.nix { });
           vm-retro = applied.vm-retro or (final.callPackage ./pkgs/vm-retro { });
@@ -95,15 +96,21 @@
       nixosModules = {
         appliance = import ./nixos/modules/appliance.nix;
         boards = import ./nixos/modules/hardware/boards;
+        cases = import ./nixos/modules/hardware/cases;
         disk-base = import ./nixos/modules/images/disk-base.nix;
         disk-efi = import ./nixos/modules/images/disk-efi.nix;
         disk-openabl = import ./nixos/modules/images/disk-openabl.nix;
         disk-rk3566 = import ./nixos/modules/images/disk-rk3566.nix;
+        disk-rpi = import ./nixos/modules/images/disk-rpi.nix;
         iso = import ./nixos/modules/images/iso.nix;
         pc = import ./nixos/modules/hardware/pc.nix;
         qemu-guest = import ./nixos/modules/hardware/qemu-guest.nix;
         soc-qcom-common = import ./nixos/modules/hardware/soc/qcom-common.nix;
         soc-rk3566 = import ./nixos/modules/hardware/soc/rk3566.nix;
+        soc-rpi-common = import ./nixos/modules/hardware/soc/rpi-common.nix;
+        soc-rpi02w = import ./nixos/modules/hardware/soc/rpi02w.nix;
+        soc-rpi4 = import ./nixos/modules/hardware/soc/rpi4.nix;
+        soc-rpi5 = import ./nixos/modules/hardware/soc/rpi5.nix;
         soc-sm6115 = import ./nixos/modules/hardware/soc/sm6115.nix;
         soc-x86_64 = import ./nixos/modules/hardware/soc/x86_64.nix;
         default = self.nixosModules.appliance;
@@ -151,6 +158,33 @@
 
         rk3566 = self.nixosConfigurations.rk3566-appliance;
 
+        rpi02w-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/rpi02w-appliance
+          ];
+        };
+
+        rpi02w = self.nixosConfigurations.rpi02w-appliance;
+
+        rpi4-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/rpi4-appliance
+          ];
+        };
+
+        rpi4 = self.nixosConfigurations.rpi4-appliance;
+
+        rpi5-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/rpi5-appliance
+          ];
+        };
+
+        rpi5 = self.nixosConfigurations.rpi5-appliance;
+
         sm6115-appliance = lib.nixosSystem {
           modules = [
             nixpkgsModule
@@ -181,9 +215,15 @@
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isAarch64 {
           disk-image-aarch64 = self.nixosConfigurations.aarch64.config.system.build.diskImage;
           disk-image-rk3566 = self.nixosConfigurations.rk3566.config.system.build.diskImage;
+          disk-image-rpi02w = self.nixosConfigurations.rpi02w.config.system.build.diskImage;
+          disk-image-rpi4 = self.nixosConfigurations.rpi4.config.system.build.diskImage;
+          disk-image-rpi5 = self.nixosConfigurations.rpi5.config.system.build.diskImage;
           disk-image-sm6115 = self.nixosConfigurations.sm6115.config.system.build.diskImage;
           ota-bundle-aarch64 = self.nixosConfigurations.aarch64.config.system.build.otaBundle;
           ota-bundle-rk3566 = self.nixosConfigurations.rk3566.config.system.build.otaBundle;
+          ota-bundle-rpi02w = self.nixosConfigurations.rpi02w.config.system.build.otaBundle;
+          ota-bundle-rpi4 = self.nixosConfigurations.rpi4.config.system.build.otaBundle;
+          ota-bundle-rpi5 = self.nixosConfigurations.rpi5.config.system.build.otaBundle;
           ota-bundle-sm6115 = self.nixosConfigurations.sm6115.config.system.build.otaBundle;
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
