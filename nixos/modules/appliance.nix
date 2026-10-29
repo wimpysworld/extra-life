@@ -6,6 +6,11 @@
 }:
 let
   ludoLauncher = pkgs.writeShellScript "extra-life-ludo" ''
+    if [ -r /run/extra-life-board.env ]; then
+      set -a
+      . /run/extra-life-board.env
+      set +a
+    fi
     export HOME="/storage"
     export XDG_CONFIG_HOME="/storage/.config"
     export XDG_DATA_HOME="/storage/.local/share"
@@ -396,6 +401,10 @@ let
       '';
 in
 {
+  imports = [
+    ./hardware/boards
+  ];
+
   options.extraLife = {
     variantId = lib.mkOption {
       type = lib.types.str;

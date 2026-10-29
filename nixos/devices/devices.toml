@@ -1,0 +1,51 @@
+# Extra Life declarative hardware device catalogue.
+# Parsed at evaluation time with builtins.fromTOML.
+
+[devices.x86_64-generic]
+name = "Generic x86_64 PC / UEFI"
+soc = "x86_64"
+arch = "x86_64-linux"
+panel_orientation = "normal"
+
+[devices.gpd-win-2]
+name = "GPD WIN 2"
+soc = "x86_64"
+arch = "x86_64-linux"
+dmi_vendor = "GPD"
+dmi_products = ["WIN2"]
+usb_fallbacks = ["0079:18d4"]
+panel_orientation = "270"
+touchscreen_matrix = "0 1 0 -1 0 1"
+
+[devices.gpd-win-max]
+name = "GPD WIN Max (2020 / 2021)"
+soc = "x86_64"
+arch = "x86_64-linux"
+dmi_vendor = "GPD"
+dmi_products = ["G1619-01", "G1619-02", "G1619-03"]
+panel_orientation = "270"
+touchscreen_matrix = "0 1 0 -1 0 1"
+
+[devices.gpd-win-max-2]
+name = "GPD WIN Max 2"
+soc = "x86_64"
+arch = "x86_64-linux"
+dmi_vendor = "GPD"
+dmi_products = ["G1619-04"]
+panel_orientation = "normal"
+
+[devices.anbernic-rg353m]
+name = "Anbernic RG353M"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_compatibles = ["anbernic,rg353m", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-anbernic-rg353m.dtb"
+panel_orientation = "normal"
+
+[devices.powkiddy-rgb30]
+name = "Powkiddy RGB30"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_compatibles = ["powkiddy,rgb30", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-powkiddy-rgb30.dtb"
+panel_orientation = "normal"

@@ -89,6 +89,7 @@ let
         (oldAttrs: {
           patches = (oldAttrs.patches or [ ]) ++ [
             ../patches/cage/teardown-order.patch
+            ../patches/cage/panel-orientation.patch
           ];
         });
 
@@ -210,6 +211,7 @@ in
         (oldAttrs: {
           patches = (oldAttrs.patches or [ ]) ++ [
             ../patches/cage/teardown-order.patch
+            ../patches/cage/panel-orientation.patch
           ];
         });
 

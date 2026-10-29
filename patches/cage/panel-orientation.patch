@@ -1,0 +1,94 @@
+--- a/output.c
++++ b/output.c
+@@ -13,9 +13,13 @@
+ #include <assert.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <unistd.h>
+ #include <wayland-server-core.h>
+ #include <wlr/backend.h>
+ #include <wlr/backend/wayland.h>
+ #include <wlr/config.h>
++#if WLR_HAS_DRM_BACKEND
++#include <wlr/backend/drm.h>
++#endif
+ #if WLR_HAS_X11_BACKEND
+ #include <wlr/backend/x11.h>
+ #endif
+@@ -240,6 +244,44 @@
+ 	output_destroy(output);
+ }
+ 
++static bool
++is_internal_panel(const char *name)
++{
++	if (!name) {
++		return false;
++	}
++	return strncmp(name, "eDP", 3) == 0 ||
++	       strncmp(name, "DSI", 3) == 0 ||
++	       strncmp(name, "LVDS", 4) == 0 ||
++	       strncmp(name, "DPI", 3) == 0;
++}
++
++static bool
++parse_panel_orientation(const char *val, enum wl_output_transform *out)
++{
++	if (!val || !*val) {
++		return false;
++	}
++	if (strcmp(val, "normal") == 0 || strcmp(val, "0") == 0) {
++		*out = WL_OUTPUT_TRANSFORM_NORMAL;
++		return true;
++	}
++	if (strcmp(val, "90") == 0 || strcmp(val, "left_side_up") == 0) {
++		*out = WL_OUTPUT_TRANSFORM_90;
++		return true;
++	}
++	if (strcmp(val, "180") == 0 || strcmp(val, "upside_down") == 0) {
++		*out = WL_OUTPUT_TRANSFORM_180;
++		return true;
++	}
++	if (strcmp(val, "270") == 0 || strcmp(val, "right_side_up") == 0) {
++		*out = WL_OUTPUT_TRANSFORM_270;
++		return true;
++	}
++	return false;
++}
++
+ void
+ handle_new_output(struct wl_listener *listener, void *data)
+ {
+@@ -308,6 +350,24 @@
+ 		}
+ 	}
+ 
++	const char *env_orient = getenv("EXTRA_LIFE_PANEL_ORIENTATION");
++	enum wl_output_transform env_transform = WL_OUTPUT_TRANSFORM_NORMAL;
++	bool has_env_orient = env_orient && *env_orient && is_internal_panel(wlr_output->name) &&
++			      parse_panel_orientation(env_orient, &env_transform);
++	if (has_env_orient && env_transform != WL_OUTPUT_TRANSFORM_NORMAL) {
++		wlr_log(WLR_INFO, "Applying EXTRA_LIFE_PANEL_ORIENTATION=%s (transform %d) to %s",
++			env_orient, env_transform, wlr_output->name);
++		wlr_output_state_set_transform(&state, env_transform);
++	} else {
++#if WLR_HAS_DRM_BACKEND
++		if (wlr_output_is_drm(wlr_output)) {
++			enum wl_output_transform orient = wlr_drm_connector_get_panel_orientation(wlr_output);
++			if (orient != WL_OUTPUT_TRANSFORM_NORMAL) {
++				wlr_log(WLR_INFO, "Applying DRM panel orientation transform %d to %s",
++					orient, wlr_output->name);
++				wlr_output_state_set_transform(&state, orient);
++			} else if (has_env_orient) {
++				wlr_output_state_set_transform(&state, WL_OUTPUT_TRANSFORM_NORMAL);
++			}
++		} else
++#endif
++		if (has_env_orient) {
++			wlr_output_state_set_transform(&state, env_transform);
++		}
++	}
++
+ 	if (server->output_mode == CAGE_MULTI_OUTPUT_MODE_LAST && wl_list_length(&server->outputs) > 1) {
+ 		struct cg_output *next = wl_container_of(output->link.next, next, link);
+ 		output_disable(next);
