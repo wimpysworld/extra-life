@@ -12,7 +12,7 @@
       "sdhci_pltfm"
       "sdhci_msm"
       "ufs_qcom"
-      "ufshcd_pltfm"
+      "ufshcd_pltfrm"
       "phy_qcom_qmp_ufs"
       "phy_qcom_qusb2"
       "phy_qcom_qmp_usb"
