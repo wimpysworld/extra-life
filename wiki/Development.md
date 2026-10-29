@@ -26,8 +26,8 @@ Run `just` with no arguments to list all recipes in the repository `justfile`. T
 | `just build-pkg [pkg]` | Builds a single package from the flake (defaults to `ludo`) and writes the symlink to `result-<pkg>`. |
 | `just build-disk [target]` | Resolves `target` to a variant ID and builds the GUID Partition Table (GPT) disk image into `result-disk` or `result-disk-<variant>`. |
 | `just build-iso` | Builds the live bootable ISO image (`.#iso`) into `result-iso` and copies it to `.vm/extra-life.iso`. |
-| `just build-ota [target]` | Resolves `target` to a variant ID, builds the OTA update bundle, stages `.tar`, `.tar.sha256`, and `meta.json` in `dist/v<version>/<variant>/`, and merges `dist/releases.json`. |
-| `just build-device [target]` | Resolves `target` to a variant ID, builds the `.img.zst` disk image, `.tar` OTA bundle, and `.iso` installer (for `x86_64` and `aarch64`) into `dist/v<version>/<variant>/`, and merges `dist/releases.json`. |
+| `just build-ota [target]` | Resolves `target` to a variant ID, builds the OTA update bundle, stages `.tar.zst`, `.tar.zst.sha256`, and `meta.json` in `dist/v<version>/<variant>/`, and merges `dist/releases.json`. |
+| `just build-device [target]` | Resolves `target` to a variant ID, builds the `.img.zst` disk image, `.tar.zst` OTA bundle, and `.iso` installer (for `x86_64` and `aarch64`) into `dist/v<version>/<variant>/`, and merges `dist/releases.json`. |
 | `just boot-disk` | Builds `.#disk-image`, seeds a writable 64 GB `.vm/disk.qcow2` image if needed, and boots `vm-retro`. |
 | `just boot-iso` | Builds `.#iso` and boots `.vm/extra-life.iso` in `vm-retro`. |
 | `just vm *args` | Passes arguments (`--shutdown`, `--kill`, `--usb-device VID:PID`) directly to `nix run .#vm-retro`. |
@@ -70,14 +70,14 @@ dist/
     │   ├── extra-life-x86_64-0.1.0.img.zst.sha256
     │   ├── extra-life-x86_64-0.1.0.iso
     │   ├── extra-life-x86_64-0.1.0.iso.sha256
-    │   ├── extra-life-x86_64-0.1.0.tar
-    │   ├── extra-life-x86_64-0.1.0.tar.sha256
+    │   ├── extra-life-x86_64-0.1.0.tar.zst
+    │   ├── extra-life-x86_64-0.1.0.tar.zst.sha256
     │   └── meta.json
     └── rk3566/
         ├── extra-life-rk3566-0.1.0.img.zst
         ├── extra-life-rk3566-0.1.0.img.zst.sha256
-        ├── extra-life-rk3566-0.1.0.tar
-        ├── extra-life-rk3566-0.1.0.tar.sha256
+        ├── extra-life-rk3566-0.1.0.tar.zst
+        ├── extra-life-rk3566-0.1.0.tar.zst.sha256
         └── meta.json
 ```
 

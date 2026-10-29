@@ -9,7 +9,7 @@ let
   toplevel = config.system.build.toplevel;
   toplevelName = baseNameOf toplevel;
   inherit (config.extraLife) buildHostPkgs variantId versionId;
-  tarName = "extra-life-${variantId}-${versionId}.tar";
+  tarName = "extra-life-${variantId}-${versionId}.tar.zst";
 
   systemSquashfs = buildHostPkgs.callPackage "${modulesPath}/../lib/make-squashfs.nix" {
     fileName = "SYSTEM";
@@ -26,6 +26,7 @@ let
         nativeBuildInputs = [
           buildHostPkgs.coreutils
           buildHostPkgs.gnutar
+          buildHostPkgs.zstd
         ];
       }
       ''
@@ -41,7 +42,7 @@ let
           sha256sum KERNEL INITRD SYSTEM > SHA256SUMS
         )
         tar --sort=name --mtime='@1' --owner=0 --group=0 --numeric-owner \
-          -cf "$out/${tarName}" -C bundle .
+          -cf - -C bundle . | zstd -3 -T0 -o "$out/${tarName}"
         tar_sha256="$(sha256sum "$out/${tarName}" | cut -d' ' -f1)"
         printf '%s  %s\n' "$tar_sha256" "${tarName}" > "$out/${tarName}.sha256"
         cat > "$out/releases.json" <<EOF
@@ -222,6 +223,7 @@ in
         pkgs.coreutils
         pkgs.gnutar
         pkgs.util-linux
+        pkgs.zstd
       ];
 
       systemd.tmpfiles.settings."10-extra-life"."/boot"."L+".argument = "/sysroot/boot";
@@ -311,7 +313,7 @@ in
           fi
 
           shopt -s nullglob
-          tarballs=(/sysroot/storage/.update/*.tar)
+          tarballs=(/sysroot/storage/.update/*.tar.zst /sysroot/storage/.update/*.tar)
           if (( ''${#tarballs[@]} == 0 )); then
             exit 0
           fi
@@ -323,7 +325,13 @@ in
           rm -rf "$work"
           mkdir -p "$work"
 
-          if ! tar -xf "$tarball" -C "$work"; then
+          if [[ "$tarball" == *.tar.zst ]]; then
+            if ! (zstd -dc "$tarball" | tar -xf - -C "$work"); then
+              echo "extra-life-update: tar extraction failed, deleting archive" > /dev/kmsg
+              rm -rf "$work" "$tarball"
+              exit 0
+            fi
+          elif ! tar -xf "$tarball" -C "$work"; then
             echo "extra-life-update: tar extraction failed, deleting archive" > /dev/kmsg
             rm -rf "$work" "$tarball"
             exit 0
@@ -371,7 +379,7 @@ in
           sync
           mount -o remount,ro /sysroot/boot
 
-          rm -rf "$work" /sysroot/storage/.update/*.tar
+          rm -rf "$work" /sysroot/storage/.update/*.tar.zst /sysroot/storage/.update/*.tar
           sync
 
           if (( need_reboot == 1 )); then

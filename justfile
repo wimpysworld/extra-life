@@ -226,7 +226,7 @@ build-ota target="":
     version="$(tr -d '[:space:]' < VERSION)"
     dist_dir="dist/v${version}/${variant}"
     mkdir -p "${dist_dir}"
-    tar_name="extra-life-${variant}-${version}.tar"
+    tar_name="extra-life-${variant}-${version}.tar.zst"
     cp -f "${out_link}/${tar_name}" "${dist_dir}/${tar_name}"
     cp -f "${out_link}/${tar_name}.sha256" "${dist_dir}/${tar_name}.sha256"
     cp -f "${out_link}/meta.json" "${dist_dir}/meta.json"
@@ -306,7 +306,7 @@ build-device target="":
     else
         nix build "${ota_attr}" --out-link "${ota_link}"
     fi
-    tar_name="extra-life-${variant}-${version}.tar"
+    tar_name="extra-life-${variant}-${version}.tar.zst"
     cp -f "${ota_link}/${tar_name}" "${dist_dir}/${tar_name}"
     cp -f "${ota_link}/${tar_name}.sha256" "${dist_dir}/${tar_name}.sha256"
     chmod 0644 "${dist_dir}/${tar_name}" "${dist_dir}/${tar_name}.sha256"
