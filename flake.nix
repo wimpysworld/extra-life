@@ -281,6 +281,7 @@
                 statix
                 vm-retro
                 wrangler
+                zstd
               ]
               ++ import ./nix/loader.nix { inherit pkgs; };
             shellHook = import ./nix/hooks.nix { inherit pkgs; };

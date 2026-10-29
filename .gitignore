@@ -1,5 +1,6 @@
 result
 result-*
+dist/
 .direnv/
 .pi/tasks
 .vm/

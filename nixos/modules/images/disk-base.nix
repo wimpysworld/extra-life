@@ -53,11 +53,23 @@ let
                 "name": "${tarName}",
                 "device": "${variantId}",
                 "sha256": "$tar_sha256",
-                "browser_download_url": "https://extralife-ota.wimpys.world/${tarName}"
+                "browser_download_url": "https://extralife-ota.wimpys.world/v${versionId}/${variantId}/${tarName}"
               }
             ]
           }
         ]
+        EOF
+        cat > "$out/meta.json" <<EOF
+        {
+          "version": "v${versionId}",
+          "variant": "${variantId}",
+          "asset": {
+            "name": "${tarName}",
+            "device": "${variantId}",
+            "sha256": "$tar_sha256",
+            "browser_download_url": "https://extralife-ota.wimpys.world/v${versionId}/${variantId}/${tarName}"
+          }
+        }
         EOF
       '';
 in

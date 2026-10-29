@@ -4,7 +4,7 @@ Extra Life provides a reproducible development environment for `x86_64-linux`, `
 
 ## Development shell (`nix develop` and `direnv`)
 
-The repository includes a flake development shell (`devShells.default`) and an `.envrc` file for `direnv`. The shell installs `just`, `nixfmt`, `nixfmt-tree`, `deadnix`, `statix`, `actionlint`, `nix-output-monitor` (`nom`), `jq`, `rclone`, `sops`, `wrangler`, and `vm-retro`.
+The repository includes a flake development shell (`devShells.default`) and an `.envrc` file for `direnv`. The shell installs `just`, `nixfmt`, `nixfmt-tree`, `deadnix`, `statix`, `actionlint`, `nix-output-monitor` (`nom`), `jq`, `rclone`, `sops`, `wrangler`, `zstd`, and `vm-retro`.
 
 ```bash
 # Enter the development shell directly
@@ -16,25 +16,30 @@ direnv allow
 
 ## `justfile` commands
 
-Run `just` with no arguments to list all recipes in the repository `justfile`.
+Run `just` with no arguments to list all recipes in the repository `justfile`. The `target` parameter in `build-disk`, `build-ota`, `build-device`, and `publish-ota` accepts a System on a Chip (SoC) variant ID (`x86_64`, `aarch64`, `rpi02w`, `rpi4`, `rpi5`, `rk3566`, `sm6115`) or any device ID from `nixos/devices/devices.toml` (for example, `anbernic-rg353m`, `powkiddy-rgb30`, `gpd-win-2`, `rpi-5-b`, or `mangmi-air-x-mq65`).
 
 | Command | Action |
 | --- | --- |
+| `just devices` | Lists all supported SoC variant IDs (`VARIANT_ID`), device IDs (`nixos/devices/devices.toml`), and retro case IDs. |
 | `just check` | Evaluates every `nixosConfigurations.<name>.config.system.build.toplevel.drvPath` and every per-system package and formatter derivation for the host system. |
 | `just fmt` | Runs `deadnix`, `statix fix`, and `nix fmt` (`nixfmt-tree`) across the repository or on specific paths. |
 | `just build-pkg [pkg]` | Builds a single package from the flake (defaults to `ludo`) and writes the symlink to `result-<pkg>`. |
-| `just build-disk [target]` | Builds the GUID Partition Table (GPT) disk image into `result-disk` or `result-disk-<target>` (see [Supported Hardware](Supported-Hardware) for System on a Chip (SoC) target keys). |
+| `just build-disk [target]` | Resolves `target` to a variant ID and builds the GUID Partition Table (GPT) disk image into `result-disk` or `result-disk-<variant>`. |
 | `just build-iso` | Builds the live bootable ISO image (`.#iso`) into `result-iso` and copies it to `.vm/extra-life.iso`. |
+| `just build-ota [target]` | Resolves `target` to a variant ID, builds the OTA update bundle, stages `.tar`, `.tar.sha256`, and `meta.json` in `dist/v<version>/<variant>/`, and merges `dist/releases.json`. |
+| `just build-device [target]` | Resolves `target` to a variant ID, builds the `.img.zst` disk image, `.tar` OTA bundle, and `.iso` installer (for `x86_64` and `aarch64`) into `dist/v<version>/<variant>/`, and merges `dist/releases.json`. |
 | `just boot-disk` | Builds `.#disk-image`, seeds a writable 64 GB `.vm/disk.qcow2` image if needed, and boots `vm-retro`. |
 | `just boot-iso` | Builds `.#iso` and boots `.vm/extra-life.iso` in `vm-retro`. |
 | `just vm *args` | Passes arguments (`--shutdown`, `--kill`, `--usb-device VID:PID`) directly to `nix run .#vm-retro`. |
-| `just build-ota [target]` | Builds the OTA update bundle into `result-ota` or `result-ota-<target>` (see [Supported Hardware](Supported-Hardware) for SoC target keys). |
-| `just publish-ota` | Builds `.#ota-bundle`, decrypts Cloudflare R2 credentials from `secrets/secrets.yaml` with `sops`, and uploads `result-ota/` to `r2:extralife-ota/` (`extralife-ota.wimpys.world`) with `rclone`. |
+| `just publish-ota [target]` | Builds missing target artefacts with `just build-device`, merges existing `r2:extralife-ota/releases.json` entries with local `dist/v*/*/meta.json` manifests, and uploads `dist/v<version>/<variant>/` and `dist/releases.json` to Cloudflare R2 (`extralife-ota.wimpys.world`). |
 | `just cf-setup` | Decrypts Cloudflare credentials from `secrets/secrets.yaml` with `sops` and provisions the `extralife-ota` R2 bucket and `extralife-ota.wimpys.world` custom domain with `wrangler`. |
 | `just update` | Updates `flake.lock` inputs (`just update [input] [lock_only] [override_url]`). |
-| `just clean` | Stops `vm-retro` if it runs, deletes `.vm/`, and removes `result` and `result-*` symlinks. |
+| `just clean` | Stops `vm-retro` if it runs, deletes `.vm/` and `dist/`, and removes `result` and `result-*` symlinks. |
 
 ```bash
+# List all supported SoC variants, device IDs, and case IDs
+just devices
+
 # Validate all NixOS configurations and package derivations
 just check
 
@@ -44,9 +49,39 @@ just fmt
 # Build the UEFI GPT disk image and boot it in QEMU
 just boot-disk
 
-# Build the OTA update bundle locally
-just build-ota
+# Build all release artefacts for a device ID or SoC variant into dist/v<version>/<variant>/
+just build-device anbernic-rg353m
+just build-device rpi5
+
+# Publish staged artefacts and merge releases.json on Cloudflare R2
+just publish-ota rk3566
 ```
+
+## Release staging (`dist/`) and Cloudflare R2 layout
+
+`just build-ota` and `just build-device` stage release artefacts under `dist/v<version>/<variant>/` and mirror that directory hierarchy in the `extralife-ota` Cloudflare R2 bucket (`https://extralife-ota.wimpys.world`):
+
+```text
+dist/
+├── releases.json
+└── v0.1.0/
+    ├── x86_64/
+    │   ├── extra-life-x86_64-0.1.0.img.zst
+    │   ├── extra-life-x86_64-0.1.0.img.zst.sha256
+    │   ├── extra-life-x86_64-0.1.0.iso
+    │   ├── extra-life-x86_64-0.1.0.iso.sha256
+    │   ├── extra-life-x86_64-0.1.0.tar
+    │   ├── extra-life-x86_64-0.1.0.tar.sha256
+    │   └── meta.json
+    └── rk3566/
+        ├── extra-life-rk3566-0.1.0.img.zst
+        ├── extra-life-rk3566-0.1.0.img.zst.sha256
+        ├── extra-life-rk3566-0.1.0.tar
+        ├── extra-life-rk3566-0.1.0.tar.sha256
+        └── meta.json
+```
+
+Each variant directory writes a `meta.json` fragment. `just build-ota`, `just build-device`, and `just publish-ota` merge all `dist/v*/*/meta.json` fragments (and any existing remote `r2:extralife-ota/releases.json` manifest during publishing) into a top-level `releases.json` file. Publishing one variant updates that variant's entry in `releases.json` and preserves all other device variants on R2.
 
 ## Virtual machine workflow (`vm-retro`)
 

@@ -185,17 +185,41 @@
  
  	"github.com/libretro/ludo/core"
  	"github.com/libretro/ludo/ludos"
-@@ -35,7 +36,7 @@
- 		if len(*rels) > 0 {
- 			rel := (*rels)[0]
+@@ -32,26 +33,31 @@
+ 			return
+ 		}
+ 
+-		if len(*rels) > 0 {
+-			rel := (*rels)[0]
++		var matchedRel *ludos.GHRelease
++		var matchedAsset *ludos.GHAsset
++		for i := range *rels {
++			rel := &(*rels)[i]
++			if asset := ludos.FilterAssets(rel.Assets); asset != nil {
++				matchedRel = rel
++				matchedAsset = asset
++				break
++			}
++		}
  
 -			if rel.Name[1:] == ludos.Version {
-+			if strings.TrimPrefix(rel.Name, "v") == strings.TrimPrefix(ludos.Version, "v") {
++		if matchedRel != nil && matchedAsset != nil {
++			if strings.TrimPrefix(matchedRel.Name, "v") == strings.TrimPrefix(ludos.Version, "v") {
  				list.children[0].label = "Up to date"
  				list.children[0].icon = "subsetting"
  				return
-@@ -51,7 +52,7 @@
- 				}
+ 			}
+ 
+-			list.children[0].label = "Upgrade to " + rel.Name
++			list.children[0].label = "Upgrade to " + matchedRel.Name
+ 			list.children[0].icon = "menu_saving"
++			asset := matchedAsset
+ 			list.children[0].callbackOK = func() {
+-				asset := ludos.FilterAssets(rel.Assets)
+-				if asset == nil {
+-					ntf.DisplayAndLog(ntf.Error, "Menu", "No matching asset")
+-					return
+-				}
  				go func() {
  					path := filepath.Join(ludos.UpdatesDir, asset.Name)
 -					ludos.DownloadRelease(path, asset.BrowserDownloadURL)
