@@ -26,10 +26,10 @@ Extra Life (`extra-life`) is a NixOS retro game appliance flake that runs `ludo 
 - Keep hardware modules (`nixos/modules/hardware/{soc,boards,cases}/`), image builders (`nixos/modules/images/`), kernels (`pkgs/kernels/`), bootloaders (`pkgs/uboot/`), and the device catalogue (`nixos/devices/devices.toml`) in this monorepo. Do not split hardware enablement into separate repositories.
 - Scope `nixosConfigurations` (`lib.nixosSystem`) by System on a Chip (SoC) family, not per retail board. Use the SoC families `x86_64`, `rpi4`, `rpi5`, `rpi02w`, `rk3566`, `h700`, `sm6115`, `sm8250`, `sm8550`, and `rk3326`. This scope keeps `just check` fast and ensures that all boards in an SoC family share one system closure.
 - Isolate board-specific differences to `nixos/devices/devices.toml`, Device Tree Blobs (`.dtb`), U-Boot payloads, and `InputPlumber` YAML profiles. Isolate board audio to Advanced Linux Sound Architecture (ALSA) Use Case Manager (UCM) profiles. Match boot-time quirks with `/sys/firmware/devicetree/base/model` or Desktop Management Interface (DMI) strings.
-- Target mainline Linux and open-source Mesa (`radeonsi`, `iris`, `vc4`, `v3d`, `panfrost`, `freedreno`) in Wave 1. Defer legacy vendor Board Support Package (BSP) kernels until after Wave 1.
+- Prefer the current NixOS Long Term Support (LTS) kernel (`pkgs.linuxPackages`) and open-source Mesa drivers (`radeonsi`, `iris`, `vc4`, `v3d`, `panfrost`, `freedreno`). When drivers, Device Tree Blobs (`.dtb`), a Board Support Package (BSP), or binary blobs require another kernel series, package that kernel in `pkgs/kernels/`. Source that kernel from `nixpkgs`, `pkgs.unstable`, a pinned historical `nixpkgs` revision, or a vendor BSP tree.
 
 ## Gotchas
 
 - Upstream `ludo -ludos` calls hardcoded Filesystem Hierarchy Standard (FHS) paths (`/usr/bin/systemctl`, `/usr/bin/connmanctl`, `/usr/bin/bash`, `/usr/sbin/shutdown`). Patch those paths in `pkgs/ludo` or link them with `systemd.tmpfiles.rules`.
 - Service toggles in Ludo create or delete `/storage/.cache/services/{sshd,samba,bluez}.conf`. Gate `sshd.service`, `samba-smbd.service`, and `bluetooth.service` with `ConditionPathExists`. Grant Polkit rules to user `ludo` (UID 1000).
-- Read `docs/architecture.md` for the full core matrix, partition layout, and milestone plan.
+- Read `docs/architecture.md` for the system architecture and partition layout, `wiki/Supported-Systems.md` for the core matrix, and `wiki/Supported-Hardware.md` for supported devices and the hardware roadmap.
