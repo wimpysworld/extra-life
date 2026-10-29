@@ -242,8 +242,10 @@ in
     "/SYSTEM".source = config.system.build.systemSquashfs;
   };
 
-  system.build.diskImage = config.image.repart.image.overrideAttrs (oldAttrs: {
-    nativeBuildInputs = (oldAttrs.nativeBuildInputs or [ ]) ++ [ pkgs.gptfdisk ];
+  system.build.diskImage = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+    nativeBuildInputs = (oldAttrs.nativeBuildInputs or [ ]) ++ [
+      config.extraLife.buildHostPkgs.gptfdisk
+    ];
     postBuild = (oldAttrs.postBuild or "") + ''
       sgdisk -h 1 "${config.image.baseName}.raw"
     '';

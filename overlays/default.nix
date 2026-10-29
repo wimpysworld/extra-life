@@ -111,6 +111,15 @@ let
       ];
     };
 
+    inherit
+      (
+        (import inputs.nixpkgs {
+          inherit (final.stdenv.hostPlatform) system;
+        })
+      )
+      retroarch-bare
+      ;
+
     ludo = final.callPackage ../pkgs/ludo { };
 
     libretro-cores = final.callPackage ../pkgs/libretro-cores { };
@@ -252,6 +261,15 @@ in
         ))
       ];
     };
+
+    inherit
+      (
+        (import inputs.nixpkgs {
+          inherit (final.stdenv.hostPlatform) system;
+        })
+      )
+      retroarch-bare
+      ;
   };
 
   localPackages = final: _prev: {

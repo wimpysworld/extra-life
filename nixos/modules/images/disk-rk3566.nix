@@ -39,7 +39,7 @@ in
     };
   };
 
-  system.build.diskImage = config.image.repart.image.overrideAttrs (oldAttrs: {
+  system.build.diskImage = config.system.build.repartImage.overrideAttrs (oldAttrs: {
     postBuild = (oldAttrs.postBuild or "") + ''
       dd if="${pkgs.ubootAnbernicRgxx3}/u-boot-rockchip.bin" \
         of="${config.image.baseName}.raw" \

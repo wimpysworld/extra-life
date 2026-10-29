@@ -38,8 +38,36 @@ in
   boot = {
     kernelPackages = pkgs.linuxPackages_sm6115;
 
+    initrd.availableKernelModules = [
+      "panel_hx83112a"
+      "panel_bm5460bb1"
+      "panel_gh7005"
+      "panel_td4310"
+      "panel_retroid_duolite_bottom"
+      "wl818s"
+      "pwm_bl"
+      "qcom_wled"
+      "wl818s_bl"
+    ];
+
     kernelModules = [
+      "panel_hx83112a"
+      "panel_bm5460bb1"
+      "panel_gh7005"
+      "panel_td4310"
+      "panel_retroid_duolite_bottom"
+      "wl818s"
+      "pwm_bl"
+      "qcom_wled"
+      "wl818s_bl"
+      "leds_aw200xx"
+      "leds_group_multicolor"
+      "leds_qcom_lpg"
+      "pwrseq_qcom_wcn"
+      "ath10k_core"
       "ath10k_snoc"
+      "fusb302"
+      "pinctrl_sm6115_lpass_lpi"
       "hci_uart"
       "btqca"
       "mangmi"

@@ -200,6 +200,31 @@
         let
           pkgs = pkgsFor system;
           archPrefix = if pkgs.stdenv.hostPlatform.isAarch64 then "aarch64" else "x86_64";
+          crossAarch64 = pkgs.pkgsCross.aarch64-multiplatform;
+          aarch64HostConfig =
+            name:
+            let
+              base = self.nixosConfigurations.${name};
+            in
+            if system == "x86_64-linux" then
+              base.extendModules {
+                modules = [
+                  {
+                    extraLife.buildHostPkgs = pkgs;
+                    nixpkgs.overlays = [
+                      (_final: _prev: {
+                        inherit (crossAarch64)
+                          ubootAnbernicRgxx3
+                          linuxPackages_rpi
+                          linuxPackages_sm6115
+                          ;
+                      })
+                    ];
+                  }
+                ];
+              }
+            else
+              base;
         in
         {
           inherit (pkgs) vm-retro;
@@ -207,30 +232,29 @@
           disk-image = self.nixosConfigurations."${archPrefix}-appliance".config.system.build.diskImage;
           ota-bundle = self.nixosConfigurations."${archPrefix}-appliance".config.system.build.otaBundle;
           default = if pkgs.stdenv.hostPlatform.isLinux then pkgs.ludo else pkgs.vm-retro;
-        }
-        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isx86_64 {
           disk-image-x86_64 = self.nixosConfigurations.x86_64.config.system.build.diskImage;
           ota-bundle-x86_64 = self.nixosConfigurations.x86_64.config.system.build.otaBundle;
-        }
-        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isAarch64 {
-          disk-image-aarch64 = self.nixosConfigurations.aarch64.config.system.build.diskImage;
-          disk-image-rk3566 = self.nixosConfigurations.rk3566.config.system.build.diskImage;
-          disk-image-rpi02w = self.nixosConfigurations.rpi02w.config.system.build.diskImage;
-          disk-image-rpi4 = self.nixosConfigurations.rpi4.config.system.build.diskImage;
-          disk-image-rpi5 = self.nixosConfigurations.rpi5.config.system.build.diskImage;
-          disk-image-sm6115 = self.nixosConfigurations.sm6115.config.system.build.diskImage;
-          ota-bundle-aarch64 = self.nixosConfigurations.aarch64.config.system.build.otaBundle;
-          ota-bundle-rk3566 = self.nixosConfigurations.rk3566.config.system.build.otaBundle;
-          ota-bundle-rpi02w = self.nixosConfigurations.rpi02w.config.system.build.otaBundle;
-          ota-bundle-rpi4 = self.nixosConfigurations.rpi4.config.system.build.otaBundle;
-          ota-bundle-rpi5 = self.nixosConfigurations.rpi5.config.system.build.otaBundle;
-          ota-bundle-sm6115 = self.nixosConfigurations.sm6115.config.system.build.otaBundle;
+          disk-image-aarch64 = (aarch64HostConfig "aarch64").config.system.build.diskImage;
+          disk-image-rk3566 = (aarch64HostConfig "rk3566").config.system.build.diskImage;
+          disk-image-rpi02w = (aarch64HostConfig "rpi02w").config.system.build.diskImage;
+          disk-image-rpi4 = (aarch64HostConfig "rpi4").config.system.build.diskImage;
+          disk-image-rpi5 = (aarch64HostConfig "rpi5").config.system.build.diskImage;
+          disk-image-sm6115 = (aarch64HostConfig "sm6115").config.system.build.diskImage;
+          ota-bundle-aarch64 = (aarch64HostConfig "aarch64").config.system.build.otaBundle;
+          ota-bundle-rk3566 = (aarch64HostConfig "rk3566").config.system.build.otaBundle;
+          ota-bundle-rpi02w = (aarch64HostConfig "rpi02w").config.system.build.otaBundle;
+          ota-bundle-rpi4 = (aarch64HostConfig "rpi4").config.system.build.otaBundle;
+          ota-bundle-rpi5 = (aarch64HostConfig "rpi5").config.system.build.otaBundle;
+          ota-bundle-sm6115 = (aarch64HostConfig "sm6115").config.system.build.otaBundle;
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
           inherit (pkgs) ludo libretro-cores pd-mapper;
         }
         // lib.optionalAttrs (system == "aarch64-linux") {
           inherit (pkgs) ubootAnbernicRgxx3;
+        }
+        // lib.optionalAttrs (system == "x86_64-linux") {
+          inherit (crossAarch64) ubootAnbernicRgxx3;
         }
       );
 

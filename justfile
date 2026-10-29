@@ -175,7 +175,7 @@ build-disk target="":
                 echo "Resolved device '${target}' -> variant '${variant}'"
                 ;;
         esac
-        attr=".#nixosConfigurations.${variant}.config.system.build.diskImage"
+        attr=".#disk-image-${variant}"
         out_link="result-disk-${variant}"
     fi
     echo "Disk 󰋊 Building: ${attr}"
@@ -215,7 +215,7 @@ build-ota target="":
         esac
         out_link="result-ota-${variant}"
     fi
-    attr=".#nixosConfigurations.${variant}.config.system.build.otaBundle"
+    attr=".#ota-bundle-${variant}"
     echo "OTA 󰏗 Building: ${attr}"
     if command -v nom >/dev/null 2>&1; then
         nom build "${attr}" --out-link "${out_link}"
@@ -277,7 +277,7 @@ build-device target="":
     dist_dir="dist/v${version}/${variant}"
     mkdir -p "${dist_dir}"
 
-    disk_attr=".#nixosConfigurations.${variant}.config.system.build.diskImage"
+    disk_attr=".#disk-image-${variant}"
     disk_link="result-disk-${variant}"
     echo "Disk 󰋊 Building: ${disk_attr}"
     if command -v nom >/dev/null 2>&1; then
@@ -298,7 +298,7 @@ build-device target="":
     printf '%s  %s\n' "${img_sha256}" "${img_zst}" > "${dist_dir}/${img_zst}.sha256"
     chmod 0644 "${dist_dir}/${img_zst}.sha256"
 
-    ota_attr=".#nixosConfigurations.${variant}.config.system.build.otaBundle"
+    ota_attr=".#ota-bundle-${variant}"
     ota_link="result-ota-${variant}"
     echo "OTA 󰏗 Building: ${ota_attr}"
     if command -v nom >/dev/null 2>&1; then

@@ -10,8 +10,10 @@ buildUBoot {
     platforms = [ "aarch64-linux" ];
     maintainers = with lib.maintainers; [ flexiondotorg ];
   };
-  BL31 = "${armTrustedFirmwareRK3568}/bl31.elf";
-  ROCKCHIP_TPL = rkbin.TPL_RK3566;
+  env = {
+    BL31 = "${armTrustedFirmwareRK3568}/bl31.elf";
+    ROCKCHIP_TPL = rkbin.TPL_RK3566;
+  };
   filesToInstall = [
     "u-boot.itb"
     "idbloader.img"

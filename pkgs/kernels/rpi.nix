@@ -33,6 +33,7 @@ let
         // (args.features or { });
 
         structuredExtraConfig = with lib.kernel; {
+          RUST = lib.mkForce no;
           ARM64_4K_PAGES = yes;
           ARCH_BCM = yes;
           ARCH_BCM2835 = yes;
