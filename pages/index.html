@@ -6,7 +6,7 @@
     <meta name="color-scheme" content="light dark">
     <meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="rgb(19, 22.5, 30.5)" media="(prefers-color-scheme: dark)">
-    <meta name="description" content="Give Extra Life to Classic Games and Hardware 🕹️. Extra Life is a retro game appliance that runs Ludo on Wayland.">
+    <meta name="description" content="Extra Life is a clean console operating system that gives extra life to classic games and hardware.">
     <title>Extra Life</title>
     <link rel="icon" href="icon.svg" type="image/svg+xml">
     <script src="theme.js"></script>
@@ -23,9 +23,11 @@
       <nav aria-label="Main navigation">
         <ul>
           <!-- tailor:navigation:start -->
-          <li><a target="_blank" rel="noopener noreferrer" href="https://github.com/wimpysworld/extra-life?tab=readme-ov-file">Overview</a></li>
+          <li><a href="./" aria-current="page">Overview</a></li>
+          <li><a href="./#systems">Systems</a></li>
+          <li><a href="./devices.html">Devices</a></li>
           <li><a target="_blank" rel="noopener noreferrer" href="https://github.com/wimpysworld/extra-life/wiki">Documentation</a></li>
-          <li><a target="_blank" rel="noopener noreferrer" href="https://github.com/wimpysworld/extra-life/releases">Download</a></li>
+          <li><a href="./devices.html">Download</a></li>
           <!-- tailor:navigation:end -->
         </ul>
       </nav>
@@ -49,29 +51,93 @@
     <main id="main" class="container" tabindex="-1">
       <section class="site-hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow">NixOS retro game appliance</p>
+          <p class="eyebrow">Retro gaming appliance</p>
           <h1 id="hero-title">Extra Life</h1>
-          <p class="lead">Give Extra Life to Classic Games and Hardware 🕹️. Extra Life is a console-grade retro game appliance that runs Ludo on Wayland for <code translate="no">x86_64</code> personal computers (PCs), Raspberry Pi boards, and ARM handhelds.</p>
-          <p>The appliance has zero text consoles, zero RetroArch menus, and automatic over-the-air (OTA) updates.</p>
+          <p class="lead">Extra Life is a clean, uncluttered console operating system that gives extra life to classic games and hardware. Turn on your handheld, Raspberry Pi, or personal computer (PC) and start playing immediately.</p>
+          <p>The system boots straight into your game library with zero text consoles, zero emulator setup menus, and automatic updates.</p>
           <div class="site-hero-actions">
-            <a class="primary-action" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
-            <a class="text-link" href="https://github.com/wimpysworld/extra-life?tab=readme-ov-file">Read the overview <span class="octicon inline-icon link-external" aria-hidden="true"></span></a>
+            <a class="primary-action" href="./devices.html">Find Your Device <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+            <a class="text-link" href="#systems">Explore Supported Systems</a>
           </div>
-          <p class="hero-note">Package <code translate="no">extra-life</code>, Ludo on Cage Wayland, 33 curated Libretro cores.</p>
+          <p class="hero-note">Supports 50+ handhelds, Raspberry Pi boards, retro cases, and PCs with 33 built-in emulators.</p>
         </div>
-        <figure class="terminal" aria-label="Extra Life quick start commands">
-          <figcaption>
-            <span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-            <span translate="no">extra-life: vm-retro</span>
-          </figcaption>
-          <pre><code translate="no"><span class="terminal-comment"># Boot Extra Life in a local QEMU virtual machine</span>
-<span class="prompt">$ </span><span class="terminal-command">just</span> <span class="terminal-argument">boot-disk</span>
 
-<span class="terminal-comment"># Or run directly from the Nix flake</span>
-<span class="prompt">$ </span><span class="terminal-command">nix</span> <span class="terminal-argument">run .#vm-retro</span>
+        <figure class="console-showcase" aria-label="Extra Life console screen and quick start steps">
+          <div class="console-screen">
+            <svg viewBox="0 0 560 320" role="img" aria-label="Illustration of the Extra Life Ludo game library interface" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="screen-bg" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#131722"/>
+                  <stop offset="100%" stop-color="#1e2436"/>
+                </linearGradient>
+                <linearGradient id="accent-pink" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#ff135b"/>
+                  <stop offset="100%" stop-color="#ff5c8d"/>
+                </linearGradient>
+              </defs>
+              <rect width="560" height="320" rx="14" fill="url(#screen-bg)"/>
+              <rect x="18" y="16" width="524" height="36" rx="8" fill="#0d1018" opacity="0.7"/>
+              <circle cx="38" cy="34" r="10" fill="#ff135b"/>
+              <path d="M34 34h8M38 30v8" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+              <text x="56" y="39" fill="#ffffff" font-family="sans-serif" font-size="13" font-weight="700">Extra Life</text>
+              <text x="135" y="39" fill="#9ba3b8" font-family="sans-serif" font-size="12">Super Nintendo</text>
+              <circle cx="478" cy="34" r="4" fill="#3dd68c"/>
+              <text x="488" y="38" fill="#9ba3b8" font-family="sans-serif" font-size="11">Wi-Fi</text>
 
-<span class="terminal-comment"># Copy ROMs into /storage/Retro/roms over SSH</span>
-<span class="prompt">$ </span><span class="terminal-command">rsync</span> <span class="terminal-argument">-avP -e "ssh -p 2222" ./roms/ ludo@localhost:/storage/Retro/roms/</span></code></pre>
+              <g transform="translate(24, 68)">
+                <rect x="0" y="0" width="96" height="132" rx="10" fill="#252c40" stroke="#36405a" stroke-width="1.5"/>
+                <rect x="12" y="14" width="72" height="54" rx="6" fill="#181d2c"/>
+                <path d="M36 41h24M48 29v24" stroke="#6d7894" stroke-width="4" stroke-linecap="round"/>
+                <rect x="12" y="80" width="56" height="8" rx="4" fill="#9ba3b8"/>
+                <rect x="12" y="94" width="40" height="6" rx="3" fill="#5e6782"/>
+
+                <rect x="112" y="-6" width="112" height="144" rx="12" fill="#2a324b" stroke="#ff135b" stroke-width="3"/>
+                <rect x="126" y="10" width="84" height="68" rx="6" fill="url(#accent-pink)"/>
+                <polygon points="160,30 160,58 184,44" fill="#ffffff"/>
+                <rect x="126" y="90" width="72" height="9" rx="4.5" fill="#ffffff"/>
+                <rect x="126" y="106" width="52" height="7" rx="3.5" fill="#ff85aa"/>
+                <rect x="126" y="119" width="38" height="12" rx="6" fill="#ff135b"/>
+                <text x="145" y="128" fill="#ffffff" font-family="sans-serif" font-size="8" font-weight="700" text-anchor="middle">PLAY</text>
+
+                <rect x="240" y="0" width="96" height="132" rx="10" fill="#252c40" stroke="#36405a" stroke-width="1.5"/>
+                <rect x="252" y="14" width="72" height="54" rx="6" fill="#181d2c"/>
+                <circle cx="288" cy="41" r="14" stroke="#4c9aff" stroke-width="3" fill="none"/>
+                <rect x="252" y="80" width="64" height="8" rx="4" fill="#9ba3b8"/>
+                <rect x="252" y="94" width="44" height="6" rx="3" fill="#5e6782"/>
+
+                <rect x="352" y="0" width="96" height="132" rx="10" fill="#252c40" stroke="#36405a" stroke-width="1.5"/>
+                <rect x="364" y="14" width="72" height="54" rx="6" fill="#181d2c"/>
+                <rect x="384" y="27" width="32" height="28" rx="4" stroke="#f5a623" stroke-width="3" fill="none"/>
+                <rect x="364" y="80" width="52" height="8" rx="4" fill="#9ba3b8"/>
+                <rect x="364" y="94" width="36" height="6" rx="3" fill="#5e6782"/>
+              </g>
+
+              <rect x="24" y="220" width="512" height="80" rx="10" fill="#0d1018" opacity="0.85"/>
+              <g transform="translate(40, 238)">
+                <circle cx="14" cy="14" r="14" fill="#ff135b"/>
+                <text x="14" y="18" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">01</text>
+                <text x="38" y="13" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="700">Pick your device</text>
+                <text x="38" y="28" fill="#9ba3b8" font-family="sans-serif" font-size="11">Flash to SD or USB</text>
+              </g>
+              <g transform="translate(208, 238)">
+                <circle cx="14" cy="14" r="14" fill="#2563eb"/>
+                <text x="14" y="18" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">02</text>
+                <text x="38" y="13" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="700">Copy your games</text>
+                <text x="38" y="28" fill="#9ba3b8" font-family="sans-serif" font-size="11">Via SD card or Wi-Fi</text>
+              </g>
+              <g transform="translate(378, 238)">
+                <circle cx="14" cy="14" r="14" fill="#10b981"/>
+                <text x="14" y="18" fill="#ffffff" font-family="sans-serif" font-size="11" font-weight="700" text-anchor="middle">03</text>
+                <text x="38" y="13" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="700">Pick and play</text>
+                <text x="38" y="28" fill="#9ba3b8" font-family="sans-serif" font-size="11">Instant controller play</text>
+              </g>
+            </svg>
+          </div>
+          <ol class="quick-start-list">
+            <li><span class="step-badge">01</span> <strong>Pick your device and flash</strong> the Extra Life image to a Secure Digital (SD) card or Universal Serial Bus (USB) drive.</li>
+            <li><span class="step-badge">02</span> <strong>Copy games via SD card or Wi-Fi</strong> right from your computer file manager.</li>
+            <li><span class="step-badge">03</span> <strong>Pick a game and play</strong> with automatic controller setup and save states.</li>
+          </ol>
         </figure>
       </section>
 
@@ -79,69 +145,352 @@
         <div>
           <p class="eyebrow">Features</p>
           <h2 id="features-title">Built like a console</h2>
-          <p>Extra Life replaces a general-purpose Linux desktop with a dedicated Wayland kiosk that boots straight into your game library.</p>
+          <p>Extra Life turns your device into a dedicated game console that boots straight into the Ludo game menu.</p>
         </div>
         <dl class="feature-list">
           <div>
-            <dt><span class="feature-number" aria-hidden="true">01</span> Pure Console Appliance</dt>
-            <dd>The system boots straight into Ludo on the Cage Wayland compositor with controller navigation, Wi-Fi, Bluetooth, and audio controls.</dd>
+            <dt><span class="feature-number" aria-hidden="true">01</span> Pure Console Experience</dt>
+            <dd>Turn on your device and browse your library with a controller. Wi-Fi, Bluetooth controllers, and audio settings live in one simple menu.</dd>
           </div>
           <div>
-            <dt><span class="feature-number" aria-hidden="true">02</span> 33 Curated Emulation Cores</dt>
-            <dd>You can play classic arcade, 8-bit, 16-bit, 32-bit, and 64-bit systems out of the box without manual core downloads.</dd>
+            <dt><span class="feature-number" aria-hidden="true">02</span> Ready to Play Out of the Box</dt>
+            <dd>Play over 40 classic consoles, handhelds, and arcade systems right away. You do not need to download emulator cores or tune complex settings.</dd>
           </div>
           <div>
-            <dt><span class="feature-number" aria-hidden="true">03</span> Power-Safe SquashFS &amp; OTA Updates</dt>
-            <dd>The system runs from a read-only compressed image that protects Secure Digital (SD) cards and updates from the Ludo menu.</dd>
+            <dt><span class="feature-number" aria-hidden="true">03</span> Install Once, Updates Itself</dt>
+            <dd>Download over-the-air (OTA) updates straight from the settings menu. Every update keeps an automatic backup of the previous version for safe recovery.</dd>
           </div>
           <div>
-            <dt><span class="feature-number" aria-hidden="true">04</span> PC, Raspberry Pi, and Handhelds</dt>
-            <dd>One unified platform supports <code translate="no">x86_64</code> PCs, Raspberry Pi boards and cases, and ARM handhelds.</dd>
+            <dt><span class="feature-number" aria-hidden="true">04</span> Easy Wi-Fi and SD Card Transfers</dt>
+            <dd>Copy game files onto the SD card, or turn on File Sharing over Wi-Fi. Open the shared folder in Windows File Explorer, macOS Finder, or your Linux file manager.</dd>
           </div>
         </dl>
       </section>
 
-      <section class="install section-rule" aria-labelledby="install-title">
-        <div>
-          <p class="eyebrow">Get started</p>
-          <h2 id="install-title">Try Extra Life</h2>
-          <p>Download a disk image from GitHub Releases, or run <code translate="no">just boot-disk</code> to boot the local QEMU virtual machine (VM).</p>
-          <p>Enable Samba or Secure Shell (SSH) in Ludo, then copy read-only memory (ROM) files to <code translate="no">/storage/Retro/roms</code>.</p>
-          <div class="install-links">
-            <a class="text-link" href="https://github.com/wimpysworld/extra-life/releases">Download an image <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
-            <a class="text-link" href="https://github.com/wimpysworld/extra-life/wiki">Read the documentation <span class="octicon inline-icon link-external" aria-hidden="true"></span></a>
+      <section id="systems" class="section-rule" aria-labelledby="systems-title">
+        <div class="section-heading">
+          <p class="eyebrow">40+ classic platforms</p>
+          <h2 id="systems-title">Play the systems you love</h2>
+          <p>Extra Life includes 33 pre-configured emulators so that your games run out of the box. Drop your games into the matching system folder and start playing.</p>
+        </div>
+
+        <div class="row systems-grid">
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-primary system-card">
+              <div class="system-card-head">
+                <span class="system-icon" aria-hidden="true">
+                  <svg viewBox="0 0 36 36" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="10" width="30" height="16" rx="4"/>
+                    <path d="M9 18h6M12 15v6"/>
+                    <circle cx="24" cy="19" r="2" fill="currentColor"/>
+                    <circle cx="28" cy="16" r="2" fill="currentColor"/>
+                  </svg>
+                </span>
+                <h3>Nintendo Consoles</h3>
+              </div>
+              <p>From 8-bit family classics to 3D home consoles.</p>
+              <ul class="tag-list" aria-label="Supported Nintendo consoles">
+                <li>NES</li>
+                <li>Famicom Disk System</li>
+                <li>Super Nintendo</li>
+                <li>Satellaview</li>
+                <li>Sufami Turbo</li>
+                <li>Nintendo 64</li>
+                <li>GameCube</li>
+                <li>Wii</li>
+                <li>Virtual Boy</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-primary system-card">
+              <div class="system-card-head">
+                <span class="system-icon" aria-hidden="true">
+                  <svg viewBox="0 0 36 36" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="8" y="3" width="20" height="30" rx="3"/>
+                    <rect x="11" y="6" width="14" height="10" rx="1"/>
+                    <path d="M12 23h4M14 21v4"/>
+                    <circle cx="22" cy="24" r="1.5" fill="currentColor"/>
+                    <circle cx="24.5" cy="21.5" r="1.5" fill="currentColor"/>
+                  </svg>
+                </span>
+                <h3>Nintendo Handhelds</h3>
+              </div>
+              <p>Portable favourites from monochrome screens to dual-screen classics.</p>
+              <ul class="tag-list" aria-label="Supported Nintendo handhelds">
+                <li>Game Boy</li>
+                <li>Game Boy Color</li>
+                <li>Game Boy Advance</li>
+                <li>Pokémon Mini</li>
+                <li>Nintendo DS</li>
+                <li>Nintendo 3DS</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-primary system-card">
+              <div class="system-card-head">
+                <span class="system-icon" aria-hidden="true">
+                  <svg viewBox="0 0 36 36" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="9" width="30" height="18" rx="9"/>
+                    <path d="M9 18h5M11.5 15.5v5"/>
+                    <circle cx="22" cy="20" r="1.4" fill="currentColor"/>
+                    <circle cx="25.5" cy="18.5" r="1.4" fill="currentColor"/>
+                    <circle cx="29" cy="17" r="1.4" fill="currentColor"/>
+                  </svg>
+                </span>
+                <h3>Sega Consoles &amp; Handhelds</h3>
+              </div>
+              <p>Fast arcade conversions and 16-bit to 128-bit home hardware.</p>
+              <ul class="tag-list" aria-label="Supported Sega systems">
+                <li>SG-1000</li>
+                <li>Master System</li>
+                <li>Mega Drive / Genesis</li>
+                <li>Sega CD</li>
+                <li>32X</li>
+                <li>Game Gear</li>
+                <li>Saturn</li>
+                <li>Dreamcast</li>
+                <li>Pico</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-primary system-card">
+              <div class="system-card-head">
+                <span class="system-icon" aria-hidden="true">
+                  <svg viewBox="0 0 36 36" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 12a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v10a4 4 0 0 1-7 2.5L20 21h-4l-3 3.5A4 4 0 0 1 6 22V12z"/>
+                    <path d="M10 15h4M12 13v4"/>
+                    <circle cx="24" cy="15" r="2"/>
+                  </svg>
+                </span>
+                <h3>Sony PlayStation</h3>
+              </div>
+              <p>Classic CD, DVD, and portable 3D gaming generations.</p>
+              <ul class="tag-list" aria-label="Supported Sony PlayStation systems">
+                <li>PlayStation</li>
+                <li>PlayStation 2 (<code translate="no">x86_64</code>)</li>
+                <li>PlayStation Portable (PSP)</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-primary system-card">
+              <div class="system-card-head">
+                <span class="system-icon" aria-hidden="true">
+                  <svg viewBox="0 0 36 36" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="6" y="22" width="24" height="8" rx="2"/>
+                    <path d="M18 8v14"/>
+                    <circle cx="18" cy="8" r="3" fill="currentColor"/>
+                    <circle cx="11" cy="26" r="1.8" fill="currentColor"/>
+                  </svg>
+                </span>
+                <h3>Atari Consoles &amp; Computers</h3>
+              </div>
+              <p>Living-room pioneers, colour handhelds, and 16-bit home computers.</p>
+              <ul class="tag-list" aria-label="Supported Atari systems">
+                <li>Atari 2600</li>
+                <li>Atari 5200</li>
+                <li>Atari 7800</li>
+                <li>Atari Lynx</li>
+                <li>Atari Jaguar</li>
+                <li>Atari ST</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-primary system-card">
+              <div class="system-card-head">
+                <span class="system-icon" aria-hidden="true">
+                  <svg viewBox="0 0 36 36" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="7" width="26" height="22" rx="3"/>
+                    <rect x="9" y="11" width="18" height="8" rx="1"/>
+                    <circle cx="14" cy="24" r="1.5" fill="currentColor"/>
+                    <circle cx="22" cy="24" r="1.5" fill="currentColor"/>
+                  </svg>
+                </span>
+                <h3>NEC PC Engine &amp; PC-FX</h3>
+              </div>
+              <p>HuCard and CD-ROM systems celebrated for arcade shooters and action.</p>
+              <ul class="tag-list" aria-label="Supported NEC systems">
+                <li>PC Engine / TurboGrafx-16</li>
+                <li>TurboGrafx-CD</li>
+                <li>SuperGrafx</li>
+                <li>PC-FX</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-primary system-card">
+              <div class="system-card-head">
+                <span class="system-icon" aria-hidden="true">
+                  <svg viewBox="0 0 36 36" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="9" width="28" height="18" rx="4"/>
+                    <rect x="12" y="12" width="12" height="12" rx="1"/>
+                    <circle cx="8" cy="18" r="2"/>
+                    <circle cx="28" cy="16" r="1.5" fill="currentColor"/>
+                    <circle cx="28" cy="20" r="1.5" fill="currentColor"/>
+                  </svg>
+                </span>
+                <h3>SNK &amp; Bandai Handhelds</h3>
+              </div>
+              <p>Click-stick pocket fighters and dual-orientation portable consoles.</p>
+              <ul class="tag-list" aria-label="Supported SNK and Bandai handhelds">
+                <li>Neo Geo Pocket</li>
+                <li>Neo Geo Pocket Color</li>
+                <li>WonderSwan</li>
+                <li>WonderSwan Color</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-primary system-card">
+              <div class="system-card-head">
+                <span class="system-icon" aria-hidden="true">
+                  <svg viewBox="0 0 36 36" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 4h18l3 8-3 4v16H9V16L6 12l3-8z"/>
+                    <rect x="12" y="8" width="12" height="7" rx="1"/>
+                    <line x1="15" y1="22" x2="21" y2="22"/>
+                  </svg>
+                </span>
+                <h3>Arcade &amp; Indie Engines</h3>
+              </div>
+              <p>Coin-op arcade cabinets and built-in open-source game engines.</p>
+              <ul class="tag-list" aria-label="Supported arcade and indie engines">
+                <li>FinalBurn Neo Arcade</li>
+                <li>Cave Story (NXEngine)</li>
+                <li>ChaiLove</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-primary system-card">
+              <div class="system-card-head">
+                <span class="system-icon" aria-hidden="true">
+                  <svg viewBox="0 0 36 36" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="6" width="26" height="18" rx="2"/>
+                    <path d="M3 28h30"/>
+                    <polygon points="18,10 23,19 13,19"/>
+                  </svg>
+                </span>
+                <h3>Classic Consoles &amp; Computers</h3>
+              </div>
+              <p>Early home computers, vector displays, and second-generation consoles.</p>
+              <ul class="tag-list" aria-label="Supported classic consoles and computers">
+                <li>ColecoVision</li>
+                <li>MSX</li>
+                <li>MSX2</li>
+                <li>Spectravideo</li>
+                <li>GCE Vectrex</li>
+                <li>Magnavox Odyssey 2 / Videopac+</li>
+              </ul>
+            </article>
           </div>
         </div>
-        <div class="install-options">
-          <h3>Boot the local VM or copy ROMs</h3>
-          <pre><code translate="no"># Build and boot the writable 64 GB UEFI disk image in QEMU
-just boot-disk
 
-# Copy ROMs over SSH (port 2222 in vm-retro, or port 22 on hardware)
-rsync -avP ./roms/ ludo@extra-life.local:/storage/Retro/roms/</code></pre>
-          <p class="muted">You can also open the <code translate="no">Retro</code> network share over Samba to copy ROMs, Basic Input/Output System (BIOS) files, saves, and screenshots.</p>
+        <p class="systems-footer-link">
+          <a class="text-link" target="_blank" rel="noopener noreferrer" href="https://github.com/wimpysworld/extra-life/wiki/Supported-Systems">View the full emulator and folder guide in the Wiki <span class="octicon inline-icon link-external" aria-hidden="true"></span></a>
+        </p>
+      </section>
+
+      <section id="install" class="section-rule" aria-labelledby="install-title">
+        <div class="section-heading">
+          <p class="eyebrow">Easy game transfers</p>
+          <h2 id="install-title">Add your games in minutes</h2>
+          <p>You do not need command-line tools to load your library. Copy your games over Wi-Fi or plug your storage card into your computer.</p>
+        </div>
+
+        <div class="row transfer-grid">
+          <div class="col-12 col-md-6">
+            <article class="card-primary transfer-card">
+              <span class="transfer-badge">Option 01</span>
+              <h3>Wi-Fi Network Drive (Windows, macOS, and Linux)</h3>
+              <p>Turn on Samba File Sharing in the settings menu. Open the shared folder on your computer and drag your games into the <code translate="no">roms</code> folder.</p>
+              <dl class="path-list">
+                <div>
+                  <dt>Windows File Explorer</dt>
+                  <dd><code translate="no">\\extra-life\Retro</code></dd>
+                </div>
+                <div>
+                  <dt>macOS Finder &amp; Linux File Managers</dt>
+                  <dd><code translate="no">smb://extra-life.local/Retro</code></dd>
+                </div>
+              </dl>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <article class="card-primary transfer-card">
+              <span class="transfer-badge">Option 02</span>
+              <h3>SD Card or USB Drive</h3>
+              <p>Plug your SD card or USB drive into your computer. Open the <code translate="no">STORAGE</code> drive and copy your games into the matching system folder inside <code translate="no">Retro/roms</code>.</p>
+              <dl class="path-list">
+                <div>
+                  <dt>Game Folders</dt>
+                  <dd><code translate="no">STORAGE/Retro/roms/&lt;System Name&gt;/</code></dd>
+                </div>
+                <div>
+                  <dt>System BIOS Files</dt>
+                  <dd><code translate="no">STORAGE/Retro/system/</code></dd>
+                </div>
+              </dl>
+            </article>
+          </div>
         </div>
       </section>
 
-      <section class="section-rule" aria-labelledby="faq-title">
+      <section class="section-rule" aria-labelledby="callout-title">
+        <div class="device-callout">
+          <div class="device-callout-copy">
+            <p class="eyebrow">50+ supported devices</p>
+            <h2 id="callout-title">Ready to transform your hardware?</h2>
+            <p>Extra Life supports handhelds, single-board computers, retro cases, and personal computers from Anbernic, Powkiddy, Mangmi, Raspberry Pi, RetroFlag, DeskPi, Argon, and GPD.</p>
+            <ul class="brand-pill-list" aria-label="Supported hardware brands">
+              <li>Anbernic</li>
+              <li>Powkiddy</li>
+              <li>Mangmi</li>
+              <li>Raspberry Pi</li>
+              <li>RetroFlag</li>
+              <li>DeskPi</li>
+              <li>Argon</li>
+              <li>GPD</li>
+              <li>64-bit PC &amp; VM</li>
+            </ul>
+          </div>
+          <div class="device-callout-action">
+            <a class="primary-action" href="./devices.html">Browse All Devices <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="section-rule" aria-labelledby="faq-title">
         <p class="eyebrow">Questions</p>
         <h2 id="faq-title">Frequently asked questions</h2>
         <div class="accordion">
           <details>
-            <summary>Which systems and hardware does Extra Life support?</summary>
-            <p>Extra Life ships 33 curated Libretro cores for Arcade, Atari, Bandai, ColecoVision, MSX, Vectrex, Odyssey2, NEC, Nintendo, Sega, SNK, and Sony systems. Hardware support covers <code translate="no">x86_64</code> PCs and handhelds, Raspberry Pi boards, and ARM handhelds.</p>
+            <summary>How do I find the right download for my device?</summary>
+            <p>Open the <a href="./devices.html">Device Finder</a> and type your device model or choose your brand. Every device card shows the exact Extra Life image name and download link for your hardware.</p>
           </details>
           <details>
-            <summary>How do I copy ROMs and BIOS files to <code translate="no">/storage/Retro</code>?</summary>
-            <p>Enable Samba or SSH from the Ludo settings menu. Over Samba, copy ROM files into <code translate="no">roms/&lt;Playlist Name&gt;/</code> and BIOS files into <code translate="no">system/</code>. Over SSH, copy files directly to <code translate="no">/storage/Retro/roms</code> and <code translate="no">/storage/Retro/system</code> as user <code translate="no">ludo</code>.</p>
+            <summary>How do I copy games from Windows, macOS, or Linux?</summary>
+            <p>You can copy games directly onto the <code translate="no">STORAGE</code> partition of your SD card or USB drive inside <code translate="no">Retro/roms</code>. You can also turn on Samba File Sharing in the settings menu and connect to <code translate="no">\\extra-life\Retro</code> on Windows or <code translate="no">smb://extra-life.local/Retro</code> on macOS and Linux.</p>
           </details>
           <details>
-            <summary>How do OTA updates work?</summary>
-            <p>Extra Life boots from a read-only compressed <code translate="no">/boot/SYSTEM</code> SquashFS image and runs zero Nix binaries at runtime. Ludo downloads a verified <code translate="no">extra-life-&lt;variant&gt;-&lt;version&gt;.tar</code> archive into <code translate="no">/storage/.update/</code> and reboots. During early boot (<code translate="no">initrd</code>), the appliance saves the previous system as <code translate="no">.prev</code> for rollback and activates the new image.</p>
+            <summary>How do automatic updates work?</summary>
+            <p>Open the settings menu on your device and select Check for Updates. Extra Life downloads the new system image in the background and installs it when you restart. The system keeps your previous version as a backup so that you can recover safely if an update fails.</p>
           </details>
           <details>
-            <summary>How can I test Extra Life in <code translate="no">vm-retro</code>?</summary>
-            <p>Clone the repository and run <code translate="no">just boot-disk</code>, <code translate="no">just boot-iso</code>, or <code translate="no">nix run .#vm-retro</code> on Linux or Apple Silicon macOS. The runner starts QEMU with hardware acceleration, audio passthrough, persistent storage in <code translate="no">.vm/</code>, and SSH on host port <code translate="no">2222</code>.</p>
+            <summary>Where do BIOS files go?</summary>
+            <p>Some disc-based systems, such as PlayStation, Sega Saturn, and PC Engine CD, need Basic Input/Output System (BIOS) files. Copy your BIOS files into the <code translate="no">Retro/system</code> folder on your SD card or over the Wi-Fi network drive.</p>
           </details>
         </div>
       </section>
@@ -159,7 +508,8 @@ rsync -avP ./roms/ ludo@extra-life.local:/storage/Retro/roms/</code></pre>
         <nav class="footer-links" aria-label="Footer navigation">
           <div><h3>Resources</h3><ul>
             <!-- tailor:footer-navigation:start -->
-            <li><a href="https://github.com/wimpysworld/extra-life?tab=readme-ov-file">Overview</a></li>
+            <li><a href="./">Overview</a></li>
+            <li><a href="./devices.html">Devices</a></li>
             <li><a href="https://github.com/wimpysworld/extra-life/wiki">Documentation</a></li>
             <li><a href="https://github.com/wimpysworld/extra-life/blob/HEAD/SUPPORT.md">Support</a></li>
             <!-- tailor:footer-navigation:end -->

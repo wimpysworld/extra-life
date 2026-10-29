@@ -1,0 +1,1270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="rgb(19, 22.5, 30.5)" media="(prefers-color-scheme: dark)">
+    <meta name="description" content="Find the right Extra Life download for your handheld, Raspberry Pi, retro case, or computer.">
+    <title>Find Your Device - Extra Life</title>
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@digicreon/mucss@1.4.9/dist/mu.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <svg class="svg-sprites" aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
+      <defs>
+        <!-- 1. Horizontal metal/plastic handheld -->
+        <symbol id="illust-handheld-horizontal" viewBox="0 0 220 110">
+          <rect x="14" y="18" width="192" height="74" rx="28" fill="var(--illust-shell, #232a3d)" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.5"/>
+          <path d="M40 18h140" stroke="var(--illust-accent, #ff135b)" stroke-width="3" stroke-linecap="round"/>
+          <rect x="58" y="25" width="104" height="60" rx="5" fill="#101420" stroke="#36405a" stroke-width="1.5"/>
+          <rect x="64" y="31" width="92" height="48" rx="3" fill="#1b2236"/>
+          <rect x="72" y="39" width="26" height="32" rx="3" fill="#ff135b"/>
+          <rect x="104" y="39" width="22" height="32" rx="3" fill="#2a3450"/>
+          <rect x="130" y="39" width="20" height="32" rx="3" fill="#2a3450"/>
+          <path d="M31 46h14M38 39v14" stroke="#d5dceb" stroke-width="4.5" stroke-linecap="round"/>
+          <circle cx="38" cy="70" r="7" fill="#151a28" stroke="#647296" stroke-width="1.5"/>
+          <circle cx="182" cy="40" r="3.5" fill="#ff5c8d"/>
+          <circle cx="182" cy="52" r="3.5" fill="#3dd68c"/>
+          <circle cx="176" cy="46" r="3.5" fill="#4c9aff"/>
+          <circle cx="188" cy="46" r="3.5" fill="#f5a623"/>
+          <circle cx="182" cy="70" r="7" fill="#151a28" stroke="#647296" stroke-width="1.5"/>
+        </symbol>
+
+        <!-- 2. Square 1:1 handheld -->
+        <symbol id="illust-handheld-square" viewBox="0 0 220 110">
+          <rect x="28" y="12" width="164" height="86" rx="18" fill="var(--illust-shell, #232a3d)" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.5"/>
+          <rect x="72" y="17" width="76" height="76" rx="5" fill="#101420" stroke="#36405a" stroke-width="1.5"/>
+          <rect x="77" y="22" width="66" height="66" rx="3" fill="#1b2236"/>
+          <rect x="85" y="30" width="50" height="32" rx="3" fill="#ff135b"/>
+          <rect x="85" y="68" width="34" height="6" rx="3" fill="#9ba3b8"/>
+          <path d="M43 44h14M50 37v14" stroke="#d5dceb" stroke-width="4.5" stroke-linecap="round"/>
+          <circle cx="50" cy="72" r="7" fill="#151a28" stroke="#647296" stroke-width="1.5"/>
+          <circle cx="170" cy="38" r="3.5" fill="#ff5c8d"/>
+          <circle cx="170" cy="50" r="3.5" fill="#3dd68c"/>
+          <circle cx="164" cy="44" r="3.5" fill="#4c9aff"/>
+          <circle cx="176" cy="44" r="3.5" fill="#f5a623"/>
+          <circle cx="170" cy="72" r="7" fill="#151a28" stroke="#647296" stroke-width="1.5"/>
+        </symbol>
+
+        <!-- 3. Vertical Game Boy-style handheld -->
+        <symbol id="illust-handheld-vertical" viewBox="0 0 220 110">
+          <rect x="72" y="6" width="76" height="98" rx="10" fill="var(--illust-shell, #232a3d)" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.5"/>
+          <rect x="80" y="13" width="60" height="44" rx="4" fill="#101420" stroke="#36405a" stroke-width="1.5"/>
+          <rect x="84" y="17" width="52" height="36" rx="2" fill="#1b2236"/>
+          <rect x="90" y="23" width="22" height="24" rx="2" fill="#ff135b"/>
+          <rect x="116" y="23" width="14" height="24" rx="2" fill="#2a3450"/>
+          <path d="M84 74h14M91 67v14" stroke="#d5dceb" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="129" cy="70" r="3.2" fill="#ff5c8d"/>
+          <circle cx="123" cy="76" r="3.2" fill="#4c9aff"/>
+          <circle cx="135" cy="76" r="3.2" fill="#f5a623"/>
+          <circle cx="129" cy="82" r="3.2" fill="#3dd68c"/>
+          <rect x="101" y="92" width="7" height="3" rx="1.5" fill="#647296"/>
+          <rect x="112" y="92" width="7" height="3" rx="1.5" fill="#647296"/>
+        </symbol>
+
+        <!-- 4. 6-button Sega-style arc handheld -->
+        <symbol id="illust-handheld-arc" viewBox="0 0 220 110">
+          <path d="M18 42C18 24 34 16 56 16h108c22 0 38 8 38 26v24c0 18-16 28-36 28-14 0-24-6-36-6H90c-12 0-22 6-36 6-20 0-36-10-36-28V42z" fill="var(--illust-shell, #232a3d)" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.5"/>
+          <rect x="64" y="22" width="92" height="54" rx="5" fill="#101420" stroke="#36405a" stroke-width="1.5"/>
+          <rect x="69" y="27" width="82" height="44" rx="3" fill="#1b2236"/>
+          <rect x="75" y="34" width="26" height="30" rx="3" fill="#ff135b"/>
+          <rect x="106" y="34" width="20" height="30" rx="3" fill="#2a3450"/>
+          <circle cx="41" cy="50" r="11" fill="#151a28" stroke="#647296" stroke-width="1.5"/>
+          <path d="M35 50h12M41 44v12" stroke="#d5dceb" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="171" cy="43" r="3" fill="#9ba3b8"/>
+          <circle cx="180" cy="40" r="3" fill="#9ba3b8"/>
+          <circle cx="189" cy="37" r="3" fill="#9ba3b8"/>
+          <circle cx="173" cy="54" r="3.5" fill="#ff135b"/>
+          <circle cx="182" cy="51" r="3.5" fill="#4c9aff"/>
+          <circle cx="191" cy="48" r="3.5" fill="#3dd68c"/>
+        </symbol>
+
+        <!-- 5. Widescreen 16:9 modern handheld -->
+        <symbol id="illust-handheld-widescreen" viewBox="0 0 220 110">
+          <rect x="10" y="16" width="200" height="78" rx="34" fill="var(--illust-shell, #232a3d)" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.5"/>
+          <rect x="48" y="22" width="124" height="66" rx="6" fill="#101420" stroke="#36405a" stroke-width="1.5"/>
+          <rect x="53" y="27" width="114" height="56" rx="3" fill="#1b2236"/>
+          <rect x="61" y="35" width="32" height="40" rx="4" fill="#ff135b"/>
+          <rect x="99" y="35" width="28" height="40" rx="4" fill="#2a3450"/>
+          <rect x="133" y="35" width="26" height="40" rx="4" fill="#2a3450"/>
+          <circle cx="29" cy="42" r="7" fill="#151a28" stroke="#ff135b" stroke-width="1.8"/>
+          <path d="M23 64h12M29 58v12" stroke="#d5dceb" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="191" cy="41" r="3" fill="#ff5c8d"/>
+          <circle cx="186" cy="46" r="3" fill="#4c9aff"/>
+          <circle cx="196" cy="46" r="3" fill="#f5a623"/>
+          <circle cx="191" cy="51" r="3" fill="#3dd68c"/>
+          <circle cx="191" cy="68" r="7" fill="#151a28" stroke="#ff135b" stroke-width="1.8"/>
+        </symbol>
+
+        <!-- 6. Clamshell mini gaming laptop -->
+        <symbol id="illust-clamshell" viewBox="0 0 220 110">
+          <rect x="44" y="8" width="132" height="52" rx="6" fill="#101420" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.2"/>
+          <rect x="50" y="13" width="120" height="42" rx="3" fill="#1b2236"/>
+          <rect x="58" y="19" width="30" height="30" rx="3" fill="#ff135b"/>
+          <rect x="94" y="19" width="26" height="30" rx="3" fill="#2a3450"/>
+          <rect x="126" y="19" width="26" height="30" rx="3" fill="#2a3450"/>
+          <path d="M36 62h148l12 38H24l12-38z" fill="var(--illust-shell, #232a3d)" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.2"/>
+          <circle cx="52" cy="73" r="5" fill="#151a28" stroke="#647296" stroke-width="1.5"/>
+          <path d="M66 73h8M70 69v8" stroke="#d5dceb" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="150" cy="73" r="2.5" fill="#ff5c8d"/>
+          <circle cx="156" cy="73" r="2.5" fill="#4c9aff"/>
+          <circle cx="168" cy="73" r="5" fill="#151a28" stroke="#647296" stroke-width="1.5"/>
+          <rect x="54" y="83" width="112" height="12" rx="2" fill="#151a28" stroke="#36405a" stroke-width="1"/>
+        </symbol>
+
+        <!-- 7. Sliding-screen / candybar PC handheld -->
+        <symbol id="illust-slider-pc" viewBox="0 0 220 110">
+          <rect x="14" y="18" width="192" height="76" rx="32" fill="var(--illust-shell, #232a3d)" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.5"/>
+          <rect x="50" y="12" width="120" height="66" rx="6" fill="#101420" stroke="#ff135b" stroke-width="2"/>
+          <rect x="55" y="17" width="110" height="56" rx="3" fill="#1b2236"/>
+          <rect x="63" y="25" width="30" height="40" rx="3" fill="#ff135b"/>
+          <rect x="99" y="25" width="26" height="40" rx="3" fill="#2a3450"/>
+          <rect x="131" y="25" width="24" height="40" rx="3" fill="#2a3450"/>
+          <rect x="64" y="81" width="92" height="8" rx="2" fill="#151a28" stroke="#36405a" stroke-width="1"/>
+          <circle cx="32" cy="42" r="6.5" fill="#151a28" stroke="#647296" stroke-width="1.5"/>
+          <path d="M27 62h10M32 57v10" stroke="#d5dceb" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="188" cy="42" r="3" fill="#ff5c8d"/>
+          <circle cx="183" cy="47" r="3" fill="#4c9aff"/>
+          <circle cx="193" cy="47" r="3" fill="#f5a623"/>
+          <circle cx="188" cy="52" r="3" fill="#3dd68c"/>
+          <circle cx="188" cy="68" r="6.5" fill="#151a28" stroke="#647296" stroke-width="1.5"/>
+        </symbol>
+
+        <!-- 8. Single-board computer PCB -->
+        <symbol id="illust-sbc-pcb" viewBox="0 0 220 110">
+          <rect x="34" y="14" width="152" height="82" rx="8" fill="#133829" stroke="#28a76b" stroke-width="2.5"/>
+          <circle cx="44" cy="24" r="3.5" fill="#101420" stroke="#eab308" stroke-width="2"/>
+          <circle cx="176" cy="24" r="3.5" fill="#101420" stroke="#eab308" stroke-width="2"/>
+          <circle cx="44" cy="86" r="3.5" fill="#101420" stroke="#eab308" stroke-width="2"/>
+          <circle cx="176" cy="86" r="3.5" fill="#101420" stroke="#eab308" stroke-width="2"/>
+          <rect x="52" y="20" width="84" height="10" rx="2" fill="#1f2937" stroke="#9ca3af" stroke-width="1"/>
+          <rect x="82" y="42" width="34" height="34" rx="4" fill="#1f2937" stroke="#9ca3af" stroke-width="1.5"/>
+          <text x="99" y="63" fill="#ffffff" font-family="monospace" font-size="10" font-weight="700" text-anchor="middle">SoC</text>
+          <rect x="166" y="28" width="24" height="16" rx="2" fill="#9ca3af"/>
+          <rect x="166" y="50" width="24" height="16" rx="2" fill="#9ca3af"/>
+          <rect x="164" y="70" width="26" height="18" rx="2" fill="#6b7280"/>
+          <rect x="54" y="84" width="18" height="12" rx="2" fill="#9ca3af"/>
+          <rect x="80" y="84" width="18" height="12" rx="2" fill="#9ca3af"/>
+        </symbol>
+
+        <!-- 9. Keyboard computer -->
+        <symbol id="illust-keyboard-pc" viewBox="0 0 220 110">
+          <path d="M22 28h176a8 8 0 0 1 8 8v44a8 8 0 0 1-8 8H22a8 8 0 0 1-8-8V36a8 8 0 0 1 8-8z" fill="var(--illust-shell, #232a3d)" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.5"/>
+          <path d="M22 30h176" stroke="#ff135b" stroke-width="4" stroke-linecap="round"/>
+          <g fill="#d5dceb" opacity="0.85">
+            <rect x="26" y="40" width="12" height="8" rx="1.5"/>
+            <rect x="42" y="40" width="12" height="8" rx="1.5"/>
+            <rect x="58" y="40" width="12" height="8" rx="1.5"/>
+            <rect x="74" y="40" width="12" height="8" rx="1.5"/>
+            <rect x="90" y="40" width="12" height="8" rx="1.5"/>
+            <rect x="106" y="40" width="12" height="8" rx="1.5"/>
+            <rect x="122" y="40" width="12" height="8" rx="1.5"/>
+            <rect x="138" y="40" width="12" height="8" rx="1.5"/>
+            <rect x="154" y="40" width="12" height="8" rx="1.5"/>
+            <rect x="170" y="40" width="24" height="8" rx="1.5" fill="#ff135b"/>
+            <rect x="26" y="52" width="16" height="8" rx="1.5"/>
+            <rect x="46" y="52" width="12" height="8" rx="1.5"/>
+            <rect x="62" y="52" width="12" height="8" rx="1.5"/>
+            <rect x="78" y="52" width="12" height="8" rx="1.5"/>
+            <rect x="94" y="52" width="12" height="8" rx="1.5"/>
+            <rect x="110" y="52" width="12" height="8" rx="1.5"/>
+            <rect x="126" y="52" width="12" height="8" rx="1.5"/>
+            <rect x="142" y="52" width="12" height="8" rx="1.5"/>
+            <rect x="158" y="52" width="12" height="8" rx="1.5"/>
+            <rect x="174" y="52" width="20" height="8" rx="1.5"/>
+            <rect x="26" y="64" width="22" height="8" rx="1.5"/>
+            <rect x="52" y="64" width="12" height="8" rx="1.5"/>
+            <rect x="68" y="64" width="76" height="8" rx="1.5"/>
+            <rect x="148" y="64" width="16" height="8" rx="1.5"/>
+            <rect x="168" y="64" width="26" height="8" rx="1.5"/>
+          </g>
+        </symbol>
+
+        <!-- 10. Retro console enclosure -->
+        <symbol id="illust-retro-case" viewBox="0 0 220 110">
+          <rect x="28" y="22" width="164" height="66" rx="8" fill="var(--illust-shell, #232a3d)" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.5"/>
+          <rect x="28" y="50" width="164" height="12" fill="#161b28"/>
+          <rect x="44" y="28" width="72" height="18" rx="2" fill="#161b28" stroke="#36405a" stroke-width="1.5"/>
+          <line x1="52" y1="37" x2="108" y2="37" stroke="#ff135b" stroke-width="3" stroke-linecap="round"/>
+          <rect x="46" y="68" width="22" height="10" rx="2" fill="#ff135b"/>
+          <rect x="74" y="68" width="22" height="10" rx="2" fill="#4e5b7c"/>
+          <circle cx="152" cy="73" r="5" fill="#101420" stroke="#647296" stroke-width="1.5"/>
+          <circle cx="170" cy="73" r="5" fill="#101420" stroke="#647296" stroke-width="1.5"/>
+          <circle cx="38" cy="73" r="2.5" fill="#3dd68c"/>
+        </symbol>
+
+        <!-- 11. Mini PC / Desktop & Virtual Machine -->
+        <symbol id="illust-mini-pc" viewBox="0 0 220 110">
+          <rect x="48" y="10" width="124" height="64" rx="6" fill="#101420" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2.5"/>
+          <rect x="54" y="16" width="112" height="52" rx="3" fill="#1b2236"/>
+          <rect x="64" y="24" width="28" height="36" rx="3" fill="#ff135b"/>
+          <rect x="98" y="24" width="24" height="36" rx="3" fill="#2a3450"/>
+          <rect x="128" y="24" width="24" height="36" rx="3" fill="#2a3450"/>
+          <path d="M98 74h24l6 10H92l6-10z" fill="#4e5b7c"/>
+          <rect x="38" y="82" width="144" height="18" rx="5" fill="var(--illust-shell, #232a3d)" stroke="var(--illust-stroke, #4e5b7c)" stroke-width="2"/>
+          <circle cx="54" cy="91" r="3" fill="#3dd68c"/>
+          <rect x="136" y="88" width="14" height="6" rx="1.5" fill="#101420"/>
+          <rect x="156" y="88" width="14" height="6" rx="1.5" fill="#101420"/>
+        </symbol>
+      </defs>
+    </svg>
+
+    <header class="container site-header">
+      <a class="brand" href="./" aria-label="Extra Life home">
+        <img class="brand-mark" src="icon.svg" alt="" width="40" height="40">
+        <span class="brand-name">Extra Life</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <ul>
+          <!-- tailor:navigation:start -->
+          <li><a href="./">Overview</a></li>
+          <li><a href="./#systems">Systems</a></li>
+          <li><a href="./devices.html" aria-current="page">Devices</a></li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://github.com/wimpysworld/extra-life/wiki">Documentation</a></li>
+          <li><a href="./devices.html">Download</a></li>
+          <!-- tailor:navigation:end -->
+        </ul>
+      </nav>
+      <div class="header-tools">
+        <a class="icon-button" target="_blank" rel="noopener noreferrer" href="https://github.com/wimpysworld/extra-life" aria-label="Extra Life on GitHub" title="Extra Life on GitHub">
+          <span class="octicon github-icon" aria-hidden="true"></span>
+        </a>
+        <label id="theme-picker" class="theme-picker" hidden>
+          <span id="theme-sun" class="octicon" aria-hidden="true"></span>
+          <span id="theme-moon" class="octicon" aria-hidden="true" hidden></span>
+          <span class="visually-hidden">Theme</span>
+          <select id="theme-select" title="Theme">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+      </div>
+    </header>
+
+    <main id="main" class="container" tabindex="-1">
+      <section class="devices-hero" aria-labelledby="devices-title">
+        <p class="eyebrow">Supported hardware</p>
+        <h1 id="devices-title">Find your device</h1>
+        <p class="lead">Pick your handheld, Raspberry Pi, retro case, or computer below. Every card gives you the exact image download and setup notes for your hardware.</p>
+
+        <div class="device-controls">
+          <div class="device-search-wrap">
+            <label for="device-search" class="visually-hidden">Search supported devices</label>
+            <input
+              type="search"
+              id="device-search"
+              name="device-search"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="Search by device or brand (for example RG353M, RGB30, Raspberry Pi 5, GPD WIN Max, Mangmi)..."
+            >
+          </div>
+
+          <div class="device-filter-bar" role="toolbar" aria-label="Filter devices by brand or category">
+            <button type="button" class="filter-pill is-active" data-filter="all" aria-pressed="true">All</button>
+            <button type="button" class="filter-pill" data-filter="anbernic" aria-pressed="false">Anbernic</button>
+            <button type="button" class="filter-pill" data-filter="powkiddy" aria-pressed="false">Powkiddy</button>
+            <button type="button" class="filter-pill" data-filter="mangmi" aria-pressed="false">Mangmi</button>
+            <button type="button" class="filter-pill" data-filter="raspberry-pi" aria-pressed="false">Raspberry Pi</button>
+            <button type="button" class="filter-pill" data-filter="retro-cases" aria-pressed="false">Retro Cases</button>
+            <button type="button" class="filter-pill" data-filter="gpd" aria-pressed="false">GPD</button>
+            <button type="button" class="filter-pill" data-filter="pc-vm" aria-pressed="false">PC &amp; VM</button>
+          </div>
+
+          <p id="device-count" class="device-count" role="status" aria-live="polite">Showing all 44 supported devices and cases</p>
+        </div>
+      </section>
+
+      <section class="devices-catalogue section-rule" aria-label="Supported device downloads">
+        <div id="device-grid" class="row device-grid">
+          <!-- Anbernic (8 cards) -->
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="anbernic" data-keywords="anbernic rg353m rk3566 metal horizontal handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-horizontal"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Anbernic</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Anbernic RG353M</h3>
+              <p>Compact 3.5-inch 4:3 metal handheld with dual Hall-effect analogue sticks. Flash the image to a microSD card for slot TF1.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="anbernic" data-keywords="anbernic rg353p rk3566 snes controller horizontal handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-horizontal"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Anbernic</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Anbernic RG353P</h3>
+              <p>Stacked-shoulder 3.5-inch 4:3 handheld styled like a classic 16-bit controller. Boots directly into Extra Life from microSD slot TF1.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="anbernic" data-keywords="anbernic rg353ps rk3566 horizontal handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-horizontal"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Anbernic</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Anbernic RG353PS</h3>
+              <p>Lightweight Linux-only edition of the curved 3.5-inch 4:3 handheld. Flash the image to microSD and start playing right away.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="anbernic" data-keywords="anbernic rg353v rk3566 vertical handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-vertical"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Anbernic</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Anbernic RG353V</h3>
+              <p>Vertical 3.5-inch 4:3 handheld with dual thumbsticks and rear shoulder buttons. Automatic device detection configures all controls on boot.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="anbernic" data-keywords="anbernic rg353vs rk3566 vertical handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-vertical"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Anbernic</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Anbernic RG353VS</h3>
+              <p>Streamlined vertical 3.5-inch 4:3 handheld built for dedicated Linux gaming. Boots from microSD slot TF1 with full Wi-Fi support.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="anbernic" data-keywords="anbernic rg503 rk3566 oled widescreen horizontal handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-horizontal"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Anbernic</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Anbernic RG503</h3>
+              <p>Widescreen 4.95-inch Organic Light-Emitting Diode (OLED) handheld ideal for portable and arcade classics. Stereo speakers and controls work automatically.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="anbernic" data-keywords="anbernic rg arc-d arc d rk3566 sega 6 button handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-arc"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Anbernic</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Anbernic RG ARC-D</h3>
+              <p>Ergonomic 4.0-inch 4:3 handheld with a classic 6-button layout and rolling directional pad. Automatic screen rotation and button mapping are built in.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="anbernic" data-keywords="anbernic rg arc-s arc s rk3566 sega 6 button handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-arc"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Anbernic</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Anbernic RG ARC-S</h3>
+              <p>Single-boot 4.0-inch 6-button handheld built for Sega Saturn, Mega Drive, and arcade fighters. Flash the image to microSD slot TF1.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Powkiddy (3 cards) -->
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="powkiddy" data-keywords="powkiddy rgb30 rk3566 square 1:1 720x720 handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-square"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Powkiddy</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Powkiddy RGB30</h3>
+              <p>Square 4.0-inch 720x720 handheld that shines with vertical arcade shooters, Game Boy, and Neo Geo Pocket. Includes built-in Wi-Fi and stereo audio.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="powkiddy" data-keywords="powkiddy rk2023 rk3566 compact horizontal handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-horizontal"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Powkiddy</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Powkiddy RK2023</h3>
+              <p>Pocket-sized 3.5-inch 4:3 horizontal handheld with dual analogue sticks and inline triggers. Boots directly from microSD slot TF1.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="powkiddy" data-keywords="powkiddy rgb10max3 rk3566 5 inch widescreen handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-horizontal"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Powkiddy</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Powkiddy RGB10MAX3</h3>
+              <p>Large 5.0-inch 16:9 handheld with comfortable grips and automatic landscape screen orientation. Ready for widescreen and classic consoles.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rk3566</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Mangmi (4 cards) -->
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="mangmi" data-keywords="mangmi air x mq65 sm6115 snapdragon widescreen handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-widescreen"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Mangmi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Mangmi Air X (MQ65)</h3>
+              <p>Snapdragon widescreen handheld (MQ65 hardware revision) with automatic panel rotation. Flash the SM6115 image to your microSD card.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-sm6115</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="mangmi" data-keywords="mangmi air x mq66 sm6115 snapdragon widescreen handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-widescreen"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Mangmi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Mangmi Air X (MQ66)</h3>
+              <p>Snapdragon widescreen handheld (MQ66 hardware revision) with pre-configured display orientation and gamepad controls.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-sm6115</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="mangmi" data-keywords="mangmi air x mq66b sm6115 snapdragon widescreen handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-widescreen"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Mangmi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Mangmi Air X (MQ66B)</h3>
+              <p>Snapdragon widescreen handheld (MQ66B board revision). Shares the unified SM6115 image with automatic hardware detection.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-sm6115</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="mangmi" data-keywords="mangmi air y sm6115 snapdragon widescreen handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-widescreen"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Mangmi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Mangmi Air Y</h3>
+              <p>Native-landscape Snapdragon handheld supported by the unified SM6115 image. Flash to microSD and pair or use built-in controls immediately.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-sm6115</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Raspberry Pi Boards (12 cards) -->
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi 5 rpi5 bcm2712 single board computer">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-sbc-pcb"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi 5</h3>
+              <p>Flagship BCM2712 board for living-room television play. Connect a USB or Bluetooth controller and flash the Pi 5 image to microSD.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi5</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi 500 rpi5 keyboard computer">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-keyboard-pc"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi 500</h3>
+              <p>All-in-one keyboard computer powered by Raspberry Pi 5 silicon. Ideal for home-computer emulation and television gaming.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi5</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi compute module 5 cm5 rpi5">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-sbc-pcb"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi Compute Module 5</h3>
+              <p>High-performance CM5 module for carrier boards and custom retro builds. Uses the standard Raspberry Pi 5 image.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi5</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi 4 model b rpi4 bcm2711">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-sbc-pcb"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi 4 Model B</h3>
+              <p>Versatile living-room retro board with HDMI audio, Wi-Fi, and Bluetooth controller support. Compatible with RetroFlag, DeskPi, and Argon cases.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi4</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi 400 rpi4 keyboard computer">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-keyboard-pc"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi 400</h3>
+              <p>Compact keyboard computer that turns any monitor or television into a classic computer and console station.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi4</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi compute module 4 cm4 rpi4">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-sbc-pcb"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi Compute Module 4</h3>
+              <p>Modular Pi 4 board used in the RetroFlag GPi Case 2 and custom handheld carriers. Flash the Pi 4 image to microSD or eMMC.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi4</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi compute module 4s cm4s rpi4">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-sbc-pcb"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi Compute Module 4S</h3>
+              <p>SODIMM-format BCM2711 compute module for industrial and retro carrier boards. Runs the standard Raspberry Pi 4 image.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi4</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi zero 2 w rpi02w gpi case">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-sbc-pcb"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi Zero 2 W</h3>
+              <p>Ultra-compact 64-bit board tailored for the RetroFlag GPi Case v1, GPi Case 2W, and pocket-sized television setups.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi02w</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi 3 model b+ b plus rpi02w">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-sbc-pcb"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi 3 Model B+</h3>
+              <p>Classic quad-core 64-bit board with dual-band Wi-Fi and full RetroFlag NESPi, SUPERPi, and MegaPi case support.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi02w</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi 3 model b rpi02w">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-sbc-pcb"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi 3 Model B</h3>
+              <p>First 64-bit Raspberry Pi board, ready for 8-bit and 16-bit consoles on HDMI televisions or inside RetroFlag cases.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi02w</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi 3 model a+ a plus rpi02w">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-sbc-pcb"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi 3 Model A+</h3>
+              <p>Compact square-footprint Pi 3 board with built-in Wi-Fi and Bluetooth for small arcade and console projects.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi02w</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="raspberry-pi" data-keywords="raspberry pi compute module 3 3+ cm3 rpi02w">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-sbc-pcb"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Raspberry Pi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Raspberry Pi Compute Module 3 / 3+</h3>
+              <p>SODIMM compute module for custom handhelds and embedded arcade cabinets. Uses the unified <code translate="no">extra-life-rpi02w</code> image.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi02w</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Retro Cases (9 cards) -->
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="retro-cases" data-keywords="retroflag gpi case v1 rpi02w vertical game boy handheld case">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-vertical"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">RetroFlag</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>RetroFlag GPi Case (v1)</h3>
+              <p>Game Boy-inspired cartridge case for Raspberry Pi Zero 2 W. Enable <code translate="no">case=gpi-case</code> in <code translate="no">extralife.ini</code> for DPI screen, audio, and safe shutdown.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi02w</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="retro-cases" data-keywords="retroflag gpi case 2 cm4 rpi4 vertical handheld dock">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-vertical"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">RetroFlag</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>RetroFlag GPi Case 2</h3>
+              <p>Handheld case for Raspberry Pi Compute Module 4. Set <code translate="no">case=gpi-case-2</code> in <code translate="no">extralife.ini</code> for built-in screen, audio, and TV dock switching.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi4</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="retro-cases" data-keywords="retroflag gpi case 2w rpi02w zero 2 w vertical handheld">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-handheld-vertical"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">RetroFlag</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>RetroFlag GPi Case 2W</h3>
+              <p>Rechargeable 3.0-inch handheld enclosure for Raspberry Pi Zero 2 W. Set <code translate="no">case=gpi-case-2w</code> in <code translate="no">extralife.ini</code> for display and safe power-off.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi02w</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="retro-cases" data-keywords="retroflag nespi case+ nespi 4 rpi4 rpi02w console case">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-retro-case"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">RetroFlag</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>RetroFlag NESPi Case+ / NESPi 4</h3>
+              <p>8-bit console case for Raspberry Pi 3 and Pi 4 with working power and reset buttons. Set <code translate="no">case=retroflag</code> in <code translate="no">extralife.ini</code>.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi4</code> / <code translate="no">rpi02w</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="retro-cases" data-keywords="retroflag superpi case rpi4 rpi02w snes console case">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-retro-case"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">RetroFlag</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>RetroFlag SUPERPi Case</h3>
+              <p>16-bit console enclosure for Raspberry Pi 3 and Pi 4 with safe shutdown switch support. Enable <code translate="no">case=retroflag</code> in <code translate="no">extralife.ini</code>.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi4</code> / <code translate="no">rpi02w</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="retro-cases" data-keywords="retroflag megapi case rpi02w pi 3 mega drive console case">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-retro-case"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">RetroFlag</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>RetroFlag MegaPi Case</h3>
+              <p>Sega-styled console case for Raspberry Pi 3 boards with functional power and reset buttons via <code translate="no">case=retroflag</code> in <code translate="no">extralife.ini</code>.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi02w</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="retro-cases" data-keywords="retroflag pistation case rpi4 playstation console case">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-retro-case"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">RetroFlag</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>RetroFlag PiStation Case</h3>
+              <p>32-bit console case for Raspberry Pi 4 with safe power button and optional LCD screen support. Enable <code translate="no">case=retroflag</code> in <code translate="no">extralife.ini</code>.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi4</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="retro-cases" data-keywords="deskpi pro v1 v2 rpi4 set top box case">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-retro-case"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">DeskPi</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>DeskPi Pro</h3>
+              <p>Aluminium set-top case for Raspberry Pi 4 with front USB ports and active cooling. Set <code translate="no">case=deskpi-pro</code> in <code translate="no">extralife.ini</code>.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi4</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="retro-cases" data-keywords="argon one v2 v3 rpi4 rpi5 aluminium case">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-retro-case"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Argon</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Argon ONE (v2 / v3)</h3>
+              <p>Sleek aluminium enclosure for Raspberry Pi 4 and Pi 5 with rear full-sized HDMI ports and safe power button support via <code translate="no">case=argon-one</code>.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-rpi5</code> / <code translate="no">rpi4</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <!-- GPD Handhelds (8 cards) -->
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="gpd" data-keywords="gpd win 2 x86_64 clamshell handheld pc">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-clamshell"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">GPD</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>GPD WIN 2</h3>
+              <p>Pocket 6-inch clamshell handheld PC. Extra Life detects the GPD WIN 2 automatically and sets display rotation, touchscreen, and XInput controls.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-x86_64</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="gpd" data-keywords="gpd win max 2020 2021 x86_64 clamshell handheld pc">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-clamshell"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">GPD</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>GPD WIN Max (2020 / 2021)</h3>
+              <p>8-inch clamshell gaming handheld with built-in gamepad and keyboard. Automatic DMI detection rotates the portrait panel to landscape on boot.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-x86_64</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="gpd" data-keywords="gpd win max 2 x86_64 clamshell handheld pc">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-clamshell"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">GPD</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>GPD WIN Max 2</h3>
+              <p>10.1-inch native-landscape clamshell handheld with Hall-effect sticks and full PlayStation 2, GameCube, and Wii performance.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-x86_64</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="gpd" data-keywords="gpd win 3 x86_64 slider candybar handheld pc">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-slider-pc"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">GPD</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>GPD WIN 3</h3>
+              <p>5.5-inch sliding-screen handheld with touch keyboard and dual analogue sticks. Panel rotation and touchscreen calibration apply automatically.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-x86_64</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="gpd" data-keywords="gpd win 4 x86_64 slider candybar handheld pc">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-slider-pc"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">GPD</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>GPD WIN 4</h3>
+              <p>6-inch sliding-screen handheld with physical thumb keyboard and native landscape display. Boots from USB drive or internal storage.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-x86_64</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="gpd" data-keywords="gpd win 5 x86_64 handheld pc">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-slider-pc"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">GPD</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>GPD WIN 5</h3>
+              <p>Next-generation GPD handheld PC with native landscape display and full 64-bit emulator support out of the box.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-x86_64</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="gpd" data-keywords="gpd win mini 2023 x86_64 clamshell handheld pc">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-clamshell"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">GPD</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>GPD WIN Mini (2023)</h3>
+              <p>Compact 7-inch clamshell handheld (2023 model). Automatic hardware detection configures the rotated portrait screen and built-in controller.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-x86_64</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="gpd" data-keywords="gpd win mini 2024 x86_64 clamshell handheld pc">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-clamshell"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">GPD</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>GPD WIN Mini (2024)</h3>
+              <p>Refreshed 7-inch clamshell handheld with a native 120 Hz landscape panel and built-in gamepad. Ready to boot from USB or internal storage.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-x86_64</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <!-- PC & Virtual Machines (2 cards) -->
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="pc-vm" data-keywords="64-bit pc mini pc intel amd uefi x86_64 desktop laptop">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-mini-pc"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">PC &amp; Mini PC</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>64-bit PC / Mini PC (Intel &amp; AMD)</h3>
+              <p>Turn any 64-bit Intel or AMD desktop, laptop, or living-room mini PC with UEFI into a dedicated console, including PlayStation 2 support.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-x86_64</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4 device-item" data-category="pc-vm" data-keywords="apple silicon macos linux virtual machine vm-retro aarch64 qemu">
+            <article class="card-primary device-card">
+              <div class="device-illust">
+                <svg viewBox="0 0 220 110" aria-hidden="true"><use href="#illust-mini-pc"/></svg>
+              </div>
+              <div class="device-meta">
+                <span class="brand-chip">Virtual Machine</span>
+                <span class="status-badge">Supported</span>
+              </div>
+              <h3>Apple Silicon &amp; Linux Virtual Machine (<code translate="no">vm-retro</code>)</h3>
+              <p>Test Extra Life in a window on Apple Silicon macOS or Linux with hardware graphics, audio passthrough, and controller forwarding.</p>
+              <div class="device-card-footer">
+                <span class="image-badge">Image: <code translate="no">extra-life-aarch64</code> / <code translate="no">x86_64</code></span>
+                <a class="primary-action device-download" href="https://github.com/wimpysworld/extra-life/releases">Download <span class="octicon inline-icon arrow-down" aria-hidden="true"></span></a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="roadmap" class="section-rule" aria-labelledby="roadmap-title">
+        <div class="section-heading">
+          <p class="eyebrow">Coming soon</p>
+          <h2 id="roadmap-title">Hardware roadmap</h2>
+          <p>Extra Life is expanding to more handheld families and portable PCs. Track upcoming board bring-up and device profiles below.</p>
+        </div>
+
+        <div class="row roadmap-grid">
+          <div class="col-12 col-md-6 col-lg-3">
+            <article class="card-primary roadmap-card">
+              <span class="roadmap-badge">Planned</span>
+              <h3>Anbernic RG35XX H700 Series</h3>
+              <p>Allwinner H700 handhelds including the RG35XX Plus, RG35XX H, RG35XX SP, and RG40XX series.</p>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-3">
+            <article class="card-primary roadmap-card">
+              <span class="roadmap-badge">Planned</span>
+              <h3>Retroid Pocket 5 &amp; AYN Odin 2</h3>
+              <p>Mainline-capable Qualcomm Snapdragon handhelds with high-resolution OLED and 1080p displays.</p>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-3">
+            <article class="card-primary roadmap-card">
+              <span class="roadmap-badge">Planned</span>
+              <h3>Powkiddy X55 &amp; RGB20SX</h3>
+              <p>Additional Rockchip RK3566 widescreen and vertical 1:1 handheld form factors.</p>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-3">
+            <article class="card-primary roadmap-card">
+              <span class="roadmap-badge">Planned</span>
+              <h3>Steam Deck &amp; ROG Ally</h3>
+              <p>Dedicated controller mappings, sleep integration, and thermal profiles for handheld gaming PCs.</p>
+            </article>
+          </div>
+        </div>
+
+        <p class="systems-footer-link">
+          <a class="text-link" target="_blank" rel="noopener noreferrer" href="https://github.com/wimpysworld/extra-life/wiki/Supported-Hardware">View the Supported Hardware Wiki <span class="octicon inline-icon link-external" aria-hidden="true"></span></a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="container site-footer">
+      <div class="footer-main">
+        <div class="footer-brand">
+          <a class="brand" href="./" aria-label="Extra Life home">
+            <img class="brand-mark" src="icon.svg" alt="" width="40" height="40">
+            <span class="brand-name">Extra Life</span>
+          </a>
+          <p>Give Extra Life to Classic Games and Hardware 🕹️</p>
+        </div>
+        <nav class="footer-links" aria-label="Footer navigation">
+          <div><h3>Resources</h3><ul>
+            <!-- tailor:footer-navigation:start -->
+            <li><a href="./">Overview</a></li>
+            <li><a href="./devices.html">Devices</a></li>
+            <li><a href="https://github.com/wimpysworld/extra-life/wiki">Documentation</a></li>
+            <li><a href="https://github.com/wimpysworld/extra-life/blob/HEAD/SUPPORT.md">Support</a></li>
+            <!-- tailor:footer-navigation:end -->
+          </ul></div>
+          <div><h3>Project</h3><ul>
+            <li><a href="https://github.com/wimpysworld/extra-life">Source code</a></li>
+            <li><a href="https://github.com/wimpysworld/extra-life/releases">Releases</a></li>
+            <!-- tailor:license:start -->
+            <li><a href="https://github.com/wimpysworld/extra-life?tab=BlueOak-1.0.0-1-ov-file">License</a></li>
+            <!-- tailor:license:end -->
+          </ul></div>
+          <div><h3>Community</h3><ul>
+            <li><a href="https://github.com/wimpysworld/extra-life?tab=coc-ov-file">Code of Conduct</a></li>
+            <li><a href="https://github.com/wimpysworld/extra-life?tab=contributing-ov-file">Contributing</a></li>
+            <li><a href="https://github.com/wimpysworld/extra-life?tab=security-ov-file">Security</a></li>
+          </ul></div>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <p><small>© <span id="copyright-year">2026</span> Martin Wimpress &amp; Extra Life contributors</small></p>
+        <!-- tailor:links:start -->
+        <nav class="connection-links" aria-label="Connect" style="display:flex;flex-wrap:wrap;gap:0.4rem">
+          <a class="icon-button" href="https://wimpys.world/" aria-label="Website" title="Website" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/globe-24.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/globe-24.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://bsky.app/profile/wimpys.world" aria-label="Bluesky" title="Bluesky" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/bluesky.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/bluesky.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://wimpysworld.social/@martin" aria-label="Mastodon" title="Mastodon" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/mastodon.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/mastodon.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://linkedin.com/in/martinwimpress" aria-label="LinkedIn" title="LinkedIn" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/briefcase-24.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/briefcase-24.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://discord.com/invite/vUsydfP" aria-label="Discord" title="Discord" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/discord.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/discord.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://linuxmatters.sh" aria-label="Podcast" title="Podcast" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/broadcast-24.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/@primer/octicons@19.36.0/build/svg/broadcast-24.svg') center/contain no-repeat"></span></a>
+          <a class="icon-button" href="https://github.com/sponsors/flexiondotorg" aria-label="GitHub Sponsors" title="GitHub Sponsors" style="display:inline-flex;padding:10px;color:inherit"><span aria-hidden="true" style="display:block;width:24px;height:24px;background-color:currentColor;-webkit-mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/githubsponsors.svg') center/contain no-repeat;mask:url('https://cdn.jsdelivr.net/npm/simple-icons@16.30.0/icons/githubsponsors.svg') center/contain no-repeat"></span></a>
+        </nav>
+        <!-- tailor:links:end -->
+      </div>
+    </footer>
+
+    <script>
+      (() => {
+        const searchInput = document.querySelector("#device-search");
+        const pills = document.querySelectorAll(".filter-pill");
+        const items = document.querySelectorAll(".device-item");
+        const countEl = document.querySelector("#device-count");
+        let activeFilter = "all";
+
+        function updateCatalogue() {
+          const query = (searchInput ? searchInput.value : "").trim().toLowerCase();
+          let visible = 0;
+
+          items.forEach((item) => {
+            const category = item.getAttribute("data-category") || "";
+            const keywords = (item.getAttribute("data-keywords") || "").toLowerCase();
+            const text = item.textContent.toLowerCase();
+            const matchesCategory = activeFilter === "all" || category === activeFilter;
+            const matchesQuery = !query || keywords.includes(query) || text.includes(query);
+            const show = matchesCategory && matchesQuery;
+            item.hidden = !show;
+            if (show) visible += 1;
+          });
+
+          if (countEl) {
+            if (activeFilter === "all" && !query) {
+              countEl.textContent = `Showing all ${items.length} supported devices and cases`;
+            } else if (visible === 0) {
+              countEl.textContent = "No matching devices found. Try another search term or brand filter.";
+            } else {
+              countEl.textContent = `Showing ${visible} of ${items.length} supported devices and cases`;
+            }
+          }
+        }
+
+        pills.forEach((pill) => {
+          pill.addEventListener("click", () => {
+            activeFilter = pill.getAttribute("data-filter") || "all";
+            pills.forEach((p) => {
+              const selected = p === pill;
+              p.classList.toggle("is-active", selected);
+              p.setAttribute("aria-pressed", selected ? "true" : "false");
+            });
+            updateCatalogue();
+          });
+        });
+
+        if (searchInput) {
+          searchInput.addEventListener("input", updateCatalogue);
+        }
+      })();
+    </script>
+  </body>
+</html>
