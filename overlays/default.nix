@@ -115,7 +115,23 @@ let
 
     libretro-cores = final.callPackage ../pkgs/libretro-cores { };
 
+    pd-mapper = final.callPackage ../pkgs/pd-mapper { };
+
     ubootAnbernicRgxx3 = final.callPackage ../pkgs/uboot/anbernic-rgxx3.nix { };
+
+    rocknix-sm6115 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/SM6115"
+        "projects/ROCKNIX/packages/linux/patches/7.2"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2"
+      ];
+      hash = "sha256-4xnHG+Ix8s/nPWeoqKhy52G8+3hIVGHXUfxMntcZOYw=";
+    };
+
+    linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
   };
 in
 {
@@ -239,6 +255,19 @@ in
   localPackages = final: _prev: {
     ludo = final.callPackage ../pkgs/ludo { };
     libretro-cores = final.callPackage ../pkgs/libretro-cores { };
+    pd-mapper = final.callPackage ../pkgs/pd-mapper { };
     ubootAnbernicRgxx3 = final.callPackage ../pkgs/uboot/anbernic-rgxx3.nix { };
+    rocknix-sm6115 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/SM6115"
+        "projects/ROCKNIX/packages/linux/patches/7.2"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2"
+      ];
+      hash = "sha256-4xnHG+Ix8s/nPWeoqKhy52G8+3hIVGHXUfxMntcZOYw=";
+    };
+    linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
   };
 }

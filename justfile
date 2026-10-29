@@ -105,26 +105,42 @@ build-iso:
     cp -f "${iso_src}" .vm/extra-life.iso
     chmod 644 .vm/extra-life.iso
 
-# Build the Extra Life UEFI GPT disk image
-build-disk:
+# Build the Extra Life GPT disk image (optionally for a specific SoC target)
+build-disk target="":
     #!/usr/bin/env bash
     set -euo pipefail
-    echo "Disk 󰋊 Building: .#disk-image"
-    if command -v nom >/dev/null 2>&1; then
-        nom build .#disk-image --out-link result-disk
+    target={{ quote(target) }}
+    if [[ -z "${target}" ]]; then
+        attr=".#disk-image"
+        out_link="result-disk"
     else
-        nix build .#disk-image --out-link result-disk
+        attr=".#nixosConfigurations.${target}.config.system.build.diskImage"
+        out_link="result-disk-${target}"
+    fi
+    echo "Disk 󰋊 Building: ${attr}"
+    if command -v nom >/dev/null 2>&1; then
+        nom build "${attr}" --out-link "${out_link}"
+    else
+        nix build "${attr}" --out-link "${out_link}"
     fi
 
-# Build the Extra Life OTA update bundle
-build-ota:
+# Build the Extra Life OTA update bundle (optionally for a specific SoC target)
+build-ota target="":
     #!/usr/bin/env bash
     set -euo pipefail
-    echo "OTA 󰏗 Building: .#ota-bundle"
-    if command -v nom >/dev/null 2>&1; then
-        nom build .#ota-bundle --out-link result-ota
+    target={{ quote(target) }}
+    if [[ -z "${target}" ]]; then
+        attr=".#ota-bundle"
+        out_link="result-ota"
     else
-        nix build .#ota-bundle --out-link result-ota
+        attr=".#nixosConfigurations.${target}.config.system.build.otaBundle"
+        out_link="result-ota-${target}"
+    fi
+    echo "OTA 󰏗 Building: ${attr}"
+    if command -v nom >/dev/null 2>&1; then
+        nom build "${attr}" --out-link "${out_link}"
+    else
+        nix build "${attr}" --out-link "${out_link}"
     fi
 
 # Build the ISO and boot it in vm-retro

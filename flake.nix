@@ -83,8 +83,11 @@
           inherit (prevWithUnstable) unstable;
           ludo = applied.ludo or (final.callPackage ./pkgs/ludo { });
           libretro-cores = applied.libretro-cores or (final.callPackage ./pkgs/libretro-cores { });
+          pd-mapper = applied.pd-mapper or (final.callPackage ./pkgs/pd-mapper { });
           ubootAnbernicRgxx3 =
             applied.ubootAnbernicRgxx3 or (final.callPackage ./pkgs/uboot/anbernic-rgxx3.nix { });
+          linuxPackages_sm6115 =
+            applied.linuxPackages_sm6115 or (final.callPackage ./pkgs/kernels/sm6115.nix { });
           vm-retro = applied.vm-retro or (final.callPackage ./pkgs/vm-retro { });
         }
         // applied;
@@ -92,12 +95,16 @@
       nixosModules = {
         appliance = import ./nixos/modules/appliance.nix;
         boards = import ./nixos/modules/hardware/boards;
+        disk-base = import ./nixos/modules/images/disk-base.nix;
         disk-efi = import ./nixos/modules/images/disk-efi.nix;
+        disk-openabl = import ./nixos/modules/images/disk-openabl.nix;
         disk-rk3566 = import ./nixos/modules/images/disk-rk3566.nix;
         iso = import ./nixos/modules/images/iso.nix;
         pc = import ./nixos/modules/hardware/pc.nix;
         qemu-guest = import ./nixos/modules/hardware/qemu-guest.nix;
+        soc-qcom-common = import ./nixos/modules/hardware/soc/qcom-common.nix;
         soc-rk3566 = import ./nixos/modules/hardware/soc/rk3566.nix;
+        soc-sm6115 = import ./nixos/modules/hardware/soc/sm6115.nix;
         soc-x86_64 = import ./nixos/modules/hardware/soc/x86_64.nix;
         default = self.nixosModules.appliance;
       };
@@ -109,6 +116,8 @@
             ./nixos/hosts/x86_64-appliance
           ];
         };
+
+        x86_64 = self.nixosConfigurations.x86_64-appliance;
 
         x86_64-installer = lib.nixosSystem {
           modules = [
@@ -123,6 +132,8 @@
             ./nixos/hosts/aarch64-appliance
           ];
         };
+
+        aarch64 = self.nixosConfigurations.aarch64-appliance;
 
         aarch64-installer = lib.nixosSystem {
           modules = [
@@ -139,6 +150,15 @@
         };
 
         rk3566 = self.nixosConfigurations.rk3566-appliance;
+
+        sm6115-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/sm6115-appliance
+          ];
+        };
+
+        sm6115 = self.nixosConfigurations.sm6115-appliance;
       };
 
       packages = forAllSystems (
@@ -154,8 +174,20 @@
           ota-bundle = self.nixosConfigurations."${archPrefix}-appliance".config.system.build.otaBundle;
           default = if pkgs.stdenv.hostPlatform.isLinux then pkgs.ludo else pkgs.vm-retro;
         }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isx86_64 {
+          disk-image-x86_64 = self.nixosConfigurations.x86_64.config.system.build.diskImage;
+          ota-bundle-x86_64 = self.nixosConfigurations.x86_64.config.system.build.otaBundle;
+        }
+        // lib.optionalAttrs pkgs.stdenv.hostPlatform.isAarch64 {
+          disk-image-aarch64 = self.nixosConfigurations.aarch64.config.system.build.diskImage;
+          disk-image-rk3566 = self.nixosConfigurations.rk3566.config.system.build.diskImage;
+          disk-image-sm6115 = self.nixosConfigurations.sm6115.config.system.build.diskImage;
+          ota-bundle-aarch64 = self.nixosConfigurations.aarch64.config.system.build.otaBundle;
+          ota-bundle-rk3566 = self.nixosConfigurations.rk3566.config.system.build.otaBundle;
+          ota-bundle-sm6115 = self.nixosConfigurations.sm6115.config.system.build.otaBundle;
+        }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
-          inherit (pkgs) ludo libretro-cores;
+          inherit (pkgs) ludo libretro-cores pd-mapper;
         }
         // lib.optionalAttrs (system == "aarch64-linux") {
           inherit (pkgs) ubootAnbernicRgxx3;
