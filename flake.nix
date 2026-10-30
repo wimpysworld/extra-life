@@ -82,6 +82,7 @@
         {
           inherit (prevWithUnstable) unstable;
           ludo = applied.ludo or (final.callPackage ./pkgs/ludo { });
+          homebrew-roms = applied.homebrew-roms or (final.callPackage ./pkgs/homebrew-roms { });
           libretro-cores = applied.libretro-cores or (final.callPackage ./pkgs/libretro-cores { });
           pd-mapper = applied.pd-mapper or (final.callPackage ./pkgs/pd-mapper { });
           ubootAnbernicRgxx3 =
@@ -227,7 +228,7 @@
               base;
         in
         {
-          inherit (pkgs) vm-retro;
+          inherit (pkgs) homebrew-roms vm-retro;
           iso = self.nixosConfigurations."${archPrefix}-installer".config.system.build.isoImage;
           disk-image = self.nixosConfigurations."${archPrefix}-appliance".config.system.build.diskImage;
           ota-bundle = self.nixosConfigurations."${archPrefix}-appliance".config.system.build.otaBundle;

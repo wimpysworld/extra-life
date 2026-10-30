@@ -122,6 +122,8 @@ let
 
     ludo = final.callPackage ../pkgs/ludo { };
 
+    homebrew-roms = final.callPackage ../pkgs/homebrew-roms { };
+
     libretro-cores = final.callPackage ../pkgs/libretro-cores { };
 
     pd-mapper = final.callPackage ../pkgs/pd-mapper { };
@@ -274,6 +276,7 @@ in
 
   localPackages = final: _prev: {
     ludo = final.callPackage ../pkgs/ludo { };
+    homebrew-roms = final.callPackage ../pkgs/homebrew-roms { };
     libretro-cores = final.callPackage ../pkgs/libretro-cores { };
     pd-mapper = final.callPackage ../pkgs/pd-mapper { };
     ubootAnbernicRgxx3 = final.callPackage ../pkgs/uboot/anbernic-rgxx3.nix { };

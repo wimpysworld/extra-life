@@ -419,12 +419,17 @@ in
           SizeMinBytes = "3G";
           SizeMaxBytes = "3G";
         };
-        "20-storage".repartConfig = {
-          Type = "linux-generic";
-          Format = "ext4";
-          Label = "STORAGE";
-          SizeMinBytes = "512M";
-          GrowFileSystem = true;
+        "20-storage" = {
+          contents = {
+            "/Retro".source = "${pkgs.homebrew-roms}/share/extra-life/retro";
+          };
+          repartConfig = {
+            Type = "linux-generic";
+            Format = "ext4";
+            Label = "STORAGE";
+            SizeMinBytes = "512M";
+            GrowFileSystem = true;
+          };
         };
       };
     };
