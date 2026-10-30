@@ -19,6 +19,9 @@ let
     export EXTRA_LIFE_UPDATE_URL="https://extralife-ota.wimpys.world/releases.json"
     export EXTRA_LIFE_DEVICE="${config.extraLife.variantId}"
     export VERSION="${config.extraLife.versionId}"
+    if [ ! -w /storage/Retro/roms/LICENSES.md ] && [ -e /storage/Retro/roms/LICENSES.md ]; then
+      chmod -R u+w /storage/Retro/roms /storage/Retro/playlists /storage/Retro/thumbnails
+    fi
     exec ${pkgs.ludo}/bin/ludo -ludos
   '';
 
@@ -654,6 +657,7 @@ in
       "d /storage/Retro/screenshots 0755 ludo users -"
       "d /storage/Retro/system 0755 ludo users -"
       "d /storage/Retro/thumbnails 0755 ludo users -"
+      "Z /storage/Retro - ludo users -"
       "d /storage/.cache 0755 ludo users -"
       "d /storage/.cache/services 0755 ludo users -"
       "d /storage/.cache/connman 0700 root root -"
