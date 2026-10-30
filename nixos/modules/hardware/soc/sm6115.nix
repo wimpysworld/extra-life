@@ -91,6 +91,13 @@ in
         "qcom_pbs"
         "qcom_labibb_regulator"
         "phy_qcom_qmp_combo"
+        "phy_qcom_qmp_usbc"
+        "rmtfs_mem"
+        "qcom_pon"
+        "rtc_pm8xxx"
+        "fusb302"
+        "typec"
+        "tcpm"
         "llcc_qcom"
         "ocmem"
         "led_class_multicolor"
@@ -117,6 +124,13 @@ in
         "qcom_pbs"
         "qcom_labibb_regulator"
         "phy_qcom_qmp_combo"
+        "phy_qcom_qmp_usbc"
+        "rmtfs_mem"
+        "qcom_pon"
+        "rtc_pm8xxx"
+        "fusb302"
+        "typec"
+        "tcpm"
         "llcc_qcom"
         "ocmem"
         "led_class_multicolor"
@@ -144,6 +158,16 @@ in
       "qcom_pbs"
       "qcom_labibb_regulator"
       "phy_qcom_qmp_combo"
+      "phy_qcom_qmp_usbc"
+      "rmtfs_mem"
+      "apr"
+      "qcom_pon"
+      "rtc_pm8xxx"
+      "qcom_spmi_adc5"
+      "qcom_spmi_temp_alarm"
+      "venus_core"
+      "venus_dec"
+      "venus_enc"
       "llcc_qcom"
       "ocmem"
       "led_class_multicolor"
@@ -169,7 +193,7 @@ in
       "btqca"
       "mangmi"
       "pwm_vibra"
-      "clk_pwm"
+      "pwm_clk"
       "gpio_fan"
       "cw221x_battery"
       "himax_hx83112a"
@@ -213,6 +237,22 @@ in
       "${rocknixSm6115}/projects/ROCKNIX/devices/SM6115/filesystem/usr/share/wireplumber/wireplumber.conf.d/90-sm6115-s16le.conf";
     "wireplumber/wireplumber.conf.d/91-suspend-on-idle.conf".source =
       "${rocknixSm6115}/projects/ROCKNIX/devices/SM6115/filesystem/usr/share/wireplumber/wireplumber.conf.d/91-suspend-on-idle.conf";
+    "systemd/system-sleep/sm6115-bt".source = pkgs.writeShellScript "sm6115-bt" ''
+      BT_UART_WAKEUP=/sys/devices/platform/soc@0/4ac0000.geniqup/4a8c000.serial/power/wakeup
+
+      bt_uart_wakeup() {
+        [ -e "''${BT_UART_WAKEUP}" ] && echo "''${1}" > "''${BT_UART_WAKEUP}"
+      }
+
+      case "$1" in
+        pre)
+          bt_uart_wakeup disabled
+          ;;
+        post)
+          bt_uart_wakeup enabled
+          ;;
+      esac
+    '';
   };
 
   environment.pathsToLink = [
@@ -221,6 +261,7 @@ in
   ];
 
   environment.systemPackages = [
+    pkgs.alsa-ucm-conf
     sm6115AlsaUcm
   ];
 }

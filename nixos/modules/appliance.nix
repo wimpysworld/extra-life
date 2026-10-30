@@ -15,6 +15,7 @@ let
     export XDG_CONFIG_HOME="/storage/.config"
     export XDG_DATA_HOME="/storage/.local/share"
     export XDG_CACHE_HOME="/storage/.cache"
+    export ALSA_CONFIG_UCM2="/run/current-system/sw/share/alsa/ucm2"
     export SDL_VIDEODRIVER="wayland"
     export EXTRA_LIFE_UPDATE_URL="https://extralife-ota.wimpys.world/releases.json"
     export EXTRA_LIFE_DEVICE="${config.extraLife.variantId}"
@@ -514,6 +515,10 @@ in
       pulse.enable = true;
       wireplumber.enable = true;
     };
+    systemd.user.services.pipewire.environment.ALSA_CONFIG_UCM2 =
+      "/run/current-system/sw/share/alsa/ucm2";
+    systemd.user.services.wireplumber.environment.ALSA_CONFIG_UCM2 =
+      "/run/current-system/sw/share/alsa/ucm2";
 
     # Network management via ConnMan, storing persistent credentials in /storage/.cache/connman.
     services.connman = {
@@ -642,6 +647,7 @@ in
         XDG_CONFIG_HOME = "/storage/.config";
         XDG_DATA_HOME = "/storage/.local/share";
         XDG_CACHE_HOME = "/storage/.cache";
+        ALSA_CONFIG_UCM2 = "/run/current-system/sw/share/alsa/ucm2";
       };
     };
 
@@ -649,10 +655,12 @@ in
 
     environment.pathsToLink = [
       "/lib/retroarch"
+      "/share/alsa"
       "/share/ludo"
     ];
 
     environment.systemPackages = with pkgs; [
+      alsa-ucm-conf
       bash
       connman
       coreutils
@@ -737,7 +745,10 @@ in
       mutableUsers = false;
     };
     environment.stub-ld.enable = false;
-    environment.variables.PAGER = lib.mkForce "cat";
+    environment.variables = {
+      ALSA_CONFIG_UCM2 = "/run/current-system/sw/share/alsa/ucm2";
+      PAGER = lib.mkForce "cat";
+    };
     environment.defaultPackages = lib.mkForce [ ];
     environment.corePackages =
       with pkgs;
