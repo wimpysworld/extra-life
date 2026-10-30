@@ -260,24 +260,6 @@ let
       url = "https://buildbot.libretro.com/assets/cores/Sega%20-%20Mega%20Drive%20-%20Genesis/aepd.bin";
     }
     {
-      system = "Nintendo - Nintendo 64";
-      title = "Driving Strikers 64";
-      romFile = "driving_strikers.z64";
-      rom = fetchurl {
-        name = "driving_strikers.z64";
-        url = "https://github.com/SpookyIluha/Driving-Strikers-64/releases/download/release_103/drivingstrikers64.z64";
-        hash = "sha256-sbhHWws9fuD59VTxgYMF00frsOVFORjAgB13iL97EYU=";
-      };
-      snap = fetchurl {
-        name = "driving_strikers.png";
-        url = "https://github.com/user-attachments/assets/ecf9522f-bc18-4e72-a50b-384b89b180b2";
-        hash = "sha256-p3FwrAmqhRdT5xIKBWLdgPNsPlA+jczoJgHysPExgKE=";
-      };
-      author = "SpookyIluha";
-      license = "Unlicense (code) + Authorised freeware ROM";
-      url = "https://github.com/SpookyIluha/Driving-Strikers-64/releases/download/release_103/drivingstrikers64.z64";
-    }
-    {
       system = "Cave Story";
       title = "Cave Story";
       romFile = "Doukutsu.exe";
