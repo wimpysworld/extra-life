@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   modulesPath,
   pkgs,
@@ -11,12 +12,24 @@
   ];
 
   boot = {
+    consoleLogLevel = if config.extraLife.debug then 7 else 3;
     initrd.systemd.enable = true;
     loader = {
       grub.enable = lib.mkForce false;
       timeout = lib.mkForce 0;
     };
-    kernelParams = [ "quiet" ];
+    kernelParams =
+      if config.extraLife.debug then
+        [
+          "console=tty0"
+          "loglevel=7"
+          "systemd.show_status=true"
+        ]
+      else
+        [
+          "quiet"
+          "splash"
+        ];
   };
 
   systemd.services.register-nix-paths.enable = false;

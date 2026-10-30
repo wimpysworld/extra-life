@@ -4,7 +4,7 @@ Extra Life provides a reproducible development environment for `x86_64-linux`, `
 
 ## Development shell (`nix develop` and `direnv`)
 
-The repository includes a flake development shell (`devShells.default`) and an `.envrc` file for `direnv`. The shell installs `just`, `nixfmt`, `nixfmt-tree`, `deadnix`, `statix`, `actionlint`, `nix-output-monitor` (`nom`), `jq`, `rclone`, `sops`, `wrangler`, `zstd`, and `vm-retro`.
+The repository includes a flake development shell (`devShells.default`) and an `.envrc` file for `direnv`. The shell installs `just`, `nixfmt`, `nixfmt-tree`, `deadnix`, `statix`, `actionlint`, `nix-output-monitor` (`nom`), `jq`, `rclone`, `sops`, `wrangler`, `xz`, `zstd`, and `vm-retro`.
 
 ```bash
 # Enter the development shell directly
@@ -27,7 +27,7 @@ Run `just` with no arguments to list all recipes in the repository `justfile`. T
 | `just build-disk [target]` | Resolves `target` to a variant ID and builds the GUID Partition Table (GPT) disk image into `result-disk` or `result-disk-<variant>`. |
 | `just build-iso` | Builds the live bootable ISO image (`.#iso`) into `result-iso` and copies it to `.vm/extra-life.iso`. |
 | `just build-ota [target]` | Resolves `target` to a variant ID, builds the OTA update bundle, stages `.tar.zst`, `.tar.zst.sha256`, and `meta.json` in `dist/v<version>/<variant>/`, and merges `dist/releases.json`. |
-| `just build-device [target]` | Resolves `target` to a variant ID, builds the `.img.zst` disk image, `.tar.zst` OTA bundle, and `.iso` installer (for `x86_64` and `aarch64`) into `dist/v<version>/<variant>/`, and merges `dist/releases.json`. |
+| `just build-device [target]` | Resolves `target` to a variant ID, builds the `.img.xz` disk image, `.tar.zst` OTA bundle, and `.iso` installer (for `x86_64` and `aarch64`) into `dist/v<version>/<variant>/`, and merges `dist/releases.json`. |
 | `just boot-disk` | Builds `.#disk-image`, seeds a writable 64 GB `.vm/disk.qcow2` image if needed, and boots `vm-retro`. |
 | `just boot-iso` | Builds `.#iso` and boots `.vm/extra-life.iso` in `vm-retro`. |
 | `just vm *args` | Passes arguments (`--shutdown`, `--kill`, `--usb-device VID:PID`) directly to `nix run .#vm-retro`. |
@@ -66,16 +66,16 @@ dist/
 ├── releases.json
 └── v0.1.0/
     ├── x86_64/
-    │   ├── extra-life-x86_64-0.1.0.img.zst
-    │   ├── extra-life-x86_64-0.1.0.img.zst.sha256
+    │   ├── extra-life-x86_64-0.1.0.img.xz
+    │   ├── extra-life-x86_64-0.1.0.img.xz.sha256
     │   ├── extra-life-x86_64-0.1.0.iso
     │   ├── extra-life-x86_64-0.1.0.iso.sha256
     │   ├── extra-life-x86_64-0.1.0.tar.zst
     │   ├── extra-life-x86_64-0.1.0.tar.zst.sha256
     │   └── meta.json
     └── rk3566/
-        ├── extra-life-rk3566-0.1.0.img.zst
-        ├── extra-life-rk3566-0.1.0.img.zst.sha256
+        ├── extra-life-rk3566-0.1.0.img.xz
+        ├── extra-life-rk3566-0.1.0.img.xz.sha256
         ├── extra-life-rk3566-0.1.0.tar.zst
         ├── extra-life-rk3566-0.1.0.tar.zst.sha256
         └── meta.json

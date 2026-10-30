@@ -306,6 +306,7 @@
                 statix
                 vm-retro
                 wrangler
+                xz
                 zstd
               ]
               ++ import ./nix/loader.nix { inherit pkgs; };

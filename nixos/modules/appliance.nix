@@ -22,7 +22,11 @@ let
     if [ ! -w /storage/Retro/roms/LICENSES.md ] && [ -e /storage/Retro/roms/LICENSES.md ]; then
       chmod -R u+w /storage/Retro/roms /storage/Retro/playlists /storage/Retro/thumbnails
     fi
-    exec ${pkgs.ludo}/bin/ludo -ludos
+    if [ "''${EXTRA_LIFE_DEBUG:-0}" = "1" ]; then
+      exec ${pkgs.ludo}/bin/ludo -ludos >>/storage/ludo.log 2>&1
+    else
+      exec ${pkgs.ludo}/bin/ludo -ludos
+    fi
   '';
 
   playstationCore =
@@ -419,6 +423,17 @@ in
       type = lib.types.str;
       default = lib.strings.trim (builtins.readFile ../../VERSION);
       description = "Release version identifier for Extra Life.";
+    };
+
+    debug = lib.mkOption {
+      type = lib.types.bool;
+      default = lib.any (dev: (dev.soc or "") == config.extraLife.variantId && (dev.debug or false)) (
+        lib.attrValues config.extraLife.devices
+      );
+      defaultText = lib.literalExpression ''
+        lib.any (dev: (dev.soc or "") == config.extraLife.variantId && (dev.debug or false)) (lib.attrValues config.extraLife.devices)
+      '';
+      description = "Enable verbose kernel boot output and SD-card diagnostic log capture for this SoC closure.";
     };
   };
 
