@@ -16,6 +16,10 @@
       "phy_qcom_qmp_ufs"
       "phy_qcom_qusb2"
       "phy_qcom_qmp_usb"
+      "phy_qcom_qmp_usbc"
+      "rmtfs_mem"
+      "qcom_pon"
+      "rtc_pm8xxx"
       "dwc3"
       "dwc3_qcom"
       "msm"
@@ -24,6 +28,10 @@
 
     kernelModules = [
       "msm"
+      "phy_qcom_qmp_usbc"
+      "rmtfs_mem"
+      "qcom_pon"
+      "rtc_pm8xxx"
       "qrtr"
       "qrtr_smd"
       "qrtr_tun"
@@ -53,19 +61,11 @@
   ];
 
   systemd.services = {
-    qrtr-ns = {
-      description = "QIPCRTR Name Service";
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig = {
-        ExecStart = "${pkgs.qrtr}/bin/qrtr-ns -f 1";
-        Restart = "always";
-      };
-    };
-
     rmtfs = {
       description = "Qualcomm remotefs service";
       wantedBy = [ "multi-user.target" ];
-      after = [ "qrtr-ns.service" ];
+      before = [ "connman.service" ];
+      unitConfig.StartLimitIntervalSec = 0;
       serviceConfig = {
         ExecStart = "${pkgs.rmtfs}/bin/rmtfs -r -P -s";
         Restart = "always";
@@ -76,20 +76,22 @@
     tqftpserv = {
       description = "QRTR TFTP service";
       wantedBy = [ "multi-user.target" ];
-      after = [ "qrtr-ns.service" ];
+      unitConfig.StartLimitIntervalSec = 0;
       serviceConfig = {
         ExecStart = "${pkgs.tqftpserv}/bin/tqftpserv";
         Restart = "always";
+        RestartSec = 1;
       };
     };
 
     pd-mapper = {
       description = "Qualcomm PD mapper service";
       wantedBy = [ "multi-user.target" ];
-      after = [ "qrtr-ns.service" ];
+      unitConfig.StartLimitIntervalSec = 0;
       serviceConfig = {
         ExecStart = "${pkgs.pd-mapper}/bin/pd-mapper";
         Restart = "always";
+        RestartSec = 1;
       };
     };
   };

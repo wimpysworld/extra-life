@@ -138,10 +138,19 @@ in
 
   config = {
     boot = {
-      kernelParams = [
-        "quiet"
-        "splash"
-      ];
+      consoleLogLevel = if config.extraLife.debug then 7 else 3;
+      kernelParams =
+        if config.extraLife.debug then
+          [
+            "console=tty0"
+            "loglevel=7"
+            "systemd.show_status=true"
+          ]
+        else
+          [
+            "quiet"
+            "splash"
+          ];
       loader = {
         grub.enable = false;
         systemd-boot.enable = lib.mkForce false;
@@ -389,6 +398,89 @@ in
           echo "extra-life-update: SYSTEM updated, continuing boot" > /dev/kmsg
         '';
       };
+
+      systemd.services.extra-life-initrd-log = lib.mkIf config.extraLife.debug {
+        description = "Capture Extra Life initrd dmesg and journal to /sysroot/storage";
+        wantedBy = [
+          "initrd.target"
+          "initrd-switch-root.target"
+        ];
+        after = [
+          "sysroot-storage.mount"
+          "extra-life-apply-update.service"
+        ];
+        before = [
+          "initrd.target"
+          "initrd-switch-root.target"
+        ];
+        unitConfig = {
+          DefaultDependencies = false;
+          RequiresMountsFor = [ "/sysroot/storage" ];
+        };
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+        script = ''
+          dmesg > /sysroot/storage/initrd-dmesg.log 2>&1 || true
+          journalctl -b --no-pager > /sysroot/storage/initrd-journal.log 2>&1 || true
+          sync || true
+        '';
+      };
+
+      systemd.services.extra-life-emergency-log = lib.mkIf config.extraLife.debug {
+        description = "Capture Extra Life initrd emergency logs to EXTRALIFE boot partition";
+        wantedBy = [
+          "emergency.target"
+          "rescue.target"
+        ];
+        before = [
+          "emergency.service"
+          "rescue.service"
+        ];
+        unitConfig.DefaultDependencies = false;
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+        script = ''
+          mkdir -p /tmp/boot-log
+          if mount -t vfat -o rw /dev/disk/by-label/EXTRALIFE /tmp/boot-log 2>/dev/null; then
+            {
+              echo "=== INITRD EMERGENCY DMESG ==="
+              dmesg 2>&1 || true
+              echo "=== INITRD EMERGENCY JOURNAL ==="
+              journalctl -b --no-pager 2>&1 || true
+            } > /tmp/boot-log/initrd-emergency.log
+            sync || true
+            umount /tmp/boot-log || true
+          fi
+        '';
+      };
+    };
+
+    systemd.services.extra-life-boot-log = lib.mkIf config.extraLife.debug {
+      description = "Capture Extra Life Stage 2 boot dmesg and journal to /storage";
+      wantedBy = [ "multi-user.target" ];
+      after = [
+        "cage-tty1.service"
+        "extra-life-board-detect.service"
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
+        if [[ -r /run/extra-life-board.env ]]; then
+          . /run/extra-life-board.env
+        fi
+        if [[ "''${EXTRA_LIFE_DEBUG:-1}" != "1" ]]; then
+          exit 0
+        fi
+        dmesg > /storage/boot-dmesg.log 2>&1 || true
+        journalctl -b --no-pager > /storage/boot-journal.log 2>&1 || true
+        sync || true
+      '';
     };
 
     systemd.services.extra-life-mark-boot-good = {

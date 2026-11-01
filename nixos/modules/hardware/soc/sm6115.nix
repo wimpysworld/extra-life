@@ -6,6 +6,32 @@
 let
   rocknixSm6115 = pkgs.rocknix-sm6115;
 
+  rocknixExtraFirmware = pkgs.fetchFromGitHub {
+    owner = "ROCKNIX";
+    repo = "extra-firmware";
+    rev = "925dfb5efbe5d6c3ca654f81e3e1f367f8492777";
+    sparseCheckout = [ "SM6115" ];
+    hash = "sha256-PIjDosffCpmxuPOcsHfXFRf49U2E0oiKwAdrYyP0wFI=";
+  };
+
+  compressedLinuxFirmware = pkgs.compressFirmwareZstd pkgs.linux-firmware;
+
+  sm6115Firmware =
+    pkgs.runCommand "sm6115-firmware"
+      {
+        nativeBuildInputs = [ pkgs.zstd ];
+        passthru.compressFirmware = false;
+      }
+      ''
+        mkdir -p "$out/lib/firmware/qcom/qrb4210"
+        cp -a "${rocknixExtraFirmware}/SM6115/." "$out/lib/firmware/"
+        chmod -R u+w "$out/lib/firmware"
+        for jsn in adspr.jsn adsps.jsn adspua.jsn; do
+          zstd -d -f "${compressedLinuxFirmware}/lib/firmware/qcom/qrb4210/$jsn.zst" \
+            -o "$out/lib/firmware/qcom/qrb4210/$jsn"
+        done
+      '';
+
   sm6115AlsaUcm = pkgs.runCommand "sm6115-alsa-ucm-conf" { } ''
     mkdir -p "$out/share/alsa/ucm2/Qualcomm/sm6115"
     mkdir -p "$out/share/alsa/ucm2/conf.d/sm4250"
@@ -38,31 +64,126 @@ in
   boot = {
     kernelPackages = pkgs.linuxPackages_sm6115;
 
-    initrd.availableKernelModules = [
-      "panel_hx83112a"
-      "panel_bm5460bb1"
-      "panel_gh7005"
-      "panel_td4310"
-      "panel_retroid_duolite_bottom"
-      "wl818s"
-      "pwm_bl"
-      "qcom_wled"
-      "wl818s_bl"
+    kernelParams = [
+      "video=efifb:off"
+      "initcall_blacklist=simpledrm_platform_driver_init,efifb_driver_init,sysfb_init"
+      "console=tty0"
+      "gpt"
+      "ssbd=force-off"
+      "kpti=off"
+      "cgroup.memory=nokmem,nosocket"
     ];
 
+    initrd = {
+      extraFirmwarePaths = [
+        "qcom/a630_sqe.fw"
+        "qcom/a630_gmu.bin"
+        "qcom/qrb4210/a610_zap.mbn"
+        "qcom/sm6115/mangmi/a610_zap.mbn"
+        "qcom/sm6125/a610_zap.mbn"
+      ];
+
+      availableKernelModules = [
+        "gpi"
+        "bam_dma"
+        "i2c_qcom_geni"
+        "spi_geni_qcom"
+        "qcom_pbs"
+        "qcom_labibb_regulator"
+        "phy_qcom_qmp_combo"
+        "phy_qcom_qmp_usbc"
+        "rmtfs_mem"
+        "qcom_pon"
+        "rtc_pm8xxx"
+        "fusb302"
+        "typec"
+        "tcpm"
+        "llcc_qcom"
+        "ocmem"
+        "led_class_multicolor"
+        "leds_qcom_lpg"
+        "leds_aw200xx"
+        "leds_group_multicolor"
+        "pwm_bl"
+        "qcom_wled"
+        "wl818s_bl"
+        "wl818s"
+        "panel_hx83112a"
+        "panel_bm5460bb1"
+        "panel_gh7005"
+        "panel_td4310"
+        "panel_retroid_duolite_bottom"
+        "msm"
+      ];
+
+      kernelModules = [
+        "gpi"
+        "bam_dma"
+        "i2c_qcom_geni"
+        "spi_geni_qcom"
+        "qcom_pbs"
+        "qcom_labibb_regulator"
+        "phy_qcom_qmp_combo"
+        "phy_qcom_qmp_usbc"
+        "rmtfs_mem"
+        "qcom_pon"
+        "rtc_pm8xxx"
+        "fusb302"
+        "typec"
+        "tcpm"
+        "llcc_qcom"
+        "ocmem"
+        "led_class_multicolor"
+        "leds_qcom_lpg"
+        "leds_aw200xx"
+        "leds_group_multicolor"
+        "pwm_bl"
+        "qcom_wled"
+        "wl818s_bl"
+        "wl818s"
+        "panel_hx83112a"
+        "panel_bm5460bb1"
+        "panel_gh7005"
+        "panel_td4310"
+        "panel_retroid_duolite_bottom"
+        "msm"
+      ];
+    };
+
     kernelModules = [
+      "gpi"
+      "bam_dma"
+      "i2c_qcom_geni"
+      "spi_geni_qcom"
+      "qcom_pbs"
+      "qcom_labibb_regulator"
+      "phy_qcom_qmp_combo"
+      "phy_qcom_qmp_usbc"
+      "rmtfs_mem"
+      "apr"
+      "qcom_pon"
+      "rtc_pm8xxx"
+      "qcom_spmi_adc5"
+      "qcom_spmi_temp_alarm"
+      "venus_core"
+      "venus_dec"
+      "venus_enc"
+      "llcc_qcom"
+      "ocmem"
+      "led_class_multicolor"
+      "leds_qcom_lpg"
+      "leds_aw200xx"
+      "leds_group_multicolor"
+      "pwm_bl"
+      "qcom_wled"
+      "wl818s_bl"
+      "wl818s"
       "panel_hx83112a"
       "panel_bm5460bb1"
       "panel_gh7005"
       "panel_td4310"
       "panel_retroid_duolite_bottom"
-      "wl818s"
-      "pwm_bl"
-      "qcom_wled"
-      "wl818s_bl"
-      "leds_aw200xx"
-      "leds_group_multicolor"
-      "leds_qcom_lpg"
+      "msm"
       "pwrseq_qcom_wcn"
       "ath10k_core"
       "ath10k_snoc"
@@ -72,7 +193,7 @@ in
       "btqca"
       "mangmi"
       "pwm_vibra"
-      "clk_pwm"
+      "pwm_clk"
       "gpio_fan"
       "cw221x_battery"
       "himax_hx83112a"
@@ -97,6 +218,10 @@ in
     ];
   };
 
+  hardware.firmware = [
+    sm6115Firmware
+  ];
+
   services.inputplumber.enable = true;
 
   environment.etc = {
@@ -112,6 +237,22 @@ in
       "${rocknixSm6115}/projects/ROCKNIX/devices/SM6115/filesystem/usr/share/wireplumber/wireplumber.conf.d/90-sm6115-s16le.conf";
     "wireplumber/wireplumber.conf.d/91-suspend-on-idle.conf".source =
       "${rocknixSm6115}/projects/ROCKNIX/devices/SM6115/filesystem/usr/share/wireplumber/wireplumber.conf.d/91-suspend-on-idle.conf";
+    "systemd/system-sleep/sm6115-bt".source = pkgs.writeShellScript "sm6115-bt" ''
+      BT_UART_WAKEUP=/sys/devices/platform/soc@0/4ac0000.geniqup/4a8c000.serial/power/wakeup
+
+      bt_uart_wakeup() {
+        [ -e "''${BT_UART_WAKEUP}" ] && echo "''${1}" > "''${BT_UART_WAKEUP}"
+      }
+
+      case "$1" in
+        pre)
+          bt_uart_wakeup disabled
+          ;;
+        post)
+          bt_uart_wakeup enabled
+          ;;
+      esac
+    '';
   };
 
   environment.pathsToLink = [
@@ -120,6 +261,7 @@ in
   ];
 
   environment.systemPackages = [
+    pkgs.alsa-ucm-conf
     sm6115AlsaUcm
   ];
 }

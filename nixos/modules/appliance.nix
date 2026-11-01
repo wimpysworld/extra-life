@@ -15,6 +15,7 @@ let
     export XDG_CONFIG_HOME="/storage/.config"
     export XDG_DATA_HOME="/storage/.local/share"
     export XDG_CACHE_HOME="/storage/.cache"
+    export ALSA_CONFIG_UCM2="/run/current-system/sw/share/alsa/ucm2"
     export SDL_VIDEODRIVER="wayland"
     export EXTRA_LIFE_UPDATE_URL="https://extralife-ota.wimpys.world/releases.json"
     export EXTRA_LIFE_DEVICE="${config.extraLife.variantId}"
@@ -22,7 +23,11 @@ let
     if [ ! -w /storage/Retro/roms/LICENSES.md ] && [ -e /storage/Retro/roms/LICENSES.md ]; then
       chmod -R u+w /storage/Retro/roms /storage/Retro/playlists /storage/Retro/thumbnails
     fi
-    exec ${pkgs.ludo}/bin/ludo -ludos
+    if [ "''${EXTRA_LIFE_DEBUG:-0}" = "1" ]; then
+      exec ${pkgs.ludo}/bin/ludo -ludos >>/storage/ludo.log 2>&1
+    else
+      exec ${pkgs.ludo}/bin/ludo -ludos
+    fi
   '';
 
   playstationCore =
@@ -420,6 +425,17 @@ in
       default = lib.strings.trim (builtins.readFile ../../VERSION);
       description = "Release version identifier for Extra Life.";
     };
+
+    debug = lib.mkOption {
+      type = lib.types.bool;
+      default = lib.any (dev: (dev.soc or "") == config.extraLife.variantId && (dev.debug or false)) (
+        lib.attrValues config.extraLife.devices
+      );
+      defaultText = lib.literalExpression ''
+        lib.any (dev: (dev.soc or "") == config.extraLife.variantId && (dev.debug or false)) (lib.attrValues config.extraLife.devices)
+      '';
+      description = "Enable verbose kernel boot output and SD-card diagnostic log capture for this SoC closure.";
+    };
   };
 
   config = {
@@ -499,6 +515,10 @@ in
       pulse.enable = true;
       wireplumber.enable = true;
     };
+    systemd.user.services.pipewire.environment.ALSA_CONFIG_UCM2 =
+      "/run/current-system/sw/share/alsa/ucm2";
+    systemd.user.services.wireplumber.environment.ALSA_CONFIG_UCM2 =
+      "/run/current-system/sw/share/alsa/ucm2";
 
     # Network management via ConnMan, storing persistent credentials in /storage/.cache/connman.
     services.connman = {
@@ -627,6 +647,7 @@ in
         XDG_CONFIG_HOME = "/storage/.config";
         XDG_DATA_HOME = "/storage/.local/share";
         XDG_CACHE_HOME = "/storage/.cache";
+        ALSA_CONFIG_UCM2 = "/run/current-system/sw/share/alsa/ucm2";
       };
     };
 
@@ -634,10 +655,12 @@ in
 
     environment.pathsToLink = [
       "/lib/retroarch"
+      "/share/alsa"
       "/share/ludo"
     ];
 
     environment.systemPackages = with pkgs; [
+      alsa-ucm-conf
       bash
       connman
       coreutils
@@ -722,7 +745,10 @@ in
       mutableUsers = false;
     };
     environment.stub-ld.enable = false;
-    environment.variables.PAGER = lib.mkForce "cat";
+    environment.variables = {
+      ALSA_CONFIG_UCM2 = "/run/current-system/sw/share/alsa/ucm2";
+      PAGER = lib.mkForce "cat";
+    };
     environment.defaultPackages = lib.mkForce [ ];
     environment.corePackages =
       with pkgs;

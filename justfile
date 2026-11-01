@@ -23,17 +23,17 @@ devices:
     echo ""
 
     echo "Device IDs (nixos/devices/devices.toml):"
-    printf "  %-22s %-10s %-14s %s\n" "DEVICE ID" "VARIANT" "ARCH" "DESCRIPTION"
-    printf "  %-22s %-10s %-14s %s\n" "---------" "-------" "----" "-----------"
+    printf "  %-22s %-10s %-14s %-7s %s\n" "DEVICE ID" "VARIANT" "ARCH" "DEBUG" "DESCRIPTION"
+    printf "  %-22s %-10s %-14s %-7s %s\n" "---------" "-------" "----" "-----" "-----------"
     jq -r '
       .devices
       | to_entries
       | sort_by(.value.soc, .key)
       | .[]
-      | [.key, .value.soc, .value.arch, .value.name]
+      | [.key, .value.soc, .value.arch, (if .value.debug then "on" else "off" end), .value.name]
       | @tsv
-    ' <<< "${catalogue}" | while IFS=$'\t' read -r id soc arch name; do
-        printf "  %-22s %-10s %-14s %s\n" "${id}" "${soc}" "${arch}" "${name}"
+    ' <<< "${catalogue}" | while IFS=$'\t' read -r id soc arch debug name; do
+        printf "  %-22s %-10s %-14s %-7s %s\n" "${id}" "${soc}" "${arch}" "${debug}" "${name}"
     done
     echo ""
 
@@ -290,13 +290,14 @@ build-device target="":
         echo "No disk image found under ${disk_link}" >&2
         exit 1
     fi
-    img_zst="extra-life-${variant}-${version}.img.zst"
-    echo "Disk 󰋊 Compressing: ${dist_dir}/${img_zst}"
-    zstd -T0 -19 -f "${disk_src}" -o "${dist_dir}/${img_zst}"
-    chmod 0644 "${dist_dir}/${img_zst}"
-    img_sha256="$(sha256sum "${dist_dir}/${img_zst}" | cut -d' ' -f1)"
-    printf '%s  %s\n' "${img_sha256}" "${img_zst}" > "${dist_dir}/${img_zst}.sha256"
-    chmod 0644 "${dist_dir}/${img_zst}.sha256"
+    img_xz="extra-life-${variant}-${version}.img.xz"
+    rm -f "${dist_dir}"/*.img.zst "${dist_dir}"/*.img.zst.sha256
+    echo "Disk 󰋊 Compressing: ${dist_dir}/${img_xz}"
+    xz -T0 -6 -f -c "${disk_src}" > "${dist_dir}/${img_xz}"
+    chmod 0644 "${dist_dir}/${img_xz}"
+    img_sha256="$(sha256sum "${dist_dir}/${img_xz}" | cut -d' ' -f1)"
+    printf '%s  %s\n' "${img_sha256}" "${img_xz}" > "${dist_dir}/${img_xz}.sha256"
+    chmod 0644 "${dist_dir}/${img_xz}.sha256"
 
     ota_attr=".#ota-bundle-${variant}"
     ota_link="result-ota-${variant}"
@@ -318,9 +319,9 @@ build-device target="":
       --arg tar_name "${tar_name}" \
       --arg tar_sha256 "${tar_sha256}" \
       --arg tar_url "https://extralife-ota.wimpys.world/v${version}/${variant}/${tar_name}" \
-      --arg img_name "${img_zst}" \
+      --arg img_name "${img_xz}" \
       --arg img_sha256 "${img_sha256}" \
-      --arg img_url "https://extralife-ota.wimpys.world/v${version}/${variant}/${img_zst}" \
+      --arg img_url "https://extralife-ota.wimpys.world/v${version}/${variant}/${img_xz}" \
       '{
         version: $version,
         variant: $variant,

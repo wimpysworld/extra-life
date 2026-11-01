@@ -26,11 +26,13 @@ let
       id: dev:
       let
         orient = dev.panel_orientation or "normal";
+        debugFlag = if (dev.debug or false) then "1" else "0";
       in
       ''
         ${lib.escapeShellArg dev.dt_model})
           board_id=${lib.escapeShellArg id}
           panel_orientation=${lib.escapeShellArg orient}
+          board_debug=${debugFlag}
           matched=1
           ;;
       ''
@@ -43,11 +45,13 @@ let
       let
         boardCompat = builtins.head dev.dt_compatibles;
         orient = dev.panel_orientation or "normal";
+        debugFlag = if (dev.debug or false) then "1" else "0";
       in
       ''
         ${lib.escapeShellArg boardCompat})
           board_id=${lib.escapeShellArg id}
           panel_orientation=${lib.escapeShellArg orient}
+          board_debug=${debugFlag}
           matched=1
           break
           ;;
@@ -62,6 +66,7 @@ let
         vendor = lib.escapeShellArg dev.dmi_vendor;
         productsPattern = lib.concatMapStringsSep "|" lib.escapeShellArg dev.dmi_products;
         orient = dev.panel_orientation or "normal";
+        debugFlag = if (dev.debug or false) then "1" else "0";
       in
       ''
         if [[ -z "$matched" ]] && [[ "$sys_vendor" == ${vendor} || "$board_vendor" == ${vendor} ]]; then
@@ -69,6 +74,7 @@ let
             ${productsPattern})
               board_id=${lib.escapeShellArg id}
               panel_orientation=${lib.escapeShellArg orient}
+              board_debug=${debugFlag}
               matched=1
               ;;
           esac
@@ -77,6 +83,7 @@ let
               ${productsPattern})
                 board_id=${lib.escapeShellArg id}
                 panel_orientation=${lib.escapeShellArg orient}
+                board_debug=${debugFlag}
                 matched=1
                 ;;
             esac
@@ -92,11 +99,13 @@ let
       let
         usbPattern = lib.concatMapStringsSep "|" (s: lib.escapeShellArg (lib.toLower s)) dev.usb_fallbacks;
         orient = dev.panel_orientation or "normal";
+        debugFlag = if (dev.debug or false) then "1" else "0";
       in
       ''
         ${usbPattern})
           board_id=${lib.escapeShellArg id}
           panel_orientation=${lib.escapeShellArg orient}
+          board_debug=${debugFlag}
           matched=1
           break
           ;;
@@ -109,6 +118,7 @@ let
 
     board_id=${lib.escapeShellArg defaultBoardId}
     panel_orientation="normal"
+    board_debug=${if config.extraLife.debug then "1" else "0"}
     matched=""
 
     if [[ -r /proc/device-tree/model ]]; then
@@ -152,9 +162,14 @@ let
       fi
     fi
 
+    if [[ -e /boot/debug || -e /boot/debug.txt ]]; then
+      board_debug="1"
+    fi
+
     cat > /run/extra-life-board.env.tmp <<EOF
     EXTRA_LIFE_BOARD=$board_id
     EXTRA_LIFE_PANEL_ORIENTATION=$panel_orientation
+    EXTRA_LIFE_DEBUG=$board_debug
     EOF
     chmod 0644 /run/extra-life-board.env.tmp
     mv -f /run/extra-life-board.env.tmp /run/extra-life-board.env

@@ -42,6 +42,14 @@ let
       kernelPatches = (linux_7_2.kernelPatches or [ ]) ++ rocknixPatches;
       structuredExtraConfig = with lib.kernel; {
         RUST = lib.mkForce no;
+        ARM64_VA_BITS_39 = lib.mkForce yes;
+        ARM64_VA_BITS = lib.mkForce (lib.kernel.freeform "39");
+        ARM64_PA_BITS_48 = lib.mkForce yes;
+        ARM64_PA_BITS = lib.mkForce (lib.kernel.freeform "48");
+        IOMMU_DEFAULT_DMA_LAZY = lib.mkForce yes;
+        IOMMU_DEFAULT_DMA_STRICT = lib.mkForce no;
+        BT_LE = lib.mkForce yes;
+        CPU_IDLE_GOV_TEO = yes;
         JOYSTICK_MANGMI = module;
         JOYSTICK_RSINPUT = module;
         DRM_PANEL_MANGMI_HX83112A = module;
