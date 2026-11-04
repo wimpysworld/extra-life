@@ -176,7 +176,13 @@ build-disk target="":
                 echo "Resolved device '${target}' -> variant '${variant}'"
                 ;;
         esac
-        if [[ "${target}" == "powkiddy-rgb20sx" ]]; then
+        if [[ "${target}" == "anbernic-rg35xx-plus" ]]; then
+            attr=".#disk-image-anbernic-rg35xx-plus"
+        elif [[ "${target}" == "anbernic-rg35xx-2024" ]]; then
+            attr=".#disk-image-anbernic-rg35xx-2024"
+        elif [[ "${target}" == "anbernic-rg35xx-pro" ]]; then
+            attr=".#disk-image-anbernic-rg35xx-pro"
+        elif [[ "${target}" == "powkiddy-rgb20sx" ]]; then
             attr=".#disk-image-powkiddy-rgb20sx"
         elif [[ "${target}" == "powkiddy-x35s" ]]; then
             attr=".#disk-image-powkiddy-x35s"
@@ -286,7 +292,13 @@ build-device target="":
     dist_dir="dist/v${version}/${variant}"
     mkdir -p "${dist_dir}"
 
-    if [[ "${target}" == "powkiddy-rgb20sx" ]]; then
+    if [[ "${target}" == "anbernic-rg35xx-plus" ]]; then
+        disk_attr=".#disk-image-anbernic-rg35xx-plus"
+    elif [[ "${target}" == "anbernic-rg35xx-2024" ]]; then
+        disk_attr=".#disk-image-anbernic-rg35xx-2024"
+    elif [[ "${target}" == "anbernic-rg35xx-pro" ]]; then
+        disk_attr=".#disk-image-anbernic-rg35xx-pro"
+    elif [[ "${target}" == "powkiddy-rgb20sx" ]]; then
         disk_attr=".#disk-image-powkiddy-rgb20sx"
     elif [[ "${target}" == "powkiddy-x35s" ]]; then
         disk_attr=".#disk-image-powkiddy-x35s"

@@ -154,7 +154,7 @@ Extra Life models its hardware architecture on ROCKNIX so that every board in an
 
 | Layer | Scope | Artefacts and runtime mechanics |
 | --- | --- | --- |
-| Kernel and firmware | Shared per SoC | Each SoC family builds its kernel (`Image` or `bzImage`), early firmware (`CONFIG_EXTRA_FIRMWARE`), and modules once. Closures use `pkgs.linuxPackages` when possible, or package a patched or Board Support Package (BSP) kernel in `pkgs/kernels/` (`linuxPackages_rk3566`, `linuxPackages_rpi`, `linuxPackages_sm6115`). |
+| Kernel and firmware | Shared per SoC | Each SoC family builds its kernel (`Image` or `bzImage`), early firmware (`CONFIG_EXTRA_FIRMWARE`), and modules once. Closures use `pkgs.linuxPackages` when possible, or package a patched or Board Support Package (BSP) kernel in `pkgs/kernels/` (`linuxPackages_h700`, `linuxPackages_rk3566`, `linuxPackages_rpi`, `linuxPackages_sm6115`). |
 | Graphics and root filesystem | Shared per SoC | Every board in the SoC family shares the Mesa Graphics Processing Unit (GPU) stack (`radeonsi`, `iris`, `vc4`, `v3d`, `panfrost`, `freedreno`) and root filesystem closure. |
 | Bootloader and DTB selection | Per board | Boot partitions select the DTB through `FDTDIR /device_trees` with U-Boot SARADC or board auto-detection, explicit `FDT` entries, or `OpenABL` UEFI and BLS entries. |
 | Runtime board detection | Per board | Early boot detection reads `/sys/firmware/devicetree/base/model` and `/proc/device-tree/compatible` on ARM, or `/sys/class/dmi/id/{sys_vendor,product_name}` on `x86_64`. |

@@ -259,6 +259,12 @@
           ota-bundle-x86_64 = self.nixosConfigurations.x86_64.config.system.build.otaBundle;
           disk-image-aarch64 = (aarch64HostConfig "aarch64").config.system.build.diskImage;
           disk-image-h700 = (aarch64HostConfig "h700").config.system.build.diskImage;
+          disk-image-anbernic-rg35xx-plus =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg35xxPlus;
+          disk-image-anbernic-rg35xx-2024 =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg35xx2024;
+          disk-image-anbernic-rg35xx-pro =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg35xxPro;
           disk-image-rk3566 = (aarch64HostConfig "rk3566").config.system.build.diskImage;
           disk-image-powkiddy-rgb20sx =
             (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyRgb20sx;

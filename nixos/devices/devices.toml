@@ -275,6 +275,36 @@ dtb = "qcom/sm6115-mangmi-air-y.dtb"
 panel_orientation = "normal"
 debug = true
 
+[devices.anbernic-rg35xx-2024]
+name = "Anbernic RG35XX 2024"
+soc = "h700"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG35XX 2024"
+dt_compatibles = ["anbernic,rg35xx-2024", "allwinner,sun50i-h700"]
+dtb = "allwinner/sun50i-h700-anbernic-rg35xx-2024.dtb"
+panel_orientation = "normal"
+debug = true
+
+[devices.anbernic-rg35xx-plus]
+name = "Anbernic RG35XX Plus"
+soc = "h700"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG35XX Plus"
+dt_compatibles = ["anbernic,rg35xx-plus", "allwinner,sun50i-h700"]
+dtb = "allwinner/sun50i-h700-anbernic-rg35xx-plus.dtb"
+panel_orientation = "normal"
+debug = true
+
+[devices.anbernic-rg35xx-pro]
+name = "Anbernic RG35XX Pro"
+soc = "h700"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG35XX Pro"
+dt_compatibles = ["anbernic,rg35xx-pro", "allwinner,sun50i-h700"]
+dtb = "allwinner/sun50i-h700-anbernic-rg35xx-pro.dtb"
+panel_orientation = "normal"
+debug = true
+
 [devices.rpi-zero-2-w]
 name = "Raspberry Pi Zero 2 W"
 soc = "rpi02w"

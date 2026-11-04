@@ -115,6 +115,7 @@ in
       availableKernelModules = [
         "panfrost"
         "pwm_bl"
+        "spi_gpio"
         "iio_mux"
         "mux_gpio"
         "snd_soc_sun4i_codec"
@@ -131,6 +132,7 @@ in
     kernelModules = [
       "panfrost"
       "pwm_bl"
+      "spi_gpio"
       "iio_mux"
       "mux_gpio"
       "snd_soc_sun4i_codec"

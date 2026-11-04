@@ -4,7 +4,7 @@ Extra Life scopes each system closure to one System on a Chip (SoC) family (`VAR
 
 ## Active SoC family summary
 
-Seven SoC targets build in the flake today. Run `just build-disk <soc>` or `just build-ota <soc>` to build an image or over-the-air (OTA) bundle.
+Eight SoC targets build in the flake today. Run `just build-disk <soc>` or `just build-ota <soc>` to build an image or over-the-air (OTA) bundle.
 
 | SoC key (`VARIANT_ID`) | Build commands | Kernel and GPU stack | Bootloader and partition layout | Device count in `devices.toml` |
 | --- | --- | --- | --- | --- |
@@ -14,6 +14,7 @@ Seven SoC targets build in the flake today. Run `just build-disk <soc>` or `just
 | `rpi5` | `just build-disk rpi5`, `just build-ota rpi5` | Raspberry Pi Linux 6.12 LTS (`linuxPackages_rpi`) with VideoCore KMS and Mesa `vc4` and `v3d` | Raspberry Pi VPU firmware (`bootcode.bin`, `start*.elf`, or Pi 5 EEPROM) + `config.txt` and `cmdline.txt` on a hybrid GPT/MBR (`sgdisk -h 1`) two-partition layout (`EXTRALIFE` `vfat` + `STORAGE` `ext4`) | 3 |
 | `rk3566` | `just build-disk rk3566`, `just build-ota rk3566` | Linux 6.18 LTS (`linuxPackages_rk3566` with ROCKNIX `RK3566` patches and `rocknix,generic-dsi`) with `rockchipdrm` and Mesa `panfrost` | `ubootAnbernicRgxx3` or `ubootPowkiddyX55` (`u-boot-rockchip.bin` at sector 64) + `extlinux.conf` (`FDTDIR /dtbs`) on GPT (`05-uboot` + `EXTRALIFE` + `STORAGE`) | 15 |
 | `sm6115` | `just build-disk sm6115`, `just build-ota sm6115` | Linux 7.2 (`linuxPackages_sm6115` with ROCKNIX `SM6115` patches) and Mesa `freedreno` (`msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 4 |
+| `h700` | `just build-disk h700`, `just build-ota h700` | Linux 7.2 (`linuxPackages_h700` with ROCKNIX `H700` patches), `sun4i-drm`, `panel-mipi-dpi-spi`, and Mesa `panfrost` | `ubootAnbernicH700` (`u-boot-sunxi-with-spl.bin` at 8 KB offset) + `extlinux.conf` (`FDT /dtbs/allwinner/*.dtb`) on hybrid GPT/MBR (`sgdisk -d 1 -j 2016 -h 2:3`) | 3 |
 | `aarch64` | `just build-disk aarch64`, `just build-ota aarch64` | Mainline Linux (`Image`) with `virtio-gpu` and Mesa | `systemd-boot` (`BOOTAA64.EFI`) on a two-partition GPT layout (`EXTRALIFE` `vfat` + `STORAGE` `ext4`) | 0 (generic UEFI and `vm-retro`) |
 
 ## Currently supported hardware
@@ -124,6 +125,21 @@ The `sm6115` closure supports four Mangmi handheld variants on the Qualcomm Snap
 | `mangmi-air-x-mq66b` | Mangmi Air X (MQ66B) | `MANGMI Air X MQ66B` | `mangmi,sm6115-air-x-mq66b` | `qcom/sm6115-mangmi-air-x-mq66b.dtb` | `mangmi,bm5460bb1`, `270` |
 | `mangmi-air-y` | Mangmi Air Y | `MANGMI Air Y` | `mangmi,sm6115-air-y` | `qcom/sm6115-mangmi-air-y.dtb` | `mangmi,gh7005`, `normal` |
 
+### `h700` (Allwinner H700 handhelds)
+
+The `h700` closure supports three Anbernic RG35XX handhelds on the Allwinner H700 platform.
+
+- **Bootloader and DTB selection**: `disk-h700.nix` writes `ubootAnbernicH700` (`u-boot-sunxi-with-spl.bin`) at the 8 KB offset on a hybrid GPT/MBR layout (`sgdisk -d 1 -j 2016 -h 2:3`). Allwinner H700 boards lack a hardware board-identification ADC channel in U-Boot. `diskImageAnbernicRg35xxPlus` (`diskImage`), `diskImageAnbernicRg35xx2024`, and `diskImageAnbernicRg35xxPro` set explicit `FDT /dtbs/allwinner/*.dtb` entries in `extlinux.conf`. The `EXTRALIFE` partition also stages `/extlinux/extlinux-*.conf` files for all three boards and the Rev 6 panel variants.
+- **Kernel and display**: `linuxPackages_h700` builds Linux 7.2 with the ROCKNIX `H700` patch set, `sun4i-drm` (`DRM_SUN50I_PLANES`), `panel-mipi-dpi-spi` over `spi-gpio`, and `PWM_SUN8I` backlight and rumble control. At boot, `panel-mipi-dpi-spi` loads display timing firmware from `/lib/firmware/panels/anbernic,*.panel` (`anbernic,rg35xx-plus-panel.panel` and `anbernic,rg35xx-plus-rev6-panel.panel`).
+- **Controls**: The built-in `rocknix-singleadc-joypad` driver exposes `H700 Gamepad`. The RG35XX 2024 and RG35XX Plus set `amux-count = <0>`. The RG35XX Pro sets `amux-count = <4>` on General-Purpose Analogue-to-Digital Converter (GPADC) channel 0 (`SUN20I_GPADC`) for dual analogue sticks.
+- **Audio and wireless**: Audio uses `sun4i-codec` (`snd_soc_sun4i_codec`) with the `Allwinner/sun4i-h616` UCM2 profile. The RG35XX Plus and RG35XX Pro include `rtw88_8821cs` Wi-Fi, `rtl8821cs` (`hci_uart` and `btrtl`) Bluetooth, and a `pcf8563` real-time clock (RTC). The RG35XX 2024 omits wireless hardware.
+
+| Device ID | Retail name | Device tree model (`dt_model`) | First `dt_compatibles` entry | DTB (`dtb`) | Panel orientation and notes |
+| --- | --- | --- | --- | --- | --- |
+| `anbernic-rg35xx-2024` | Anbernic RG35XX 2024 | `Anbernic RG35XX 2024` | `anbernic,rg35xx-2024` | `allwinner/sun50i-h700-anbernic-rg35xx-2024.dtb` | `normal`, `anbernic,rg35xx-plus-panel` (plus `-rev6-panel` variant), no Wi-Fi or Bluetooth |
+| `anbernic-rg35xx-plus` | Anbernic RG35XX Plus | `Anbernic RG35XX Plus` | `anbernic,rg35xx-plus` | `allwinner/sun50i-h700-anbernic-rg35xx-plus.dtb` | `normal`, `anbernic,rg35xx-plus-panel` (plus `-rev6-panel` variant), `rtw88_8821cs` Wi-Fi and Bluetooth |
+| `anbernic-rg35xx-pro` | Anbernic RG35XX Pro | `Anbernic RG35XX Pro` | `anbernic,rg35xx-pro` | `allwinner/sun50i-h700-anbernic-rg35xx-pro.dtb` | `normal`, `anbernic,rg35xx-plus-panel`, dual analogue sticks (`amux-count = <4>`), `rtw88_8821cs` Wi-Fi and Bluetooth |
+
 ### `aarch64` (Generic ARM64 UEFI and `vm-retro`)
 
 The `aarch64` closure targets generic 64-bit ARM UEFI systems and the `vm-retro` QEMU `virt` machine. It runs on `aarch64-linux` (`kvm`) and on Apple Silicon `aarch64-darwin` (`hvf` with `linux-builder`).
@@ -134,7 +150,7 @@ Extra Life expands hardware support in priority order. Each SoC closure uses the
 
 | Priority | SoC key | Target devices and cases | Kernel, GPU, and bootloader stack | Known quirks and caveats |
 | --- | --- | --- | --- | --- |
-| Priority 1 | `h700` | Anbernic RG35XX Plus, 2024, H, SP, Pro, RG40XX H, RG40XX V, RG CubeXX, RG28XX, and RG34XX | Mainline Linux (`Image`) with Mesa `panfrost` and Allwinner `H700` U-Boot | Requires built-in `/lib/firmware/panels/*.panel` MIPI-DSI timing firmware and `H700 Gamepad` input mapping. |
+| Priority 1 | `h700` | Anbernic RG35XX H, RG35XX SP, RG40XX H, RG40XX V, RG CubeXX, RG28XX, and RG34XX | Linux 7.2 (`linuxPackages_h700`) with Mesa `panfrost` and Allwinner `H700` U-Boot | Requires built-in `/lib/firmware/panels/*.panel` MIPI-DSI timing firmware and `H700 Gamepad` input mapping. |
 | Priority 2 | `sm8250`, `sm8550` | Retroid Pocket 5, Flip 2, Mini, and 6, AYN Odin 2, and AYANEO Pocket S, DMG, and EVO | Mainline Linux (`Image`) with Mesa `freedreno` and `disk-openabl.nix` UEFI/BLS boot | Reuses `qcom-common.nix` (`pd-mapper`, `rmtfs`, and `tqftpserv`) and per-board BLS device tree entries. |
 | Priority 3 | `rk3326` | Odroid Go Advance, Odroid Go Super, Anbernic RG351M, RG351V, R36S, R33S, and Powkiddy RGB20S | Mainline Linux (`Image`) with Mesa `panfrost` and Rockchip `RK3326` U-Boot | Requires `odroidgo2_joypad` and `retrogame_joypad` input mappings and respects 1 GB RAM limits. |
 | Priority 4 | `x86_64` | Valve Steam Deck, ASUS ROG Ally, Lenovo Legion Go, AYANEO, and AYN Loki handhelds | Mainline Linux (`bzImage`) with Mesa `radeonsi` and `systemd-boot` UEFI | Requires DMI portrait-panel rotation rules and `InputPlumber` composite controller profiles. |
