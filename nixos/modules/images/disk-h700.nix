@@ -54,6 +54,41 @@ let
         INITRD /INITRD
         FDT /dtbs/allwinner/sun50i-h700-anbernic-rg35xx-pro.dtb
         APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+
+      LABEL anbernic-rg35xx-h
+        MENU LABEL Extra Life (Anbernic RG35XX H)
+        LINUX /KERNEL
+        INITRD /INITRD
+        FDT /dtbs/allwinner/sun50i-h700-anbernic-rg35xx-h.dtb
+        APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+
+      LABEL anbernic-rg35xx-h-rev6-panel
+        MENU LABEL Extra Life (Anbernic RG35XX H Rev 6 Panel)
+        LINUX /KERNEL
+        INITRD /INITRD
+        FDT /dtbs/allwinner/sun50i-h700-anbernic-rg35xx-h-rev6-panel.dtb
+        APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+
+      LABEL anbernic-rg35xx-sp
+        MENU LABEL Extra Life (Anbernic RG35XX SP)
+        LINUX /KERNEL
+        INITRD /INITRD
+        FDT /dtbs/allwinner/sun50i-h700-anbernic-rg35xx-sp.dtb
+        APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+
+      LABEL anbernic-rg35xx-sp-v2-panel
+        MENU LABEL Extra Life (Anbernic RG35XX SP V2 Panel)
+        LINUX /KERNEL
+        INITRD /INITRD
+        FDT /dtbs/allwinner/sun50i-h700-anbernic-rg35xx-sp-v2-panel.dtb
+        APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+
+      LABEL anbernic-rg-sp
+        MENU LABEL Extra Life (Anbernic RG SP)
+        LINUX /KERNEL
+        INITRD /INITRD
+        FDT /dtbs/allwinner/sun50i-h700-anbernic-rg-sp.dtb
+        APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
     '';
 
   extlinuxConf = mkExtlinuxConf "extlinux.conf" "anbernic-rg35xx-plus";
@@ -62,6 +97,11 @@ let
   extlinuxConfAnbernicRg35xx2024 = mkExtlinuxConf "extlinux-anbernic-rg35xx-2024.conf" "anbernic-rg35xx-2024";
   extlinuxConfAnbernicRg35xx2024Rev6 = mkExtlinuxConf "extlinux-anbernic-rg35xx-2024-rev6-panel.conf" "anbernic-rg35xx-2024-rev6-panel";
   extlinuxConfAnbernicRg35xxPro = mkExtlinuxConf "extlinux-anbernic-rg35xx-pro.conf" "anbernic-rg35xx-pro";
+  extlinuxConfAnbernicRg35xxH = mkExtlinuxConf "extlinux-anbernic-rg35xx-h.conf" "anbernic-rg35xx-h";
+  extlinuxConfAnbernicRg35xxHRev6 = mkExtlinuxConf "extlinux-anbernic-rg35xx-h-rev6-panel.conf" "anbernic-rg35xx-h-rev6-panel";
+  extlinuxConfAnbernicRg35xxSp = mkExtlinuxConf "extlinux-anbernic-rg35xx-sp.conf" "anbernic-rg35xx-sp";
+  extlinuxConfAnbernicRg35xxSpV2 = mkExtlinuxConf "extlinux-anbernic-rg35xx-sp-v2-panel.conf" "anbernic-rg35xx-sp-v2-panel";
+  extlinuxConfAnbernicRgSp = mkExtlinuxConf "extlinux-anbernic-rg-sp.conf" "anbernic-rg-sp";
 
   mkH700DiskImage =
     defaultExtlinuxConf:
@@ -101,6 +141,11 @@ in
       "/extlinux/extlinux-anbernic-rg35xx-2024-rev6-panel.conf".source =
         extlinuxConfAnbernicRg35xx2024Rev6;
       "/extlinux/extlinux-anbernic-rg35xx-pro.conf".source = extlinuxConfAnbernicRg35xxPro;
+      "/extlinux/extlinux-anbernic-rg35xx-h.conf".source = extlinuxConfAnbernicRg35xxH;
+      "/extlinux/extlinux-anbernic-rg35xx-h-rev6-panel.conf".source = extlinuxConfAnbernicRg35xxHRev6;
+      "/extlinux/extlinux-anbernic-rg35xx-sp.conf".source = extlinuxConfAnbernicRg35xxSp;
+      "/extlinux/extlinux-anbernic-rg35xx-sp-v2-panel.conf".source = extlinuxConfAnbernicRg35xxSpV2;
+      "/extlinux/extlinux-anbernic-rg-sp.conf".source = extlinuxConfAnbernicRgSp;
       "/dtbs/allwinner".source = "${config.hardware.deviceTree.package}/allwinner";
       "/uboot/anbernic-h700-u-boot-sunxi-with-spl.bin".source =
         "${pkgs.ubootAnbernicH700}/u-boot-sunxi-with-spl.bin";
@@ -115,5 +160,7 @@ in
     diskImageAnbernicRg35xxPlus = mkH700DiskImage extlinuxConfAnbernicRg35xxPlus;
     diskImageAnbernicRg35xx2024 = mkH700DiskImage extlinuxConfAnbernicRg35xx2024;
     diskImageAnbernicRg35xxPro = mkH700DiskImage extlinuxConfAnbernicRg35xxPro;
+    diskImageAnbernicRg35xxH = mkH700DiskImage extlinuxConfAnbernicRg35xxH;
+    diskImageAnbernicRg35xxSp = mkH700DiskImage extlinuxConfAnbernicRg35xxSp;
   };
 }

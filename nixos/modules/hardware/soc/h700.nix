@@ -4,6 +4,215 @@
   ...
 }:
 let
+  h700CompositeProfile = pkgs.writeText "50-h700-handheld.yaml" ''
+    version: 1
+    kind: CompositeDevice
+    name: H700 Handheld
+    single_source: false
+    matches: []
+    source_devices:
+      - group: gamepad
+        evdev:
+          name: H700 Gamepad
+          handler: event*
+        capability_map_id: h700_gamepad
+    options:
+      auto_manage: true
+    target_devices:
+      - xb360
+  '';
+
+  h700CapabilityMap = pkgs.writeText "h700_gamepad.yaml" ''
+    version: 2
+    kind: CapabilityMap
+    name: H700 Gamepad
+    id: h700_gamepad
+    mapping:
+      - name: DPad Up
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_DPAD_UP
+              value_type: button
+        target_event:
+          gamepad:
+            button: DPadUp
+      - name: DPad Down
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_DPAD_DOWN
+              value_type: button
+        target_event:
+          gamepad:
+            button: DPadDown
+      - name: DPad Left
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_DPAD_LEFT
+              value_type: button
+        target_event:
+          gamepad:
+            button: DPadLeft
+      - name: DPad Right
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_DPAD_RIGHT
+              value_type: button
+        target_event:
+          gamepad:
+            button: DPadRight
+      - name: South Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_SOUTH
+              value_type: button
+        target_event:
+          gamepad:
+            button: South
+      - name: East Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_EAST
+              value_type: button
+        target_event:
+          gamepad:
+            button: East
+      - name: North Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_NORTH
+              value_type: button
+        target_event:
+          gamepad:
+            button: North
+      - name: West Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_WEST
+              value_type: button
+        target_event:
+          gamepad:
+            button: West
+      - name: Left Bumper
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TL
+              value_type: button
+        target_event:
+          gamepad:
+            button: LeftBumper
+      - name: Right Bumper
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TR
+              value_type: button
+        target_event:
+          gamepad:
+            button: RightBumper
+      - name: Left Trigger
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TL2
+              value_type: trigger
+        target_event:
+          gamepad:
+            trigger:
+              name: LeftTrigger
+      - name: Right Trigger
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TR2
+              value_type: trigger
+        target_event:
+          gamepad:
+            trigger:
+              name: RightTrigger
+      - name: Select Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_SELECT
+              value_type: button
+        target_event:
+          gamepad:
+            button: Select
+      - name: Start Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_START
+              value_type: button
+        target_event:
+          gamepad:
+            button: Start
+      - name: Guide Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_MODE
+              value_type: button
+        target_event:
+          gamepad:
+            button: Guide
+      - name: Left Stick Click
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_THUMBL
+              value_type: button
+        target_event:
+          gamepad:
+            button: LeftStick
+      - name: Right Stick Click
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_THUMBR
+              value_type: button
+        target_event:
+          gamepad:
+            button: RightStick
+      - name: Left Stick
+        source_events:
+          - evdev:
+              event_type: ABS
+              event_code: ABS_X
+              value_type: joystick_x
+          - evdev:
+              event_type: ABS
+              event_code: ABS_Y
+              value_type: joystick_y
+        target_event:
+          gamepad:
+            axis:
+              name: LeftStick
+      - name: Right Stick
+        source_events:
+          - evdev:
+              event_type: ABS
+              event_code: ABS_RX
+              value_type: joystick_x
+          - evdev:
+              event_type: ABS
+              event_code: ABS_RY
+              value_type: joystick_y
+        target_event:
+          gamepad:
+            axis:
+              name: RightStick
+  '';
+
   h700PanelFirmware =
     pkgs.runCommand "h700-panel-firmware"
       {
@@ -148,6 +357,14 @@ in
 
   services.cage.environment.MESA_EXTENSION_OVERRIDE = "-GL_OES_copy_image -GL_EXT_copy_image -GL_NV_copy_image -GL_ARB_copy_image";
 
+  services.inputplumber.enable = true;
+
+  services.logind.settings.Login = {
+    HandleLidSwitch = "suspend";
+    HandleLidSwitchExternalPower = "suspend";
+    HandleLidSwitchDocked = "ignore";
+  };
+
   services.udev = {
     extraRules = ''
       ACTION=="add", SUBSYSTEM=="net", SUBSYSTEMS=="sdio", KERNELS=="mmc2:0001:1", RUN+="${pkgs.iw}/bin/iw dev %k set power_save off"
@@ -160,8 +377,14 @@ in
     '';
   };
 
+  environment.etc = {
+    "inputplumber/devices.d/50-h700-handheld.yaml".source = h700CompositeProfile;
+    "inputplumber/capability_maps.d/h700_gamepad.yaml".source = h700CapabilityMap;
+  };
+
   environment.pathsToLink = [
     "/share/alsa/ucm2"
+    "/share/inputplumber"
   ];
 
   environment.systemPackages = [

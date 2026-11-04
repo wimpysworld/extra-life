@@ -100,8 +100,13 @@ let
         PHY_SUN4I_USB = yes;
         USB_MUSB_HDRC = yes;
         USB_MUSB_SUNXI = yes;
+        USB_EHCI_HCD = yes;
+        USB_EHCI_HCD_PLATFORM = yes;
+        USB_OHCI_HCD = yes;
+        USB_OHCI_HCD_PLATFORM = yes;
         RTC_DRV_PCF8563 = yes;
         KEYBOARD_ADC = yes;
+        KEYBOARD_GPIO = yes;
         IIO = yes;
         IIO_MUX = module;
         MUX_GPIO = module;

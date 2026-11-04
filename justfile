@@ -182,6 +182,10 @@ build-disk target="":
             attr=".#disk-image-anbernic-rg35xx-2024"
         elif [[ "${target}" == "anbernic-rg35xx-pro" ]]; then
             attr=".#disk-image-anbernic-rg35xx-pro"
+        elif [[ "${target}" == "anbernic-rg35xx-h" ]]; then
+            attr=".#disk-image-anbernic-rg35xx-h"
+        elif [[ "${target}" == "anbernic-rg35xx-sp" ]]; then
+            attr=".#disk-image-anbernic-rg35xx-sp"
         elif [[ "${target}" == "powkiddy-rgb20sx" ]]; then
             attr=".#disk-image-powkiddy-rgb20sx"
         elif [[ "${target}" == "powkiddy-x35s" ]]; then
@@ -298,6 +302,10 @@ build-device target="":
         disk_attr=".#disk-image-anbernic-rg35xx-2024"
     elif [[ "${target}" == "anbernic-rg35xx-pro" ]]; then
         disk_attr=".#disk-image-anbernic-rg35xx-pro"
+    elif [[ "${target}" == "anbernic-rg35xx-h" ]]; then
+        disk_attr=".#disk-image-anbernic-rg35xx-h"
+    elif [[ "${target}" == "anbernic-rg35xx-sp" ]]; then
+        disk_attr=".#disk-image-anbernic-rg35xx-sp"
     elif [[ "${target}" == "powkiddy-rgb20sx" ]]; then
         disk_attr=".#disk-image-powkiddy-rgb20sx"
     elif [[ "${target}" == "powkiddy-x35s" ]]; then
