@@ -178,6 +178,19 @@ let
       hash = "sha256-4xnHG+Ix8s/nPWeoqKhy52G8+3hIVGHXUfxMntcZOYw=";
     };
 
+    rocknix-sm8250 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/SM8250"
+        "projects/ROCKNIX/packages/linux/patches/7.2"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/SM8250"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2"
+      ];
+      hash = "sha256-9Ox2liSB8UQFDCjCJoP0Ps1TxtByiId72n/etYDycHY=";
+    };
+
     linuxPackages_h700 = final.callPackage ../pkgs/kernels/h700.nix { };
 
     linuxPackages_rk3566 = final.callPackage ../pkgs/kernels/rk3566.nix { };
@@ -185,6 +198,8 @@ let
     linuxPackages_rpi = final.callPackage ../pkgs/kernels/rpi.nix { };
 
     linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
+
+    linuxPackages_sm8250 = final.callPackage ../pkgs/kernels/sm8250.nix { };
   };
 in
 {
@@ -362,9 +377,22 @@ in
       ];
       hash = "sha256-4xnHG+Ix8s/nPWeoqKhy52G8+3hIVGHXUfxMntcZOYw=";
     };
+    rocknix-sm8250 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/SM8250"
+        "projects/ROCKNIX/packages/linux/patches/7.2"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/SM8250"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2"
+      ];
+      hash = "sha256-9Ox2liSB8UQFDCjCJoP0Ps1TxtByiId72n/etYDycHY=";
+    };
     linuxPackages_h700 = final.callPackage ../pkgs/kernels/h700.nix { };
     linuxPackages_rk3566 = final.callPackage ../pkgs/kernels/rk3566.nix { };
     linuxPackages_rpi = final.callPackage ../pkgs/kernels/rpi.nix { };
     linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
+    linuxPackages_sm8250 = final.callPackage ../pkgs/kernels/sm8250.nix { };
   };
 }

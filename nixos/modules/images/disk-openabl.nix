@@ -7,6 +7,7 @@
 let
   toplevel = config.system.build.toplevel;
   inherit (config.extraLife) variantId;
+  openablDevice = lib.toUpper variantId;
 
   socDevices = lib.filterAttrs (
     _id: dev: (dev.soc or "") == variantId && (dev ? dtb)
@@ -28,10 +29,22 @@ let
 
   socDtbs = pkgs.runCommand "extra-life-${variantId}-dtbs" { } ''
     mkdir -p "$out/qcom"
-    ${lib.concatMapStringsSep "\n" (dtb: ''
-      cp -f "${config.hardware.deviceTree.package}/${dtb}" "$out/${dtb}"
-      cp -f "${config.hardware.deviceTree.package}/${dtb}" "$out/$(basename "${dtb}")"
-    '') dtbFiles}
+    ${
+      if dtbFiles != [ ] then
+        lib.concatMapStringsSep "\n" (dtb: ''
+          cp -f "${config.hardware.deviceTree.package}/${dtb}" "$out/${dtb}"
+          cp -f "${config.hardware.deviceTree.package}/${dtb}" "$out/$(basename "${dtb}")"
+        '') dtbFiles
+      else
+        ''
+          for f in "${config.hardware.deviceTree.package}"/qcom/${variantId}-*.dtb; do
+            if [ -e "$f" ]; then
+              cp -f "$f" "$out/qcom/$(basename "$f")"
+              cp -f "$f" "$out/$(basename "$f")"
+            fi
+          done
+        ''
+    }
   '';
 
   openablTarball = pkgs.fetchurl {
@@ -41,7 +54,7 @@ let
 
   openablDir = pkgs.runCommand "extra-life-openabl-${variantId}" { } ''
     mkdir -p "$out"
-    tar -xzf "${openablTarball}" --strip-components=2 -C "$out" "openabl-v1.2/SM6115/abl_signed-SM6115.elf"
+    tar -xzf "${openablTarball}" --strip-components=2 -C "$out" "openabl-v1.2/${openablDevice}/abl_signed-${openablDevice}.elf"
     cat > "$out/backup_abl.sh" << 'EOF'
     #!/bin/sh
 
@@ -51,8 +64,8 @@ let
     cat > "$out/flash_abl.sh" << 'EOF'
     #!/bin/sh
 
-    dd if="/sdcard/openabl/abl_signed-SM6115.elf" of="/dev/block/by-name/abl_a" bs=1M
-    dd if="/sdcard/openabl/abl_signed-SM6115.elf" of="/dev/block/by-name/abl_b" bs=1M
+    dd if="/sdcard/openabl/abl_signed-${openablDevice}.elf" of="/dev/block/by-name/abl_a" bs=1M
+    dd if="/sdcard/openabl/abl_signed-${openablDevice}.elf" of="/dev/block/by-name/abl_b" bs=1M
     EOF
     cat > "$out/restore_backup_abl.sh" << 'EOF'
     #!/bin/sh
@@ -69,13 +82,20 @@ in
   ];
 
   image.repart.partitions."10-boot".contents = {
+    "/EFI/BOOT/BOOTAA64.EFI".source = "${pkgs.systemd}/lib/systemd/boot/efi/systemd-bootaa64.efi";
     "/loader/entries".source = entriesDir;
     "/dtbs".source = socDtbs;
     "/KERNEL".source = "${toplevel}/kernel";
     "/INITRD".source = "${toplevel}/initrd";
     "/SYSTEM".source = config.system.build.systemSquashfs;
   }
-  // lib.optionalAttrs (variantId == "sm6115") {
-    "/openabl".source = openablDir;
-  };
+  //
+    lib.optionalAttrs
+      (builtins.elem variantId [
+        "sm6115"
+        "sm8250"
+      ])
+      {
+        "/openabl".source = openablDir;
+      };
 }

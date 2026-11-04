@@ -97,6 +97,8 @@
           linuxPackages_rpi = applied.linuxPackages_rpi or (final.callPackage ./pkgs/kernels/rpi.nix { });
           linuxPackages_sm6115 =
             applied.linuxPackages_sm6115 or (final.callPackage ./pkgs/kernels/sm6115.nix { });
+          linuxPackages_sm8250 =
+            applied.linuxPackages_sm8250 or (final.callPackage ./pkgs/kernels/sm8250.nix { });
           vm-retro = applied.vm-retro or (final.callPackage ./pkgs/vm-retro { });
         }
         // applied;
@@ -122,6 +124,7 @@
         soc-rpi4 = import ./nixos/modules/hardware/soc/rpi4.nix;
         soc-rpi5 = import ./nixos/modules/hardware/soc/rpi5.nix;
         soc-sm6115 = import ./nixos/modules/hardware/soc/sm6115.nix;
+        soc-sm8250 = import ./nixos/modules/hardware/soc/sm8250.nix;
         soc-x86_64 = import ./nixos/modules/hardware/soc/x86_64.nix;
         default = self.nixosModules.appliance;
       };
@@ -212,6 +215,15 @@
         };
 
         sm6115 = self.nixosConfigurations.sm6115-appliance;
+
+        sm8250-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/sm8250-appliance
+          ];
+        };
+
+        sm8250 = self.nixosConfigurations.sm8250-appliance;
       };
 
       packages = forAllSystems (
@@ -240,6 +252,7 @@
                           linuxPackages_rk3566
                           linuxPackages_rpi
                           linuxPackages_sm6115
+                          linuxPackages_sm8250
                           ;
                       })
                     ];
@@ -286,6 +299,7 @@
           disk-image-rpi4 = (aarch64HostConfig "rpi4").config.system.build.diskImage;
           disk-image-rpi5 = (aarch64HostConfig "rpi5").config.system.build.diskImage;
           disk-image-sm6115 = (aarch64HostConfig "sm6115").config.system.build.diskImage;
+          disk-image-sm8250 = (aarch64HostConfig "sm8250").config.system.build.diskImage;
           ota-bundle-aarch64 = (aarch64HostConfig "aarch64").config.system.build.otaBundle;
           ota-bundle-h700 = (aarch64HostConfig "h700").config.system.build.otaBundle;
           ota-h700 = self.packages.${system}.ota-bundle-h700;
@@ -294,6 +308,8 @@
           ota-bundle-rpi4 = (aarch64HostConfig "rpi4").config.system.build.otaBundle;
           ota-bundle-rpi5 = (aarch64HostConfig "rpi5").config.system.build.otaBundle;
           ota-bundle-sm6115 = (aarch64HostConfig "sm6115").config.system.build.otaBundle;
+          ota-bundle-sm8250 = (aarch64HostConfig "sm8250").config.system.build.otaBundle;
+          ota-sm8250 = self.packages.${system}.ota-bundle-sm8250;
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
           inherit (pkgs) ludo libretro-cores pd-mapper;
