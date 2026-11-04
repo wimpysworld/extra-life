@@ -275,6 +275,76 @@ dtb = "qcom/sm6115-mangmi-air-y.dtb"
 panel_orientation = "normal"
 debug = true
 
+[devices.retroid-pocket-5]
+name = "Retroid Pocket 5"
+soc = "sm8250"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket 5"
+dt_compatibles = ["retroidpocket,rp5", "qcom,sm8250"]
+dtb = "qcom/sm8250-retroidpocket-rp5.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.retroid-pocket-5-visionox]
+name = "Retroid Pocket 5 (Visionox)"
+soc = "sm8250"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket 5 Visionox"
+dt_compatibles = ["retroidpocket,rp5", "qcom,sm8250"]
+dtb = "qcom/sm8250-retroidpocket-rp5-visionox.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.retroid-pocket-flip-2]
+name = "Retroid Pocket Flip 2"
+soc = "sm8250"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket Flip2"
+dt_compatibles = ["retroidpocket,rpflip2", "qcom,sm8250"]
+dtb = "qcom/sm8250-retroidpocket-flip2.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.retroid-pocket-flip-2-visionox]
+name = "Retroid Pocket Flip 2 (Visionox)"
+soc = "sm8250"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket Flip2 Visionox"
+dt_compatibles = ["retroidpocket,rpflip2", "qcom,sm8250"]
+dtb = "qcom/sm8250-retroidpocket-flip2-visionox.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.retroid-pocket-mini]
+name = "Retroid Pocket Mini"
+soc = "sm8250"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket Mini"
+dt_compatibles = ["retroidpocket,rpmini", "qcom,sm8250"]
+dtb = "qcom/sm8250-retroidpocket-rpmini.dtb"
+panel_orientation = "90"
+debug = true
+
+[devices.retroid-pocket-mini-v2]
+name = "Retroid Pocket Mini V2"
+soc = "sm8250"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket Mini V2"
+dt_compatibles = ["retroidpocket,rpminiv2", "qcom,sm8250"]
+dtb = "qcom/sm8250-retroidpocket-rpminiv2.dtb"
+panel_orientation = "90"
+debug = true
+
+[devices.retroid-pocket-6]
+name = "Retroid Pocket 6"
+soc = "sm8250"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket 6"
+dt_compatibles = ["retroidpocket,rp6", "qcom,sm8250"]
+dtb = "qcom/sm8250-retroidpocket-rp5-visionox.dtb"
+panel_orientation = "270"
+debug = true
+
 [devices.anbernic-rg-cubexx]
 name = "Anbernic RG CubeXX"
 soc = "h700"

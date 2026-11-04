@@ -20,7 +20,7 @@ devices:
     printf "  %-10s %s\n" "rpi5"    "Broadcom BCM2712 (Raspberry Pi 5, Pi 500, CM5)"
     printf "  %-10s %s\n" "rk3566"  "Rockchip RK3566 (Anbernic RG353/RG503/RG ARC and Powkiddy RGB20 Pro/RGB20SX/RGB30/RK2023/RGB10MAX3/X35S/X55)"
     printf "  %-10s %s\n" "sm6115"  "Qualcomm Snapdragon 662 (Mangmi Air X MQ65/MQ66/MQ66B and Mangmi Air Y)"
-    printf "  %-10s %s\n" "sm8250"  "Qualcomm Snapdragon 865 (Retroid Pocket 5, Pocket Mini/Mini V2, Pocket Flip 2)"
+    printf "  %-10s %s\n" "sm8250"  "Qualcomm Snapdragon 865 (Retroid Pocket 5, Pocket Flip 2, Pocket Mini/Mini V2, Pocket 6)"
     printf "  %-10s %s\n" "h700"    "Allwinner H700 (Anbernic RG28XX, RG34XX/SP, RG35XX Plus/H/SP/2024/Pro, RG40XX H/V, RG CubeXX)"
     echo ""
 

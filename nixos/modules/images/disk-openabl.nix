@@ -22,9 +22,24 @@ let
     options init=/nix/store/current-system/init ${toString config.boot.kernelParams}
   '';
 
+  boardEntries = lib.mapAttrsToList (
+    id: dev:
+    let
+      entryFile = pkgs.writeText "extra-life-${id}.conf" ''
+        title Extra Life (${dev.name})
+        linux /KERNEL
+        initrd /INITRD
+        fdt /dtbs/${dev.dtb}
+        options init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+      '';
+    in
+    "cp ${entryFile} \"$out/extra-life-${id}.conf\""
+  ) socDevices;
+
   entriesDir = pkgs.runCommand "extra-life-bls-entries-${variantId}" { } ''
     mkdir -p "$out"
     cp ${defaultEntryConf} "$out/extra-life.conf"
+    ${lib.concatStringsSep "\n" boardEntries}
   '';
 
   socDtbs = pkgs.runCommand "extra-life-${variantId}-dtbs" { } ''

@@ -4,7 +4,7 @@ Extra Life scopes each system closure to one System on a Chip (SoC) family (`VAR
 
 ## Active SoC family summary
 
-Eight SoC targets build in the flake today. Run `just build-disk <soc>` or `just build-ota <soc>` to build an image or over-the-air (OTA) bundle.
+Nine SoC targets build in the flake today. Run `just build-disk <soc>` or `just build-ota <soc>` to build an image or over-the-air (OTA) bundle.
 
 | SoC key (`VARIANT_ID`) | Build commands | Kernel and GPU stack | Bootloader and partition layout | Device count in `devices.toml` |
 | --- | --- | --- | --- | --- |
@@ -14,6 +14,7 @@ Eight SoC targets build in the flake today. Run `just build-disk <soc>` or `just
 | `rpi5` | `just build-disk rpi5`, `just build-ota rpi5` | Raspberry Pi Linux 6.12 LTS (`linuxPackages_rpi`) with VideoCore KMS and Mesa `vc4` and `v3d` | Raspberry Pi VPU firmware (`bootcode.bin`, `start*.elf`, or Pi 5 EEPROM) + `config.txt` and `cmdline.txt` on a hybrid GPT/MBR (`sgdisk -h 1`) two-partition layout (`EXTRALIFE` `vfat` + `STORAGE` `ext4`) | 3 |
 | `rk3566` | `just build-disk rk3566`, `just build-ota rk3566` | Linux 6.18 LTS (`linuxPackages_rk3566` with ROCKNIX `RK3566` patches and `rocknix,generic-dsi`) with `rockchipdrm` and Mesa `panfrost` | `ubootAnbernicRgxx3` or `ubootPowkiddyX55` (`u-boot-rockchip.bin` at sector 64) + `extlinux.conf` (`FDTDIR /dtbs`) on GPT (`05-uboot` + `EXTRALIFE` + `STORAGE`) | 15 |
 | `sm6115` | `just build-disk sm6115`, `just build-ota sm6115` | Linux 7.2 (`linuxPackages_sm6115` with ROCKNIX `SM6115` patches) and Mesa `freedreno` (`msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 4 |
+| `sm8250` | `just build-disk sm8250`, `just build-ota sm8250` | Linux 7.2 (`linuxPackages_sm8250` with ROCKNIX `SM8250` patches) and Mesa `freedreno` (`a650` and `msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 7 |
 | `h700` | `just build-disk h700`, `just build-ota h700` | Linux 7.2 (`linuxPackages_h700` with ROCKNIX `H700` patches), `sun4i-drm`, `panel-mipi-dpi-spi`, and Mesa `panfrost` | `ubootAnbernicH700` (`u-boot-sunxi-with-spl.bin` at 8 KB offset) + `extlinux.conf` (`FDT /dtbs/allwinner/*.dtb`) on hybrid GPT/MBR (`sgdisk -d 1 -j 2016 -h 2:3`) | 10 |
 | `aarch64` | `just build-disk aarch64`, `just build-ota aarch64` | Mainline Linux (`Image`) with `virtio-gpu` and Mesa | `systemd-boot` (`BOOTAA64.EFI`) on a two-partition GPT layout (`EXTRALIFE` `vfat` + `STORAGE` `ext4`) | 0 (generic UEFI and `vm-retro`) |
 
@@ -125,6 +126,25 @@ The `sm6115` closure supports four Mangmi handheld variants on the Qualcomm Snap
 | `mangmi-air-x-mq66b` | Mangmi Air X (MQ66B) | `MANGMI Air X MQ66B` | `mangmi,sm6115-air-x-mq66b` | `qcom/sm6115-mangmi-air-x-mq66b.dtb` | `mangmi,bm5460bb1`, `270` |
 | `mangmi-air-y` | Mangmi Air Y | `MANGMI Air Y` | `mangmi,sm6115-air-y` | `qcom/sm6115-mangmi-air-y.dtb` | `mangmi,gh7005`, `normal` |
 
+### `sm8250` (Qualcomm Snapdragon 865 handhelds)
+
+The `sm8250` closure supports seven Retroid handheld variants on the Qualcomm Snapdragon 865 platform.
+
+- **Kernel and bootloader**: `linuxPackages_sm8250` builds Linux 7.2 with the ROCKNIX `SM8250` patch set and Mesa `freedreno` (`a650`). `OpenABL` (`rocknix_abl` in the Android `abl` partition) starts `systemd-boot` (`BOOTAA64.EFI`) and reads BLS entries in `/loader/entries/extra-life-*.conf`.
+- **Display and orientation**: The Pocket 5 and Flip 2 use `ch13726a` (`panel_ddic_ch13726a`) or Visionox `vtdr6130` (`panel_visionox_vtdr6130_cog`) 1080x1920 MIPI-DSI OLED panels with `270` rotation. The Pocket Mini (`960x1280`) and Mini V2 (`1080x1240`) use `ch13726a` panels with `90` rotation. The `retroid-pocket-6` entry uses `sm8250-retroidpocket-rp5-visionox.dtb` (`vtdr6130` with `270` rotation) on `sm8250`.
+- **Controls and lid switch**: The `retroid` UART driver exposes `Retroid Pocket Gamepad`, and `InputPlumber` loads `01-retroid-controller.yaml` with `retroid_mcu.yaml`. On the Flip 2 clamshell variants, `gpio-keys-lid` reports hall-sensor events (`SW_LID` on `gpio123`). `systemd-logind` (`HandleLidSwitch = "suspend"`) suspends the system when the lid closes.
+- **Audio, wireless, and Qualcomm services**: Audio uses `wcd938x` and `wsa881x` over SoundWire with the `RetroidPocket` UCM2 profile (`HiFi-RP.conf` and `HDMI-RP.conf`). USB Type-C (USB-C) DisplayPort and High-Definition Multimedia Interface (HDMI) audio use `52-retroid-pocket-5-hdmi.conf`. Wireless uses `qca6390` (`ath11k_pci` Wi-Fi and `btqca` Bluetooth) with `qrtr-ns`, `pd-mapper`, `rmtfs`, and `tqftpserv`.
+
+| Device ID | Retail name | Device tree model (`dt_model`) | First `dt_compatibles` entry | DTB (`dtb`) | Panel driver and orientation |
+| --- | --- | --- | --- | --- | --- |
+| `retroid-pocket-5` | Retroid Pocket 5 | `Retroid Pocket 5` | `retroidpocket,rp5` | `qcom/sm8250-retroidpocket-rp5.dtb` | `ch13726a,rp5`, `270` |
+| `retroid-pocket-5-visionox` | Retroid Pocket 5 (Visionox) | `Retroid Pocket 5 Visionox` | `retroidpocket,rp5` | `qcom/sm8250-retroidpocket-rp5-visionox.dtb` | `vtdr6130,rp5`, `270` |
+| `retroid-pocket-flip-2` | Retroid Pocket Flip 2 | `Retroid Pocket Flip2` | `retroidpocket,rpflip2` | `qcom/sm8250-retroidpocket-flip2.dtb` | `ch13726a,rp5`, `270`, `gpio-keys-lid` (`SW_LID` on `gpio123`) |
+| `retroid-pocket-flip-2-visionox` | Retroid Pocket Flip 2 (Visionox) | `Retroid Pocket Flip2 Visionox` | `retroidpocket,rpflip2` | `qcom/sm8250-retroidpocket-flip2-visionox.dtb` | `vtdr6130,rpflip2`, `270`, `gpio-keys-lid` (`SW_LID` on `gpio123`) |
+| `retroid-pocket-mini` | Retroid Pocket Mini | `Retroid Pocket Mini` | `retroidpocket,rpmini` | `qcom/sm8250-retroidpocket-rpmini.dtb` | `ch13726a,rpmini`, `90` |
+| `retroid-pocket-mini-v2` | Retroid Pocket Mini V2 | `Retroid Pocket Mini V2` | `retroidpocket,rpminiv2` | `qcom/sm8250-retroidpocket-rpminiv2.dtb` | `ch13726a,rpminiv2`, `90` |
+| `retroid-pocket-6` | Retroid Pocket 6 | `Retroid Pocket 6` | `retroidpocket,rp6` | `qcom/sm8250-retroidpocket-rp5-visionox.dtb` | `vtdr6130,rp5`, `270` |
+
 ### `h700` (Allwinner H700 handhelds)
 
 The `h700` closure supports ten Anbernic handhelds on the Allwinner H700 platform.
@@ -157,7 +177,7 @@ Extra Life expands hardware support in priority order. Each SoC closure uses the
 
 | Priority | SoC key | Target devices and cases | Kernel, GPU, and bootloader stack | Known quirks and caveats |
 | --- | --- | --- | --- | --- |
-| Priority 1 | `sm8250`, `sm8550` | Retroid Pocket 5, Flip 2, Mini, and 6, AYN Odin 2, and AYANEO Pocket S, DMG, and EVO | Mainline Linux (`Image`) with Mesa `freedreno` and `disk-openabl.nix` UEFI/BLS boot | Reuses `qcom-common.nix` (`pd-mapper`, `rmtfs`, and `tqftpserv`) and per-board BLS device tree entries. |
+| Priority 1 | `sm8550` | AYN Odin 2 and AYANEO Pocket S, DMG, and EVO | Mainline Linux (`Image`) with Mesa `freedreno` and `disk-openabl.nix` UEFI/BLS boot | Reuses `qcom-common.nix` (`pd-mapper`, `rmtfs`, and `tqftpserv`) and per-board BLS device tree entries. |
 | Priority 2 | `rk3326` | Odroid Go Advance, Odroid Go Super, Anbernic RG351M, RG351V, R36S, R33S, and Powkiddy RGB20S | Mainline Linux (`Image`) with Mesa `panfrost` and Rockchip `RK3326` U-Boot | Requires `odroidgo2_joypad` and `retrogame_joypad` input mappings and respects 1 GB RAM limits. |
 | Priority 3 | `x86_64` | Valve Steam Deck, ASUS ROG Ally, Lenovo Legion Go, AYANEO, and AYN Loki handhelds | Mainline Linux (`bzImage`) with Mesa `radeonsi` and `systemd-boot` UEFI | Requires DMI portrait-panel rotation rules and `InputPlumber` composite controller profiles. |
 | Priority 4 | `rk3588`, `sm6125` | Rockchip `rk3588` (GameForce Ace, Orange Pi 5, Retro Lite CM5, RetrOLED CM5) and Qualcomm `sm6125` dual-screen (Retroid Pocket Duo Lite) | Pinned Linux 6.1 vendor BSP (`pkgs/kernels/rk3588.nix`) with Mesa `panfrost`, or patched Linux (`Image`) with Mesa `freedreno` (`sm6125`) | `rk3588` can use a pinned Linux 6.1 vendor BSP kernel in `pkgs/kernels/rk3588.nix` with Mesa `panfrost` until mainline MIPI-DSI and High-Definition Multimedia Interface (HDMI) parity matures. `Retroid Pocket Duo Lite` (`sm6125-retroid-pocket-duo-lite.dtb`) needs dual-panel Cage output handling (`duolite-hx83112a` + `duolite-bottom-panel`) and SM6125 SoundWire (`wcd937x`) audio validation. |

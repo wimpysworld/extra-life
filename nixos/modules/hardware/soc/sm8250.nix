@@ -240,15 +240,23 @@ in
     sm8250Firmware
   ];
 
-  services.inputplumber.enable = true;
+  services = {
+    inputplumber.enable = true;
 
-  services.udev.extraRules = ''
-    SUBSYSTEM=="input", ATTRS{name}=="Retroid Pocket Gamepad", MODE="0666", ENV{ID_INPUT_JOYSTICK}="1"
-    SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT}=="1", ATTRS{name}=="pmi8998_haptics", TAG+="uaccess", ENV{FEEDBACKD_TYPE}="vibra"
-    SUBSYSTEM=="input", ATTRS{name}=="MANGMI Pocket Max Joypad", MODE="0666", ENV{ID_INPUT_JOYSTICK}="1"
-    ACTION=="bind", SUBSYSTEM=="soundwire", KERNEL=="sdw:*:0217:010d:*", ATTR{power/control}="on"
-    ACTION=="bind", SUBSYSTEM=="soundwire", KERNEL=="sdw:*:0217:2010:*", ATTR{power/control}="on"
-  '';
+    logind.settings.Login = {
+      HandleLidSwitch = "suspend";
+      HandleLidSwitchExternalPower = "suspend";
+      HandleLidSwitchDocked = "ignore";
+    };
+
+    udev.extraRules = ''
+      SUBSYSTEM=="input", ATTRS{name}=="Retroid Pocket Gamepad", MODE="0666", ENV{ID_INPUT_JOYSTICK}="1"
+      SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT}=="1", ATTRS{name}=="pmi8998_haptics", TAG+="uaccess", ENV{FEEDBACKD_TYPE}="vibra"
+      SUBSYSTEM=="input", ATTRS{name}=="MANGMI Pocket Max Joypad", MODE="0666", ENV{ID_INPUT_JOYSTICK}="1"
+      ACTION=="bind", SUBSYSTEM=="soundwire", KERNEL=="sdw:*:0217:010d:*", ATTR{power/control}="on"
+      ACTION=="bind", SUBSYSTEM=="soundwire", KERNEL=="sdw:*:0217:2010:*", ATTR{power/control}="on"
+    '';
+  };
 
   environment = {
     etc = {
