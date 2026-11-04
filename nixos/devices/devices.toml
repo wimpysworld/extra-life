@@ -275,6 +275,16 @@ dtb = "qcom/sm6115-mangmi-air-y.dtb"
 panel_orientation = "normal"
 debug = true
 
+[devices.anbernic-rg-cubexx]
+name = "Anbernic RG CubeXX"
+soc = "h700"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG CubeXX"
+dt_compatibles = ["anbernic,rgcubexx", "allwinner,sun50i-h700"]
+dtb = "allwinner/sun50i-h700-anbernic-rgcubexx.dtb"
+panel_orientation = "normal"
+debug = true
+
 [devices.anbernic-rg35xx-2024]
 name = "Anbernic RG35XX 2024"
 soc = "h700"
@@ -322,6 +332,26 @@ arch = "aarch64-linux"
 dt_model = "Anbernic RG35XX SP"
 dt_compatibles = ["anbernic,rg35xx-sp", "allwinner,sun50i-h700"]
 dtb = "allwinner/sun50i-h700-anbernic-rg35xx-sp.dtb"
+panel_orientation = "normal"
+debug = true
+
+[devices.anbernic-rg40xx-h]
+name = "Anbernic RG40XX H"
+soc = "h700"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG40XX H"
+dt_compatibles = ["anbernic,rg40xx-h", "allwinner,sun50i-h700"]
+dtb = "allwinner/sun50i-h700-anbernic-rg40xx-h.dtb"
+panel_orientation = "normal"
+debug = true
+
+[devices.anbernic-rg40xx-v]
+name = "Anbernic RG40XX V"
+soc = "h700"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG40XX V"
+dt_compatibles = ["anbernic,rg40xx-V", "allwinner,sun50i-h700"]
+dtb = "allwinner/sun50i-h700-anbernic-rg40xx-v.dtb"
 panel_orientation = "normal"
 debug = true
 

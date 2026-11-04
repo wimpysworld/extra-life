@@ -269,6 +269,12 @@
             (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg35xxH;
           disk-image-anbernic-rg35xx-sp =
             (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg35xxSp;
+          disk-image-anbernic-rg40xx-h =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg40xxH;
+          disk-image-anbernic-rg40xx-v =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg40xxV;
+          disk-image-anbernic-rg-cubexx =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRgCubexx;
           disk-image-rk3566 = (aarch64HostConfig "rk3566").config.system.build.diskImage;
           disk-image-powkiddy-rgb20sx =
             (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyRgb20sx;
