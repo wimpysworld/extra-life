@@ -191,6 +191,18 @@ let
       hash = "sha256-9Ox2liSB8UQFDCjCJoP0Ps1TxtByiId72n/etYDycHY=";
     };
 
+    rocknix-sm8550 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/SM8550"
+        "projects/ROCKNIX/packages/linux/patches/7.2"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/SM8550"
+      ];
+      hash = "sha256-5Sb2DjyPyVSjR8iaUlUQBL+Lj8WhYnlq+aWpK2XpOHY=";
+    };
+
     linuxPackages_h700 = final.callPackage ../pkgs/kernels/h700.nix { };
 
     linuxPackages_rk3566 = final.callPackage ../pkgs/kernels/rk3566.nix { };
@@ -200,6 +212,8 @@ let
     linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
 
     linuxPackages_sm8250 = final.callPackage ../pkgs/kernels/sm8250.nix { };
+
+    linuxPackages_sm8550 = final.callPackage ../pkgs/kernels/sm8550.nix { };
   };
 in
 {
@@ -389,10 +403,22 @@ in
       ];
       hash = "sha256-9Ox2liSB8UQFDCjCJoP0Ps1TxtByiId72n/etYDycHY=";
     };
+    rocknix-sm8550 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/SM8550"
+        "projects/ROCKNIX/packages/linux/patches/7.2"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/SM8550"
+      ];
+      hash = "sha256-5Sb2DjyPyVSjR8iaUlUQBL+Lj8WhYnlq+aWpK2XpOHY=";
+    };
     linuxPackages_h700 = final.callPackage ../pkgs/kernels/h700.nix { };
     linuxPackages_rk3566 = final.callPackage ../pkgs/kernels/rk3566.nix { };
     linuxPackages_rpi = final.callPackage ../pkgs/kernels/rpi.nix { };
     linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
     linuxPackages_sm8250 = final.callPackage ../pkgs/kernels/sm8250.nix { };
+    linuxPackages_sm8550 = final.callPackage ../pkgs/kernels/sm8550.nix { };
   };
 }

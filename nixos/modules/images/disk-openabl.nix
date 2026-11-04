@@ -52,7 +52,12 @@ let
         '') dtbFiles
       else
         ''
-          for f in "${config.hardware.deviceTree.package}"/qcom/${variantId}-*.dtb; do
+          for f in ${
+            if variantId == "sm8550" then
+              ''"${config.hardware.deviceTree.package}"/qcom/qcs8550-*.dtb "${config.hardware.deviceTree.package}"/qcom/sm8550-*.dtb''
+            else
+              ''"${config.hardware.deviceTree.package}"/qcom/${variantId}-*.dtb''
+          }; do
             if [ -e "$f" ]; then
               cp -f "$f" "$out/qcom/$(basename "$f")"
               cp -f "$f" "$out/$(basename "$f")"
@@ -109,6 +114,7 @@ in
       (builtins.elem variantId [
         "sm6115"
         "sm8250"
+        "sm8550"
       ])
       {
         "/openabl".source = openablDir;
