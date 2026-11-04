@@ -285,6 +285,26 @@ dtb = "allwinner/sun50i-h700-anbernic-rgcubexx.dtb"
 panel_orientation = "normal"
 debug = true
 
+[devices.anbernic-rg28xx]
+name = "Anbernic RG28XX"
+soc = "h700"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG28XX"
+dt_compatibles = ["anbernic,rg28xx", "allwinner,sun50i-h700"]
+dtb = "allwinner/sun50i-h700-anbernic-rg28xx.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.anbernic-rg34xx]
+name = "Anbernic RG34XX"
+soc = "h700"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG34XX"
+dt_compatibles = ["anbernic,rg34xx", "allwinner,sun50i-h700"]
+dtb = "allwinner/sun50i-h700-anbernic-rg34xx.dtb"
+panel_orientation = "normal"
+debug = true
+
 [devices.anbernic-rg35xx-2024]
 name = "Anbernic RG35XX 2024"
 soc = "h700"

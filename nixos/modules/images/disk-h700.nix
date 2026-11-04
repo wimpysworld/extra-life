@@ -124,6 +124,34 @@ let
         INITRD /INITRD
         FDT /dtbs/allwinner/sun50i-h700-anbernic-rgcubexx.dtb
         APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+
+      LABEL anbernic-rg28xx
+        MENU LABEL Extra Life (Anbernic RG28XX)
+        LINUX /KERNEL
+        INITRD /INITRD
+        FDT /dtbs/allwinner/sun50i-h700-anbernic-rg28xx.dtb
+        APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+
+      LABEL anbernic-rg34xx
+        MENU LABEL Extra Life (Anbernic RG34XX)
+        LINUX /KERNEL
+        INITRD /INITRD
+        FDT /dtbs/allwinner/sun50i-h700-anbernic-rg34xx.dtb
+        APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+
+      LABEL anbernic-rg34xx-sp
+        MENU LABEL Extra Life (Anbernic RG34XX SP)
+        LINUX /KERNEL
+        INITRD /INITRD
+        FDT /dtbs/allwinner/sun50i-h700-anbernic-rg34xx-sp.dtb
+        APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+
+      LABEL anbernic-rg34xx-sp-v2-panel
+        MENU LABEL Extra Life (Anbernic RG34XX SP V2 Panel)
+        LINUX /KERNEL
+        INITRD /INITRD
+        FDT /dtbs/allwinner/sun50i-h700-anbernic-rg34xx-sp-v2-panel.dtb
+        APPEND init=/nix/store/current-system/init ${toString config.boot.kernelParams}
     '';
 
   extlinuxConf = mkExtlinuxConf "extlinux.conf" "anbernic-rg35xx-plus";
@@ -142,6 +170,10 @@ let
   extlinuxConfAnbernicRg40xxV = mkExtlinuxConf "extlinux-anbernic-rg40xx-v.conf" "anbernic-rg40xx-v";
   extlinuxConfAnbernicRg40xxVV2 = mkExtlinuxConf "extlinux-anbernic-rg40xx-v-v2-panel.conf" "anbernic-rg40xx-v-v2-panel";
   extlinuxConfAnbernicRgCubexx = mkExtlinuxConf "extlinux-anbernic-rg-cubexx.conf" "anbernic-rg-cubexx";
+  extlinuxConfAnbernicRg28xx = mkExtlinuxConf "extlinux-anbernic-rg28xx.conf" "anbernic-rg28xx";
+  extlinuxConfAnbernicRg34xx = mkExtlinuxConf "extlinux-anbernic-rg34xx.conf" "anbernic-rg34xx";
+  extlinuxConfAnbernicRg34xxSp = mkExtlinuxConf "extlinux-anbernic-rg34xx-sp.conf" "anbernic-rg34xx-sp";
+  extlinuxConfAnbernicRg34xxSpV2 = mkExtlinuxConf "extlinux-anbernic-rg34xx-sp-v2-panel.conf" "anbernic-rg34xx-sp-v2-panel";
 
   mkH700DiskImage =
     defaultExtlinuxConf:
@@ -191,6 +223,10 @@ in
       "/extlinux/extlinux-anbernic-rg40xx-v.conf".source = extlinuxConfAnbernicRg40xxV;
       "/extlinux/extlinux-anbernic-rg40xx-v-v2-panel.conf".source = extlinuxConfAnbernicRg40xxVV2;
       "/extlinux/extlinux-anbernic-rg-cubexx.conf".source = extlinuxConfAnbernicRgCubexx;
+      "/extlinux/extlinux-anbernic-rg28xx.conf".source = extlinuxConfAnbernicRg28xx;
+      "/extlinux/extlinux-anbernic-rg34xx.conf".source = extlinuxConfAnbernicRg34xx;
+      "/extlinux/extlinux-anbernic-rg34xx-sp.conf".source = extlinuxConfAnbernicRg34xxSp;
+      "/extlinux/extlinux-anbernic-rg34xx-sp-v2-panel.conf".source = extlinuxConfAnbernicRg34xxSpV2;
       "/dtbs/allwinner".source = "${config.hardware.deviceTree.package}/allwinner";
       "/uboot/anbernic-h700-u-boot-sunxi-with-spl.bin".source =
         "${pkgs.ubootAnbernicH700}/u-boot-sunxi-with-spl.bin";
@@ -210,5 +246,7 @@ in
     diskImageAnbernicRg40xxH = mkH700DiskImage extlinuxConfAnbernicRg40xxH;
     diskImageAnbernicRg40xxV = mkH700DiskImage extlinuxConfAnbernicRg40xxV;
     diskImageAnbernicRgCubexx = mkH700DiskImage extlinuxConfAnbernicRgCubexx;
+    diskImageAnbernicRg28xx = mkH700DiskImage extlinuxConfAnbernicRg28xx;
+    diskImageAnbernicRg34xx = mkH700DiskImage extlinuxConfAnbernicRg34xx;
   };
 }
