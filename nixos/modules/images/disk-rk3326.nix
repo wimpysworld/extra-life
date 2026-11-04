@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -118,6 +119,28 @@ in
 
   system.build = {
     diskImage = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+      postBuild = (oldAttrs.postBuild or "") + ''
+        dd if="${pkgs.ubootRk3326}/u-boot-rockchip.bin" \
+          of="${config.image.baseName}.raw" \
+          bs=512 seek=64 conv=notrunc
+      '';
+    });
+
+    diskImageAnbernicRg351m = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+      finalPartitions = lib.recursiveUpdate oldAttrs.finalPartitions {
+        "10-boot".contents."/extlinux/extlinux.conf".source = extlinuxConfAnbernicRg351m;
+      };
+      postBuild = (oldAttrs.postBuild or "") + ''
+        dd if="${pkgs.ubootRk3326}/u-boot-rockchip.bin" \
+          of="${config.image.baseName}.raw" \
+          bs=512 seek=64 conv=notrunc
+      '';
+    });
+
+    diskImageAnbernicRg351v = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+      finalPartitions = lib.recursiveUpdate oldAttrs.finalPartitions {
+        "10-boot".contents."/extlinux/extlinux.conf".source = extlinuxConfAnbernicRg351v;
+      };
       postBuild = (oldAttrs.postBuild or "") + ''
         dd if="${pkgs.ubootRk3326}/u-boot-rockchip.bin" \
           of="${config.image.baseName}.raw" \

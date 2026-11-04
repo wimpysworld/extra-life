@@ -106,6 +106,26 @@ dtb = "rockchip/rk3326-odroid-go3.dtb"
 panel_orientation = "270"
 debug = true
 
+[devices.anbernic-rg351m]
+name = "Anbernic RG351M"
+soc = "rk3326"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG351M"
+dt_compatibles = ["anbernic,rg351m", "rockchip,rk3326"]
+dtb = "rockchip/rk3326-anbernic-rg351m.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.anbernic-rg351v]
+name = "Anbernic RG351V"
+soc = "rk3326"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG351V"
+dt_compatibles = ["anbernic,rg351v", "rockchip,rk3326"]
+dtb = "rockchip/rk3326-anbernic-rg351v.dtb"
+panel_orientation = "normal"
+debug = true
+
 [devices.anbernic-rg353m]
 name = "Anbernic RG353M"
 soc = "rk3566"

@@ -90,6 +90,13 @@ let
           name: odroidgo3_joypad
           handler: event*
         capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
+          name: OpenSimHardware OSH PB Controller
+          vendor_id: "1209"
+          product_id: "3100"
+          handler: event*
+        capability_map_id: rg351_gamepad
     options:
       auto_manage: true
     target_devices:
@@ -332,6 +339,192 @@ let
               name: RightStick
   '';
 
+  rg351CapabilityMap = pkgs.writeText "rg351_gamepad.yaml" ''
+    version: 2
+    kind: CapabilityMap
+    name: Anbernic RG351 Gamepad
+    id: rg351_gamepad
+    mapping:
+      - name: DPad Up
+        source_events:
+          - evdev:
+              event_type: ABS
+              event_code: ABS_HAT0Y
+              value_type: button
+              axis_direction: negative
+        target_event:
+          gamepad:
+            button: DPadUp
+      - name: DPad Down
+        source_events:
+          - evdev:
+              event_type: ABS
+              event_code: ABS_HAT0Y
+              value_type: button
+              axis_direction: positive
+        target_event:
+          gamepad:
+            button: DPadDown
+      - name: DPad Left
+        source_events:
+          - evdev:
+              event_type: ABS
+              event_code: ABS_HAT0X
+              value_type: button
+              axis_direction: negative
+        target_event:
+          gamepad:
+            button: DPadLeft
+      - name: DPad Right
+        source_events:
+          - evdev:
+              event_type: ABS
+              event_code: ABS_HAT0X
+              value_type: button
+              axis_direction: positive
+        target_event:
+          gamepad:
+            button: DPadRight
+      - name: East Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_SOUTH
+              value_type: button
+        target_event:
+          gamepad:
+            button: East
+      - name: South Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_EAST
+              value_type: button
+        target_event:
+          gamepad:
+            button: South
+      - name: North Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_C
+              value_type: button
+        target_event:
+          gamepad:
+            button: North
+      - name: West Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_NORTH
+              value_type: button
+        target_event:
+          gamepad:
+            button: West
+      - name: Left Bumper
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_WEST
+              value_type: button
+        target_event:
+          gamepad:
+            button: LeftBumper
+      - name: Right Bumper
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_Z
+              value_type: button
+        target_event:
+          gamepad:
+            button: RightBumper
+      - name: Left Trigger
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_SELECT
+              value_type: trigger
+        target_event:
+          gamepad:
+            trigger:
+              name: LeftTrigger
+      - name: Right Trigger
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_START
+              value_type: trigger
+        target_event:
+          gamepad:
+            trigger:
+              name: RightTrigger
+      - name: Select Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TR
+              value_type: button
+        target_event:
+          gamepad:
+            button: Select
+      - name: Start Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TL
+              value_type: button
+        target_event:
+          gamepad:
+            button: Start
+      - name: Left Stick Click
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TL2
+              value_type: button
+        target_event:
+          gamepad:
+            button: LeftStick
+      - name: Right Stick Click
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TR2
+              value_type: button
+        target_event:
+          gamepad:
+            button: RightStick
+      - name: Left Stick
+        source_events:
+          - evdev:
+              event_type: ABS
+              event_code: ABS_Z
+              value_type: joystick_x
+          - evdev:
+              event_type: ABS
+              event_code: ABS_RX
+              value_type: joystick_y
+        target_event:
+          gamepad:
+            axis:
+              name: LeftStick
+      - name: Right Stick
+        source_events:
+          - evdev:
+              event_type: ABS
+              event_code: ABS_RY
+              value_type: joystick_x
+          - evdev:
+              event_type: ABS
+              event_code: ABS_RZ
+              value_type: joystick_y
+        target_event:
+          gamepad:
+            axis:
+              name: RightStick
+  '';
+
   rk3326PanelFirmware =
     pkgs.runCommand "rk3326-panel-firmware"
       {
@@ -446,19 +639,46 @@ in
       "snd_soc_simple_amplifier"
       "rk817_charger"
       "esp8089"
+      "mt7601u"
+      "rtl8xxxu"
       "rtw88_8723ds"
+      "rtw88_8723du"
       "rtw88_8821cs"
+      "rtw88_8821cu"
       "hci_uart"
     ];
   };
 
   services.inputplumber.enable = true;
 
+  systemd.services.extra-life-rk3326-audio = {
+    description = "Apply RK3326 board-specific ALSA routing quirks";
+    wantedBy = [ "multi-user.target" ];
+    after = [
+      "extra-life-board-detect.service"
+      "sound.target"
+    ];
+    wants = [ "extra-life-board-detect.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      EnvironmentFile = [ "-/run/extra-life-board.env" ];
+      ExecStart = pkgs.writeShellScript "extra-life-rk3326-audio" ''
+        set -euo pipefail
+        if [[ "''${EXTRA_LIFE_BOARD:-}" == "anbernic-rg351m" ]]; then
+          ${pkgs.alsa-utils}/bin/amixer -c 0 sset 'Master' 100% || true
+          ${pkgs.alsa-utils}/bin/amixer -c 0 cset name='Playback Mux' HP || true
+        fi
+      '';
+    };
+  };
+
   environment = {
     etc = {
       "ludo.toml".source = lib.mkForce rk3326LudoToml;
       "inputplumber/devices.d/50-rk3326-handheld.yaml".source = rk3326CompositeProfile;
       "inputplumber/capability_maps.d/rk3326_gamepad.yaml".source = rk3326CapabilityMap;
+      "inputplumber/capability_maps.d/rg351_gamepad.yaml".source = rg351CapabilityMap;
     };
 
     pathsToLink = [
