@@ -345,6 +345,66 @@ dtb = "qcom/sm8250-retroidpocket-rp5-visionox.dtb"
 panel_orientation = "270"
 debug = true
 
+[devices.ayaneo-pocket-ace]
+name = "AYANEO Pocket ACE"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYANEO Pocket ACE"
+dt_compatibles = ["ayaneo,pocketace", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayaneo-pocketace.dtb"
+panel_orientation = "90"
+debug = true
+
+[devices.ayaneo-pocket-dmg]
+name = "AYANEO Pocket DMG"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYANEO Pocket DMG"
+dt_compatibles = ["ayaneo,pocketdmg", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayaneo-pocketdmg.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.ayaneo-pocket-evo]
+name = "AYANEO Pocket EVO"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYANEO Pocket EVO"
+dt_compatibles = ["ayaneo,pocketevo", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayaneo-pocketevo.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.ayaneo-pocket-s]
+name = "AYANEO Pocket S (1080p / 1K)"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYANEO Pocket S 1K"
+dt_compatibles = ["ayaneo,pocket-s1", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayaneo-pockets1k.dtb"
+panel_orientation = "90"
+debug = true
+
+[devices.ayaneo-pocket-s-2k]
+name = "AYANEO Pocket S (1440p / 2K)"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYANEO Pocket S 2K"
+dt_compatibles = ["ayaneo,pocket-s1", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayaneo-pockets2k.dtb"
+panel_orientation = "90"
+debug = true
+
+[devices.ayaneo-pocket-s-mini]
+name = "AYANEO Pocket S Mini"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYANEO Pocket S Mini"
+dt_compatibles = ["ayaneo,pocket-s-mini", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayaneo-pocketsmini.dtb"
+panel_orientation = "180"
+debug = true
+
 [devices.ayn-odin-2]
 name = "AYN Odin 2"
 soc = "sm8550"

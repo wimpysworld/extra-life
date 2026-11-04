@@ -35,6 +35,17 @@ let
         for p in "${rocknixSm8550}"/projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/SM8550/*.patch; do
           patch -d "$out/share/alsa" -p1 < "$p"
         done
+        for conf in \
+          ayaneo-AYANEOPocketS1K-.conf \
+          ayaneo-AYANEOPocketS2K-.conf \
+          ayaneo-AYANEOPocketSMini-.conf; do
+          ln -sf ../../AYANEO/Pocket/AYANEO-Pocket.conf "$out/share/alsa/ucm2/conf.d/sm8550/$conf"
+        done
+        for conf in \
+          ayn-AYNOdin2Mini-.conf \
+          ayn-AYNOdin2Portal-.conf; do
+          ln -sf ../../AYN/Odin2/AYN-Odin2.conf "$out/share/alsa/ucm2/conf.d/sm8550/$conf"
+        done
       '';
 in
 {
