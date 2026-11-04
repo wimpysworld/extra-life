@@ -345,6 +345,36 @@ dtb = "qcom/sm8250-retroidpocket-rp5-visionox.dtb"
 panel_orientation = "270"
 debug = true
 
+[devices.ayn-odin-2]
+name = "AYN Odin 2"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYN Odin 2"
+dt_compatibles = ["ayn,odin2", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayn-odin2.dtb"
+panel_orientation = "90"
+debug = true
+
+[devices.ayn-odin-2-mini]
+name = "AYN Odin 2 Mini"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYN Odin 2 Mini"
+dt_compatibles = ["ayn,odin2mini", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayn-odin2mini.dtb"
+panel_orientation = "90"
+debug = true
+
+[devices.ayn-odin-2-portal]
+name = "AYN Odin 2 Portal"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYN Odin 2 Portal"
+dt_compatibles = ["ayn,odin2portal", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayn-odin2portal.dtb"
+panel_orientation = "270"
+debug = true
+
 [devices.anbernic-rg-cubexx]
 name = "Anbernic RG CubeXX"
 soc = "h700"

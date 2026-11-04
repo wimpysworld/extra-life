@@ -4,7 +4,7 @@ Extra Life scopes each system closure to one System on a Chip (SoC) family (`VAR
 
 ## Active SoC family summary
 
-Nine SoC targets build in the flake today. Run `just build-disk <soc>` or `just build-ota <soc>` to build an image or over-the-air (OTA) bundle.
+Ten SoC targets build in the flake today. Run `just build-disk <soc>` or `just build-ota <soc>` to build an image or over-the-air (OTA) bundle.
 
 | SoC key (`VARIANT_ID`) | Build commands | Kernel and GPU stack | Bootloader and partition layout | Device count in `devices.toml` |
 | --- | --- | --- | --- | --- |
@@ -15,6 +15,7 @@ Nine SoC targets build in the flake today. Run `just build-disk <soc>` or `just 
 | `rk3566` | `just build-disk rk3566`, `just build-ota rk3566` | Linux 6.18 LTS (`linuxPackages_rk3566` with ROCKNIX `RK3566` patches and `rocknix,generic-dsi`) with `rockchipdrm` and Mesa `panfrost` | `ubootAnbernicRgxx3` or `ubootPowkiddyX55` (`u-boot-rockchip.bin` at sector 64) + `extlinux.conf` (`FDTDIR /dtbs`) on GPT (`05-uboot` + `EXTRALIFE` + `STORAGE`) | 15 |
 | `sm6115` | `just build-disk sm6115`, `just build-ota sm6115` | Linux 7.2 (`linuxPackages_sm6115` with ROCKNIX `SM6115` patches) and Mesa `freedreno` (`msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 4 |
 | `sm8250` | `just build-disk sm8250`, `just build-ota sm8250` | Linux 7.2 (`linuxPackages_sm8250` with ROCKNIX `SM8250` patches) and Mesa `freedreno` (`a650` and `msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 7 |
+| `sm8550` | `just build-disk sm8550`, `just build-ota sm8550` | Linux 7.2 (`linuxPackages_sm8550` with ROCKNIX `SM8550` patches) and Mesa `freedreno` (`a740` and `msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 3 |
 | `h700` | `just build-disk h700`, `just build-ota h700` | Linux 7.2 (`linuxPackages_h700` with ROCKNIX `H700` patches), `sun4i-drm`, `panel-mipi-dpi-spi`, and Mesa `panfrost` | `ubootAnbernicH700` (`u-boot-sunxi-with-spl.bin` at 8 KB offset) + `extlinux.conf` (`FDT /dtbs/allwinner/*.dtb`) on hybrid GPT/MBR (`sgdisk -d 1 -j 2016 -h 2:3`) | 10 |
 | `aarch64` | `just build-disk aarch64`, `just build-ota aarch64` | Mainline Linux (`Image`) with `virtio-gpu` and Mesa | `systemd-boot` (`BOOTAA64.EFI`) on a two-partition GPT layout (`EXTRALIFE` `vfat` + `STORAGE` `ext4`) | 0 (generic UEFI and `vm-retro`) |
 
@@ -145,6 +146,21 @@ The `sm8250` closure supports seven Retroid handheld variants on the Qualcomm Sn
 | `retroid-pocket-mini-v2` | Retroid Pocket Mini V2 | `Retroid Pocket Mini V2` | `retroidpocket,rpminiv2` | `qcom/sm8250-retroidpocket-rpminiv2.dtb` | `ch13726a,rpminiv2`, `90` |
 | `retroid-pocket-6` | Retroid Pocket 6 | `Retroid Pocket 6` | `retroidpocket,rp6` | `qcom/sm8250-retroidpocket-rp5-visionox.dtb` | `vtdr6130,rp5`, `270` |
 
+### `sm8550` (Qualcomm Snapdragon 8 Gen 2 handhelds)
+
+The `sm8550` closure supports three AYN Odin 2 handheld variants on the Qualcomm Snapdragon 8 Gen 2 platform.
+
+- **Kernel and bootloader**: `linuxPackages_sm8550` builds Linux 7.2 with the ROCKNIX `SM8550` patch set and Mesa `freedreno` (`a740`). `OpenABL` v1.2 (`rocknix_abl` in the Android `abl` partition) starts `systemd-boot` (`BOOTAA64.EFI`) and reads BLS entries in `/loader/entries/extra-life-*.conf`.
+- **Display and orientation**: The Odin 2 uses a `syna,td4328` (`panel_synaptics_td4328`) panel with `pwm-backlight` and `90` rotation. The Odin 2 Mini uses a `boe,xm91080g` (`panel_boe_xm91080g`) panel with the `ayn,odin2miniled` (`odin2mini_backlight`) Mini-LED backlight and `90` rotation. The Odin 2 Portal uses a `chipone,icna3512` (`panel_chipone_icna35xx`) 120 Hz / 60 Hz Display Stream Compression (DSC) OLED panel with `270` rotation. The Odin 2 and Odin 2 Mini also route `mdss_dsi0` through Lontium `lt8912b` (`lontium_lt8912b`) for micro-HDMI output alongside USB-C DisplayPort Alt Mode (`mdss_dp0`).
+- **Controls and haptics**: The `rsinput` UART driver on `uart15` exposes `AYN Odin2 Gamepad`, and `qcom-hv-haptics` (`pm8550b_hv_haptics`) provides force-feedback rumble. On the Odin 2, `gpio-keys-paddles` maps the rear paddles to `BTN_Z` and `BTN_C` on `gpio57` and `gpio58`. `InputPlumber` loads `02-ayn-controller.yaml` with `ayn_mcu.yaml`.
+- **Audio, wireless, and Qualcomm services**: Audio uses `qcom,sm8550-sndcard` AudioReach (`q6apm` and `q6prm`) with the `AYN-Odin2` UCM2 profile and `AYN-Odin2-tplg.bin` topology. Dual `aw88166` speaker amplifiers run over Inter-IC Sound (I2S) (`Primary MI2S Playback`), and the `wcd9385` (`wcd938x`) headphone codec runs over SoundWire. Wireless uses `wcn7850` (`ath12k` Wi-Fi 7 and `btqca` Bluetooth) with `qrtr-ns`, `pd-mapper`, `rmtfs`, and `tqftpserv`.
+
+| Device ID | Retail name | Device tree model (`dt_model`) | First `dt_compatibles` entry | DTB (`dtb`) | Panel driver and orientation |
+| --- | --- | --- | --- | --- | --- |
+| `ayn-odin-2` | AYN Odin 2 | `AYN Odin 2` | `ayn,odin2` | `qcom/qcs8550-ayn-odin2.dtb` | `syna,td4328`, `90`, `lt8912b` micro-HDMI, `gpio-keys-paddles` (`BTN_Z` / `BTN_C`) |
+| `ayn-odin-2-mini` | AYN Odin 2 Mini | `AYN Odin 2 Mini` | `ayn,odin2mini` | `qcom/qcs8550-ayn-odin2mini.dtb` | `boe,xm91080g` + `ayn,odin2miniled`, `90`, `lt8912b` micro-HDMI |
+| `ayn-odin-2-portal` | AYN Odin 2 Portal | `AYN Odin 2 Portal` | `ayn,odin2portal` | `qcom/qcs8550-ayn-odin2portal.dtb` | `chipone,icna3512` (120 Hz / 60 Hz DSC OLED), `270` |
+
 ### `h700` (Allwinner H700 handhelds)
 
 The `h700` closure supports ten Anbernic handhelds on the Allwinner H700 platform.
@@ -177,7 +193,7 @@ Extra Life expands hardware support in priority order. Each SoC closure uses the
 
 | Priority | SoC key | Target devices and cases | Kernel, GPU, and bootloader stack | Known quirks and caveats |
 | --- | --- | --- | --- | --- |
-| Priority 1 | `sm8550` | AYN Odin 2 and AYANEO Pocket S, DMG, and EVO | Mainline Linux (`Image`) with Mesa `freedreno` and `disk-openabl.nix` UEFI/BLS boot | Reuses `qcom-common.nix` (`pd-mapper`, `rmtfs`, and `tqftpserv`) and per-board BLS device tree entries. |
+| Priority 1 | `sm8550` | AYANEO Pocket S, DMG, and EVO | Mainline Linux (`Image`) with Mesa `freedreno` and `disk-openabl.nix` UEFI/BLS boot | Reuses `qcom-common.nix` (`pd-mapper`, `rmtfs`, and `tqftpserv`) and per-board BLS device tree entries. |
 | Priority 2 | `rk3326` | Odroid Go Advance, Odroid Go Super, Anbernic RG351M, RG351V, R36S, R33S, and Powkiddy RGB20S | Mainline Linux (`Image`) with Mesa `panfrost` and Rockchip `RK3326` U-Boot | Requires `odroidgo2_joypad` and `retrogame_joypad` input mappings and respects 1 GB RAM limits. |
 | Priority 3 | `x86_64` | Valve Steam Deck, ASUS ROG Ally, Lenovo Legion Go, AYANEO, and AYN Loki handhelds | Mainline Linux (`bzImage`) with Mesa `radeonsi` and `systemd-boot` UEFI | Requires DMI portrait-panel rotation rules and `InputPlumber` composite controller profiles. |
 | Priority 4 | `rk3588`, `sm6125` | Rockchip `rk3588` (GameForce Ace, Orange Pi 5, Retro Lite CM5, RetrOLED CM5) and Qualcomm `sm6125` dual-screen (Retroid Pocket Duo Lite) | Pinned Linux 6.1 vendor BSP (`pkgs/kernels/rk3588.nix`) with Mesa `panfrost`, or patched Linux (`Image`) with Mesa `freedreno` (`sm6125`) | `rk3588` can use a pinned Linux 6.1 vendor BSP kernel in `pkgs/kernels/rk3588.nix` with Mesa `panfrost` until mainline MIPI-DSI and High-Definition Multimedia Interface (HDMI) parity matures. `Retroid Pocket Duo Lite` (`sm6125-retroid-pocket-duo-lite.dtb`) needs dual-panel Cage output handling (`duolite-hx83112a` + `duolite-bottom-panel`) and SM6125 SoundWire (`wcd937x`) audio validation. |

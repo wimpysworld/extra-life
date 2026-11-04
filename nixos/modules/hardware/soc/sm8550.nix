@@ -308,6 +308,8 @@ in
       extraHwdb = builtins.readFile "${rocknixSm8550}/projects/ROCKNIX/devices/SM8550/filesystem/usr/lib/udev/hwdb.d/10-ayaneo.hwdb";
 
       extraRules = ''
+        SUBSYSTEM=="input", ATTRS{name}=="AYN Odin2 Gamepad", MODE="0666", ENV{ID_INPUT_JOYSTICK}="1"
+        SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT}=="1", ATTRS{name}=="qcom-hv-haptics", TAG+="uaccess", ENV{FEEDBACKD_TYPE}="vibra"
         ACTION=="bind", SUBSYSTEM=="soundwire", KERNEL=="sdw:*:0217:010d:*", ATTR{power/control}="on"
         ACTION=="bind", SUBSYSTEM=="soundwire", KERNEL=="sdw:*:0217:0204:*", ATTR{power/control}="on"
       '';
