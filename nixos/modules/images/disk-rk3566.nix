@@ -33,17 +33,30 @@ in
     "10-boot".contents = {
       "/extlinux/extlinux.conf".source = extlinuxConf;
       "/dtbs/rockchip".source = "${config.hardware.deviceTree.package}/rockchip";
+      "/uboot/anbernic-rgxx3-u-boot-rockchip.bin".source =
+        "${pkgs.ubootAnbernicRgxx3}/u-boot-rockchip.bin";
+      "/uboot/powkiddy-x55-u-boot-rockchip.bin".source = "${pkgs.ubootPowkiddyX55}/u-boot-rockchip.bin";
       "/KERNEL".source = "${toplevel}/kernel";
       "/INITRD".source = "${toplevel}/initrd";
       "/SYSTEM".source = config.system.build.systemSquashfs;
     };
   };
 
-  system.build.diskImage = config.system.build.repartImage.overrideAttrs (oldAttrs: {
-    postBuild = (oldAttrs.postBuild or "") + ''
-      dd if="${pkgs.ubootAnbernicRgxx3}/u-boot-rockchip.bin" \
-        of="${config.image.baseName}.raw" \
-        bs=512 seek=64 conv=notrunc
-    '';
-  });
+  system.build = {
+    diskImage = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+      postBuild = (oldAttrs.postBuild or "") + ''
+        dd if="${pkgs.ubootAnbernicRgxx3}/u-boot-rockchip.bin" \
+          of="${config.image.baseName}.raw" \
+          bs=512 seek=64 conv=notrunc
+      '';
+    });
+
+    diskImagePowkiddyX55 = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+      postBuild = (oldAttrs.postBuild or "") + ''
+        dd if="${pkgs.ubootPowkiddyX55}/u-boot-rockchip.bin" \
+          of="${config.image.baseName}.raw" \
+          bs=512 seek=64 conv=notrunc
+      '';
+    });
+  };
 }

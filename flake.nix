@@ -87,6 +87,8 @@
           pd-mapper = applied.pd-mapper or (final.callPackage ./pkgs/pd-mapper { });
           ubootAnbernicRgxx3 =
             applied.ubootAnbernicRgxx3 or (final.callPackage ./pkgs/uboot/anbernic-rgxx3.nix { });
+          ubootPowkiddyX55 =
+            applied.ubootPowkiddyX55 or (final.callPackage ./pkgs/uboot/powkiddy-x55.nix { });
           linuxPackages_rpi = applied.linuxPackages_rpi or (final.callPackage ./pkgs/kernels/rpi.nix { });
           linuxPackages_sm6115 =
             applied.linuxPackages_sm6115 or (final.callPackage ./pkgs/kernels/sm6115.nix { });
@@ -216,6 +218,7 @@
                       (_final: _prev: {
                         inherit (crossAarch64)
                           ubootAnbernicRgxx3
+                          ubootPowkiddyX55
                           linuxPackages_rpi
                           linuxPackages_sm6115
                           ;
@@ -237,6 +240,7 @@
           ota-bundle-x86_64 = self.nixosConfigurations.x86_64.config.system.build.otaBundle;
           disk-image-aarch64 = (aarch64HostConfig "aarch64").config.system.build.diskImage;
           disk-image-rk3566 = (aarch64HostConfig "rk3566").config.system.build.diskImage;
+          disk-image-powkiddy-x55 = (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyX55;
           disk-image-rpi02w = (aarch64HostConfig "rpi02w").config.system.build.diskImage;
           disk-image-rpi4 = (aarch64HostConfig "rpi4").config.system.build.diskImage;
           disk-image-rpi5 = (aarch64HostConfig "rpi5").config.system.build.diskImage;
@@ -252,10 +256,10 @@
           inherit (pkgs) ludo libretro-cores pd-mapper;
         }
         // lib.optionalAttrs (system == "aarch64-linux") {
-          inherit (pkgs) ubootAnbernicRgxx3;
+          inherit (pkgs) ubootAnbernicRgxx3 ubootPowkiddyX55;
         }
         // lib.optionalAttrs (system == "x86_64-linux") {
-          inherit (crossAarch64) ubootAnbernicRgxx3;
+          inherit (crossAarch64) ubootAnbernicRgxx3 ubootPowkiddyX55;
         }
       );
 

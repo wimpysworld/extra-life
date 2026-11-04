@@ -130,6 +130,8 @@ let
 
     ubootAnbernicRgxx3 = final.callPackage ../pkgs/uboot/anbernic-rgxx3.nix { };
 
+    ubootPowkiddyX55 = final.callPackage ../pkgs/uboot/powkiddy-x55.nix { };
+
     rocknix-sm6115 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";
@@ -280,6 +282,7 @@ in
     libretro-cores = final.callPackage ../pkgs/libretro-cores { };
     pd-mapper = final.callPackage ../pkgs/pd-mapper { };
     ubootAnbernicRgxx3 = final.callPackage ../pkgs/uboot/anbernic-rgxx3.nix { };
+    ubootPowkiddyX55 = final.callPackage ../pkgs/uboot/powkiddy-x55.nix { };
     rocknix-sm6115 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";

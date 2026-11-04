@@ -195,6 +195,16 @@ dtb = "rockchip/rk3566-powkiddy-rk2023.dtb"
 panel_orientation = "normal"
 debug = true
 
+[devices.powkiddy-x55]
+name = "Powkiddy X55"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Powkiddy x55"
+dt_compatibles = ["powkiddy,x55", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-powkiddy-x55.dtb"
+panel_orientation = "normal"
+debug = true
+
 [devices.mangmi-air-x-mq65]
 name = "Mangmi Air X (MQ65)"
 soc = "sm6115"
