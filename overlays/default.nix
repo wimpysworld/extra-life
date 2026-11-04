@@ -132,6 +132,18 @@ let
 
     ubootPowkiddyX55 = final.callPackage ../pkgs/uboot/powkiddy-x55.nix { };
 
+    rocknix-rk3566 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/RK3566"
+        "projects/ROCKNIX/packages/linux-drivers/generic-dsi"
+        "projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/panels"
+      ];
+      hash = "sha256-Aq33TGwj/lwtztrgXAIEmynRQwSJAymM1es0GBWyceU=";
+    };
+
     rocknix-sm6115 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";
@@ -143,6 +155,8 @@ let
       ];
       hash = "sha256-4xnHG+Ix8s/nPWeoqKhy52G8+3hIVGHXUfxMntcZOYw=";
     };
+
+    linuxPackages_rk3566 = final.callPackage ../pkgs/kernels/rk3566.nix { };
 
     linuxPackages_rpi = final.callPackage ../pkgs/kernels/rpi.nix { };
 
@@ -283,6 +297,17 @@ in
     pd-mapper = final.callPackage ../pkgs/pd-mapper { };
     ubootAnbernicRgxx3 = final.callPackage ../pkgs/uboot/anbernic-rgxx3.nix { };
     ubootPowkiddyX55 = final.callPackage ../pkgs/uboot/powkiddy-x55.nix { };
+    rocknix-rk3566 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/RK3566"
+        "projects/ROCKNIX/packages/linux-drivers/generic-dsi"
+        "projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/panels"
+      ];
+      hash = "sha256-Aq33TGwj/lwtztrgXAIEmynRQwSJAymM1es0GBWyceU=";
+    };
     rocknix-sm6115 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";
@@ -294,6 +319,7 @@ in
       ];
       hash = "sha256-4xnHG+Ix8s/nPWeoqKhy52G8+3hIVGHXUfxMntcZOYw=";
     };
+    linuxPackages_rk3566 = final.callPackage ../pkgs/kernels/rk3566.nix { };
     linuxPackages_rpi = final.callPackage ../pkgs/kernels/rpi.nix { };
     linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
   };

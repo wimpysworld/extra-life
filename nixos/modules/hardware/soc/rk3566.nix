@@ -91,13 +91,30 @@ let
           gamepad:
             button: LeftStick
   '';
+
+  rk3566PanelFirmware =
+    pkgs.runCommand "rk3566-panel-firmware"
+      {
+        passthru.compressFirmware = false;
+      }
+      ''
+        mkdir -p "$out/lib/firmware/panels"
+        cp -a "${pkgs.rocknix-rk3566}/projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/panels/." "$out/lib/firmware/panels/"
+      '';
 in
 {
   extraLife.variantId = lib.mkDefault "rk3566";
 
-  hardware.deviceTree.enable = true;
+  hardware = {
+    deviceTree.enable = true;
+    firmware = [
+      rk3566PanelFirmware
+    ];
+  };
 
   boot = {
+    kernelPackages = pkgs.linuxPackages_rk3566;
+
     initrd.availableKernelModules = [
       "mmc_block"
       "dw_mmc"
@@ -141,6 +158,7 @@ in
       "adc_joystick"
       "adc_keys"
       "gpio_keys"
+      "pwm_vibra"
       "snd_soc_rk817"
       "snd_soc_rockchip_i2s_tdm"
       "snd_soc_simple_card"

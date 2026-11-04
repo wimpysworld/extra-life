@@ -89,6 +89,8 @@
             applied.ubootAnbernicRgxx3 or (final.callPackage ./pkgs/uboot/anbernic-rgxx3.nix { });
           ubootPowkiddyX55 =
             applied.ubootPowkiddyX55 or (final.callPackage ./pkgs/uboot/powkiddy-x55.nix { });
+          linuxPackages_rk3566 =
+            applied.linuxPackages_rk3566 or (final.callPackage ./pkgs/kernels/rk3566.nix { });
           linuxPackages_rpi = applied.linuxPackages_rpi or (final.callPackage ./pkgs/kernels/rpi.nix { });
           linuxPackages_sm6115 =
             applied.linuxPackages_sm6115 or (final.callPackage ./pkgs/kernels/sm6115.nix { });
@@ -219,6 +221,7 @@
                         inherit (crossAarch64)
                           ubootAnbernicRgxx3
                           ubootPowkiddyX55
+                          linuxPackages_rk3566
                           linuxPackages_rpi
                           linuxPackages_sm6115
                           ;
@@ -242,6 +245,7 @@
           disk-image-rk3566 = (aarch64HostConfig "rk3566").config.system.build.diskImage;
           disk-image-powkiddy-rgb20sx =
             (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyRgb20sx;
+          disk-image-powkiddy-x35s = (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyX35s;
           disk-image-powkiddy-x55 = (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyX55;
           disk-image-rpi02w = (aarch64HostConfig "rpi02w").config.system.build.diskImage;
           disk-image-rpi4 = (aarch64HostConfig "rpi4").config.system.build.diskImage;
