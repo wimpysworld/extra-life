@@ -85,6 +85,27 @@ dmi_products = ["G1617-02", "G1617-02-L"]
 panel_orientation = "normal"
 debug = true
 
+[devices.hardkernel-odroid-go-advance]
+name = "Hardkernel Odroid Go Advance"
+soc = "rk3326"
+arch = "aarch64-linux"
+dt_model = "ODROID-GO Advance"
+dt_models = ["ODROID-GO Advance", "ODROID-GO Advance Black Edition"]
+dt_compatibles = ["hardkernel,rk3326-odroid-go2", "hardkernel,rk3326-odroid-go2-v11", "rockchip,rk3326"]
+dtb = "rockchip/rk3326-odroid-go2.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.hardkernel-odroid-go-super]
+name = "Hardkernel Odroid Go Super"
+soc = "rk3326"
+arch = "aarch64-linux"
+dt_model = "ODROID-GO Super"
+dt_compatibles = ["hardkernel,rk3326-odroid-go3", "rockchip,rk3326"]
+dtb = "rockchip/rk3326-odroid-go3.dtb"
+panel_orientation = "270"
+debug = true
+
 [devices.anbernic-rg353m]
 name = "Anbernic RG353M"
 soc = "rk3566"

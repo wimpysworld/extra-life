@@ -68,6 +68,270 @@ let
     "Spectravideo - SVI-318 - SVI-328" = "bluemsx_libretro"
   '';
 
+  rk3326CompositeProfile = pkgs.writeText "50-rk3326-handheld.yaml" ''
+    version: 1
+    kind: CompositeDevice
+    name: RK3326 Handheld
+    single_source: false
+    matches: []
+    source_devices:
+      - group: gamepad
+        evdev:
+          name: odroidgo2_joypad
+          handler: event*
+        capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
+          name: odroidgo2_v11_joypad
+          handler: event*
+        capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
+          name: odroidgo3_joypad
+          handler: event*
+        capability_map_id: rk3326_gamepad
+    options:
+      auto_manage: true
+    target_devices:
+      - xb360
+  '';
+
+  rk3326CapabilityMap = pkgs.writeText "rk3326_gamepad.yaml" ''
+    version: 2
+    kind: CapabilityMap
+    name: RK3326 Gamepad
+    id: rk3326_gamepad
+    mapping:
+      - name: DPad Up
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_DPAD_UP
+              value_type: button
+        target_event:
+          gamepad:
+            button: DPadUp
+      - name: DPad Down
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_DPAD_DOWN
+              value_type: button
+        target_event:
+          gamepad:
+            button: DPadDown
+      - name: DPad Left
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_DPAD_LEFT
+              value_type: button
+        target_event:
+          gamepad:
+            button: DPadLeft
+      - name: DPad Right
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_DPAD_RIGHT
+              value_type: button
+        target_event:
+          gamepad:
+            button: DPadRight
+      - name: South Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_SOUTH
+              value_type: button
+        target_event:
+          gamepad:
+            button: South
+      - name: East Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_EAST
+              value_type: button
+        target_event:
+          gamepad:
+            button: East
+      - name: North Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_NORTH
+              value_type: button
+        target_event:
+          gamepad:
+            button: North
+      - name: West Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_WEST
+              value_type: button
+        target_event:
+          gamepad:
+            button: West
+      - name: Left Bumper
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TL
+              value_type: button
+        target_event:
+          gamepad:
+            button: LeftBumper
+      - name: Right Bumper
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TR
+              value_type: button
+        target_event:
+          gamepad:
+            button: RightBumper
+      - name: Left Trigger
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TL2
+              value_type: trigger
+        target_event:
+          gamepad:
+            trigger:
+              name: LeftTrigger
+      - name: Right Trigger
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TR2
+              value_type: trigger
+        target_event:
+          gamepad:
+            trigger:
+              name: RightTrigger
+      - name: Select Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_SELECT
+              value_type: button
+        target_event:
+          gamepad:
+            button: Select
+      - name: Start Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_START
+              value_type: button
+        target_event:
+          gamepad:
+            button: Start
+      - name: Guide Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_MODE
+              value_type: button
+        target_event:
+          gamepad:
+            button: Guide
+      - name: Left Stick Click
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_THUMBL
+              value_type: button
+        target_event:
+          gamepad:
+            button: LeftStick
+      - name: Right Stick Click
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_THUMBR
+              value_type: button
+        target_event:
+          gamepad:
+            button: RightStick
+      - name: Function 1 Select Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TRIGGER_HAPPY1
+              value_type: button
+        target_event:
+          gamepad:
+            button: Select
+      - name: Function 2 Guide Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TRIGGER_HAPPY2
+              value_type: button
+        target_event:
+          gamepad:
+            button: Guide
+      - name: Function 3 Guide Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TRIGGER_HAPPY3
+              value_type: button
+        target_event:
+          gamepad:
+            button: Guide
+      - name: Function 5 Right Stick Click
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TRIGGER_HAPPY5
+              value_type: button
+        target_event:
+          gamepad:
+            button: RightStick
+      - name: Function 6 Start Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TRIGGER_HAPPY6
+              value_type: button
+        target_event:
+          gamepad:
+            button: Start
+      - name: Left Stick
+        source_events:
+          - evdev:
+              event_type: ABS
+              event_code: ABS_X
+              value_type: joystick_x
+          - evdev:
+              event_type: ABS
+              event_code: ABS_Y
+              value_type: joystick_y
+        target_event:
+          gamepad:
+            axis:
+              name: LeftStick
+      - name: Right Stick
+        source_events:
+          - evdev:
+              event_type: ABS
+              event_code: ABS_RX
+              value_type: joystick_x
+          - evdev:
+              event_type: ABS
+              event_code: ABS_RY
+              value_type: joystick_y
+        target_event:
+          gamepad:
+            axis:
+              name: RightStick
+  '';
+
   rk3326PanelFirmware =
     pkgs.runCommand "rk3326-panel-firmware"
       {
@@ -81,12 +345,16 @@ let
   rk3326AlsaUcm = lib.hiPrio (
     pkgs.runCommand "rk3326-alsa-ucm-conf" { } ''
       mkdir -p "$out/share/alsa/ucm2/Rockchip/rk817-sound"
+      mkdir -p "$out/share/alsa/ucm2/conf.d/simple-card"
       cp "${pkgs.alsa-ucm-conf}/share/alsa/ucm2/Rockchip/rk817-sound/rk817-sound.conf" \
         "$out/share/alsa/ucm2/Rockchip/rk817-sound/rk817-sound.conf"
       cp "${pkgs.alsa-ucm-conf}/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf" \
         "$out/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf"
       chmod u+w "$out/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf"
       patch -p2 -d "$out/share/alsa/ucm2" < "${pkgs.rocknix-rk3326}/projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/RK3326/0001_fix_speaker_when_booting_with_headphones.patch"
+      for conf in rk817_int.conf rk817_ext.conf rk817-sound.conf; do
+        ln -sf ../../Rockchip/rk817-sound/rk817-sound.conf "$out/share/alsa/ucm2/conf.d/simple-card/$conf"
+      done
     ''
   );
 in
@@ -184,11 +452,18 @@ in
     ];
   };
 
+  services.inputplumber.enable = true;
+
   environment = {
-    etc."ludo.toml".source = lib.mkForce rk3326LudoToml;
+    etc = {
+      "ludo.toml".source = lib.mkForce rk3326LudoToml;
+      "inputplumber/devices.d/50-rk3326-handheld.yaml".source = rk3326CompositeProfile;
+      "inputplumber/capability_maps.d/rk3326_gamepad.yaml".source = rk3326CapabilityMap;
+    };
 
     pathsToLink = [
       "/share/alsa/ucm2"
+      "/share/inputplumber"
     ];
 
     systemPackages = [
