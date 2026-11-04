@@ -175,6 +175,16 @@ dtb = "rockchip/rk3566-powkiddy-rgb10max3.dtb"
 panel_orientation = "270"
 debug = true
 
+[devices.powkiddy-rgb20sx]
+name = "Powkiddy RGB20SX"
+soc = "rk3566"
+arch = "aarch64-linux"
+dt_model = "Powkiddy RGB20SX"
+dt_compatibles = ["powkiddy,rgb20sx", "rockchip,rk3566"]
+dtb = "rockchip/rk3566-powkiddy-rgb20sx.dtb"
+panel_orientation = "normal"
+debug = true
+
 [devices.powkiddy-rgb30]
 name = "Powkiddy RGB30"
 soc = "rk3566"

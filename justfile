@@ -18,7 +18,7 @@ devices:
     printf "  %-10s %s\n" "rpi02w"  "Broadcom BCM2710 (Raspberry Pi Zero 2 W, Pi 3B/3B+/3A+, CM3)"
     printf "  %-10s %s\n" "rpi4"    "Broadcom BCM2711 (Raspberry Pi 4B, Pi 400, CM4, CM4S)"
     printf "  %-10s %s\n" "rpi5"    "Broadcom BCM2712 (Raspberry Pi 5, Pi 500, CM5)"
-    printf "  %-10s %s\n" "rk3566"  "Rockchip RK3566 (Anbernic RG353/RG503/RG ARC and Powkiddy RGB30/RK2023/RGB10MAX3/X55)"
+    printf "  %-10s %s\n" "rk3566"  "Rockchip RK3566 (Anbernic RG353/RG503/RG ARC and Powkiddy RGB20SX/RGB30/RK2023/RGB10MAX3/X55)"
     printf "  %-10s %s\n" "sm6115"  "Qualcomm Snapdragon 662 (Mangmi Air X MQ65/MQ66/MQ66B and Mangmi Air Y)"
     echo ""
 
@@ -175,7 +175,9 @@ build-disk target="":
                 echo "Resolved device '${target}' -> variant '${variant}'"
                 ;;
         esac
-        if [[ "${target}" == "powkiddy-x55" ]]; then
+        if [[ "${target}" == "powkiddy-rgb20sx" ]]; then
+            attr=".#disk-image-powkiddy-rgb20sx"
+        elif [[ "${target}" == "powkiddy-x55" ]]; then
             attr=".#disk-image-powkiddy-x55"
         else
             attr=".#disk-image-${variant}"
@@ -281,7 +283,9 @@ build-device target="":
     dist_dir="dist/v${version}/${variant}"
     mkdir -p "${dist_dir}"
 
-    if [[ "${target}" == "powkiddy-x55" ]]; then
+    if [[ "${target}" == "powkiddy-rgb20sx" ]]; then
+        disk_attr=".#disk-image-powkiddy-rgb20sx"
+    elif [[ "${target}" == "powkiddy-x55" ]]; then
         disk_attr=".#disk-image-powkiddy-x55"
     else
         disk_attr=".#disk-image-${variant}"

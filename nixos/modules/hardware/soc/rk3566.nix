@@ -146,6 +146,7 @@ in
       "snd_soc_simple_card"
       "snd_soc_simple_amplifier"
       "rk817_charger"
+      "rtw88_8723ds"
       "rtw88_8821cs"
       "hci_uart"
     ];

@@ -240,6 +240,8 @@
           ota-bundle-x86_64 = self.nixosConfigurations.x86_64.config.system.build.otaBundle;
           disk-image-aarch64 = (aarch64HostConfig "aarch64").config.system.build.diskImage;
           disk-image-rk3566 = (aarch64HostConfig "rk3566").config.system.build.diskImage;
+          disk-image-powkiddy-rgb20sx =
+            (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyRgb20sx;
           disk-image-powkiddy-x55 = (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyX55;
           disk-image-rpi02w = (aarch64HostConfig "rpi02w").config.system.build.diskImage;
           disk-image-rpi4 = (aarch64HostConfig "rpi4").config.system.build.diskImage;
