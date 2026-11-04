@@ -134,6 +134,8 @@ let
 
     ubootPowkiddyX55 = final.callPackage ../pkgs/uboot/powkiddy-x55.nix { };
 
+    ubootRk3326 = final.callPackage ../pkgs/uboot/rk3326.nix { };
+
     rocknix-h700 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";
@@ -152,6 +154,21 @@ let
       repo = "rocknix-joypad";
       rev = "005033d1ddd8746c771f2c81f1174f2d892541c9";
       hash = "sha256-uprZYBDSjmSP0+MRK4e0mkRrij84zYg6eb5wtAtYsLo=";
+    };
+
+    rocknix-rk3326 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/RK3326"
+        "projects/ROCKNIX/packages/linux/patches/mainline"
+        "projects/ROCKNIX/packages/linux/patches/mainline-rockchip"
+        "projects/ROCKNIX/packages/linux-drivers/generic-dsi"
+        "projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/panels"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/RK3326"
+      ];
+      hash = "sha256-UYFpR602bB+sVNt00XDXr5ZhaSlmjCQkixtuZiwznu0=";
     };
 
     rocknix-rk3566 = final.fetchFromGitHub {
@@ -204,6 +221,8 @@ let
     };
 
     linuxPackages_h700 = final.callPackage ../pkgs/kernels/h700.nix { };
+
+    linuxPackages_rk3326 = final.callPackage ../pkgs/kernels/rk3326.nix { };
 
     linuxPackages_rk3566 = final.callPackage ../pkgs/kernels/rk3566.nix { };
 
@@ -351,6 +370,7 @@ in
     ubootAnbernicH700 = final.callPackage ../pkgs/uboot/anbernic-h700.nix { };
     ubootAnbernicRgxx3 = final.callPackage ../pkgs/uboot/anbernic-rgxx3.nix { };
     ubootPowkiddyX55 = final.callPackage ../pkgs/uboot/powkiddy-x55.nix { };
+    ubootRk3326 = final.callPackage ../pkgs/uboot/rk3326.nix { };
     rocknix-h700 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";
@@ -368,6 +388,20 @@ in
       repo = "rocknix-joypad";
       rev = "005033d1ddd8746c771f2c81f1174f2d892541c9";
       hash = "sha256-uprZYBDSjmSP0+MRK4e0mkRrij84zYg6eb5wtAtYsLo=";
+    };
+    rocknix-rk3326 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/RK3326"
+        "projects/ROCKNIX/packages/linux/patches/mainline"
+        "projects/ROCKNIX/packages/linux/patches/mainline-rockchip"
+        "projects/ROCKNIX/packages/linux-drivers/generic-dsi"
+        "projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/panels"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/RK3326"
+      ];
+      hash = "sha256-UYFpR602bB+sVNt00XDXr5ZhaSlmjCQkixtuZiwznu0=";
     };
     rocknix-rk3566 = final.fetchFromGitHub {
       owner = "ROCKNIX";
@@ -415,6 +449,7 @@ in
       hash = "sha256-5Sb2DjyPyVSjR8iaUlUQBL+Lj8WhYnlq+aWpK2XpOHY=";
     };
     linuxPackages_h700 = final.callPackage ../pkgs/kernels/h700.nix { };
+    linuxPackages_rk3326 = final.callPackage ../pkgs/kernels/rk3326.nix { };
     linuxPackages_rk3566 = final.callPackage ../pkgs/kernels/rk3566.nix { };
     linuxPackages_rpi = final.callPackage ../pkgs/kernels/rpi.nix { };
     linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
