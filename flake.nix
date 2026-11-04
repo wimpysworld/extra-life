@@ -85,10 +85,13 @@
           homebrew-roms = applied.homebrew-roms or (final.callPackage ./pkgs/homebrew-roms { });
           libretro-cores = applied.libretro-cores or (final.callPackage ./pkgs/libretro-cores { });
           pd-mapper = applied.pd-mapper or (final.callPackage ./pkgs/pd-mapper { });
+          ubootAnbernicH700 =
+            applied.ubootAnbernicH700 or (final.callPackage ./pkgs/uboot/anbernic-h700.nix { });
           ubootAnbernicRgxx3 =
             applied.ubootAnbernicRgxx3 or (final.callPackage ./pkgs/uboot/anbernic-rgxx3.nix { });
           ubootPowkiddyX55 =
             applied.ubootPowkiddyX55 or (final.callPackage ./pkgs/uboot/powkiddy-x55.nix { });
+          linuxPackages_h700 = applied.linuxPackages_h700 or (final.callPackage ./pkgs/kernels/h700.nix { });
           linuxPackages_rk3566 =
             applied.linuxPackages_rk3566 or (final.callPackage ./pkgs/kernels/rk3566.nix { });
           linuxPackages_rpi = applied.linuxPackages_rpi or (final.callPackage ./pkgs/kernels/rpi.nix { });
@@ -104,12 +107,14 @@
         cases = import ./nixos/modules/hardware/cases;
         disk-base = import ./nixos/modules/images/disk-base.nix;
         disk-efi = import ./nixos/modules/images/disk-efi.nix;
+        disk-h700 = import ./nixos/modules/images/disk-h700.nix;
         disk-openabl = import ./nixos/modules/images/disk-openabl.nix;
         disk-rk3566 = import ./nixos/modules/images/disk-rk3566.nix;
         disk-rpi = import ./nixos/modules/images/disk-rpi.nix;
         iso = import ./nixos/modules/images/iso.nix;
         pc = import ./nixos/modules/hardware/pc.nix;
         qemu-guest = import ./nixos/modules/hardware/qemu-guest.nix;
+        soc-h700 = import ./nixos/modules/hardware/soc/h700.nix;
         soc-qcom-common = import ./nixos/modules/hardware/soc/qcom-common.nix;
         soc-rk3566 = import ./nixos/modules/hardware/soc/rk3566.nix;
         soc-rpi-common = import ./nixos/modules/hardware/soc/rpi-common.nix;
@@ -153,6 +158,15 @@
             ./nixos/hosts/aarch64-installer
           ];
         };
+
+        h700-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/h700-appliance
+          ];
+        };
+
+        h700 = self.nixosConfigurations.h700-appliance;
 
         rk3566-appliance = lib.nixosSystem {
           modules = [
@@ -219,8 +233,10 @@
                     nixpkgs.overlays = [
                       (_final: _prev: {
                         inherit (crossAarch64)
+                          ubootAnbernicH700
                           ubootAnbernicRgxx3
                           ubootPowkiddyX55
+                          linuxPackages_h700
                           linuxPackages_rk3566
                           linuxPackages_rpi
                           linuxPackages_sm6115
@@ -242,6 +258,7 @@
           disk-image-x86_64 = self.nixosConfigurations.x86_64.config.system.build.diskImage;
           ota-bundle-x86_64 = self.nixosConfigurations.x86_64.config.system.build.otaBundle;
           disk-image-aarch64 = (aarch64HostConfig "aarch64").config.system.build.diskImage;
+          disk-image-h700 = (aarch64HostConfig "h700").config.system.build.diskImage;
           disk-image-rk3566 = (aarch64HostConfig "rk3566").config.system.build.diskImage;
           disk-image-powkiddy-rgb20sx =
             (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyRgb20sx;
@@ -252,6 +269,8 @@
           disk-image-rpi5 = (aarch64HostConfig "rpi5").config.system.build.diskImage;
           disk-image-sm6115 = (aarch64HostConfig "sm6115").config.system.build.diskImage;
           ota-bundle-aarch64 = (aarch64HostConfig "aarch64").config.system.build.otaBundle;
+          ota-bundle-h700 = (aarch64HostConfig "h700").config.system.build.otaBundle;
+          ota-h700 = self.packages.${system}.ota-bundle-h700;
           ota-bundle-rk3566 = (aarch64HostConfig "rk3566").config.system.build.otaBundle;
           ota-bundle-rpi02w = (aarch64HostConfig "rpi02w").config.system.build.otaBundle;
           ota-bundle-rpi4 = (aarch64HostConfig "rpi4").config.system.build.otaBundle;
@@ -262,10 +281,10 @@
           inherit (pkgs) ludo libretro-cores pd-mapper;
         }
         // lib.optionalAttrs (system == "aarch64-linux") {
-          inherit (pkgs) ubootAnbernicRgxx3 ubootPowkiddyX55;
+          inherit (pkgs) ubootAnbernicH700 ubootAnbernicRgxx3 ubootPowkiddyX55;
         }
         // lib.optionalAttrs (system == "x86_64-linux") {
-          inherit (crossAarch64) ubootAnbernicRgxx3 ubootPowkiddyX55;
+          inherit (crossAarch64) ubootAnbernicH700 ubootAnbernicRgxx3 ubootPowkiddyX55;
         }
       );
 

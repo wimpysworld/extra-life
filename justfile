@@ -20,6 +20,7 @@ devices:
     printf "  %-10s %s\n" "rpi5"    "Broadcom BCM2712 (Raspberry Pi 5, Pi 500, CM5)"
     printf "  %-10s %s\n" "rk3566"  "Rockchip RK3566 (Anbernic RG353/RG503/RG ARC and Powkiddy RGB20 Pro/RGB20SX/RGB30/RK2023/RGB10MAX3/X35S/X55)"
     printf "  %-10s %s\n" "sm6115"  "Qualcomm Snapdragon 662 (Mangmi Air X MQ65/MQ66/MQ66B and Mangmi Air Y)"
+    printf "  %-10s %s\n" "h700"    "Allwinner H700 (Anbernic RG28XX, RG34XX/SP, RG35XX Plus/H/SP/2024/Pro, RG40XX H/V, RG CubeXX)"
     echo ""
 
     echo "Device IDs (nixos/devices/devices.toml):"
@@ -162,7 +163,7 @@ build-disk target="":
         out_link="result-disk"
     else
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115|h700)
                 variant="${target}"
                 ;;
             *)
@@ -208,7 +209,7 @@ build-ota target="":
         out_link="result-ota"
     else
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115|h700)
                 variant="${target}"
                 ;;
             *)
@@ -266,7 +267,7 @@ build-device target="":
         fi
     else
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115|h700)
                 variant="${target}"
                 ;;
             *)
@@ -433,7 +434,7 @@ publish-ota target="":
 
     if [[ -n "${target}" ]]; then
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115|h700)
                 variant="${target}"
                 ;;
             *)
