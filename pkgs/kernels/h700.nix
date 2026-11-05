@@ -27,7 +27,14 @@ let
     dir:
     let
       entries = builtins.readDir dir;
-      names = builtins.filter (n: lib.hasSuffix ".patch" n) (builtins.attrNames entries);
+      names = builtins.filter (
+        n:
+        lib.hasSuffix ".patch" n
+        && !builtins.elem n [
+          "0003-Update-sun8i_tcon_top.c.patch"
+          "0204-dts-Enable-hdmi-sound.patch"
+        ]
+      ) (builtins.attrNames entries);
       sorted = builtins.sort builtins.lessThan names;
     in
     map (n: {
@@ -131,6 +138,10 @@ let
     }).overrideAttrs
       (oldAttrs: {
         postPatch = (oldAttrs.postPatch or "") + ''
+          substituteInPlace drivers/gpu/drm/sun4i/sun8i_tcon_top.c \
+            --replace-fail "writel(0, regs + TCON_TOP_PORT_SEL_REG);" "writel(0x20, regs + TCON_TOP_PORT_SEL_REG);"
+          sed -i '/reg_vcc5v0_usb: regulator-vcc5v0-usb {/,/^\t};/d; /usb1_vbus-supply = <&reg_vcc5v0_usb>;/d' \
+            arch/arm64/boot/dts/allwinner/sun50i-h700-anbernic-rg35xx-h.dts
           cp -v ${rocknix-h700}/projects/ROCKNIX/devices/H700/linux/dts/allwinner/*.dts arch/arm64/boot/dts/allwinner/
           if ! grep -q "sun50i-h700-anbernic-rg-sp.dtb" arch/arm64/boot/dts/allwinner/Makefile; then
             echo "dtb-\$(CONFIG_ARCH_SUNXI) += ${lib.concatStringsSep " " h700Dtbs}" >> arch/arm64/boot/dts/allwinner/Makefile

@@ -201,6 +201,8 @@ build-disk target="":
             attr=".#disk-image-anbernic-rg28xx"
         elif [[ "${target}" == "anbernic-rg34xx" ]]; then
             attr=".#disk-image-anbernic-rg34xx"
+        elif [[ "${target}" == "anbernic-rg34xx-sp" ]]; then
+            attr=".#disk-image-anbernic-rg34xx-sp"
         elif [[ "${target}" == "anbernic-rg351m" ]]; then
             attr=".#disk-image-anbernic-rg351m"
         elif [[ "${target}" == "anbernic-rg351v" ]]; then
@@ -349,6 +351,8 @@ build-device target="":
         disk_attr=".#disk-image-anbernic-rg28xx"
     elif [[ "${target}" == "anbernic-rg34xx" ]]; then
         disk_attr=".#disk-image-anbernic-rg34xx"
+    elif [[ "${target}" == "anbernic-rg34xx-sp" ]]; then
+        disk_attr=".#disk-image-anbernic-rg34xx-sp"
     elif [[ "${target}" == "anbernic-rg351m" ]]; then
         disk_attr=".#disk-image-anbernic-rg351m"
     elif [[ "${target}" == "anbernic-rg351v" ]]; then

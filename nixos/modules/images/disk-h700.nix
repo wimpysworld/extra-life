@@ -248,5 +248,6 @@ in
     diskImageAnbernicRgCubexx = mkH700DiskImage extlinuxConfAnbernicRgCubexx;
     diskImageAnbernicRg28xx = mkH700DiskImage extlinuxConfAnbernicRg28xx;
     diskImageAnbernicRg34xx = mkH700DiskImage extlinuxConfAnbernicRg34xx;
+    diskImageAnbernicRg34xxSp = mkH700DiskImage extlinuxConfAnbernicRg34xxSp;
   };
 }

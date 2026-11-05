@@ -327,13 +327,6 @@ in
         "spi_gpio"
         "iio_mux"
         "mux_gpio"
-        "snd_soc_sun4i_codec"
-        "snd_soc_sun4i_i2s"
-        "snd_soc_sun4i_spdif"
-        "snd_soc_simple_card"
-        "rtw88_8821cs"
-        "hci_uart"
-        "btrtl"
         "usbhid"
       ];
     };
@@ -345,9 +338,6 @@ in
       "iio_mux"
       "mux_gpio"
       "snd_soc_sun4i_codec"
-      "snd_soc_sun4i_i2s"
-      "snd_soc_sun4i_spdif"
-      "snd_soc_simple_card"
       "rtw88_8821cs"
       "hci_uart"
       "btrtl"
@@ -360,6 +350,7 @@ in
   services.inputplumber.enable = true;
 
   services.logind.settings.Login = {
+    HandlePowerKey = "suspend";
     HandleLidSwitch = "suspend";
     HandleLidSwitchExternalPower = "suspend";
     HandleLidSwitchDocked = "ignore";

@@ -586,6 +586,16 @@ dtb = "allwinner/sun50i-h700-anbernic-rg34xx.dtb"
 panel_orientation = "normal"
 debug = true
 
+[devices.anbernic-rg34xx-sp]
+name = "Anbernic RG34XX SP"
+soc = "h700"
+arch = "aarch64-linux"
+dt_model = "Anbernic RG34XX-SP"
+dt_compatibles = ["anbernic,rg34xx-sp", "allwinner,sun50i-h700"]
+dtb = "allwinner/sun50i-h700-anbernic-rg34xx-sp.dtb"
+panel_orientation = "normal"
+debug = true
+
 [devices.anbernic-rg35xx-2024]
 name = "Anbernic RG35XX 2024"
 soc = "h700"
