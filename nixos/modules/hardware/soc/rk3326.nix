@@ -107,6 +107,26 @@ let
         capability_map_id: rk3326_gamepad
       - group: gamepad
         evdev:
+          name: retrogame_joypad_s1_f2
+          handler: event*
+        capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
+          name: XU10 Gamepad
+          handler: event*
+        capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
+          name: XU Mini M Gamepad
+          handler: event*
+        capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
+          name: gkd_pixel2_joypad
+          handler: event*
+        capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
           name: rocknix-joypad
           handler: event*
         capability_map_id: rk3326_gamepad
@@ -293,15 +313,16 @@ let
         target_event:
           gamepad:
             button: Select
-      - name: Function 2 Guide Button
+      - name: Function 2 Left Trigger
         source_events:
           - evdev:
               event_type: KEY
               event_code: BTN_TRIGGER_HAPPY2
-              value_type: button
+              value_type: trigger
         target_event:
           gamepad:
-            button: Guide
+            trigger:
+              name: LeftTrigger
       - name: Function 3 Guide Button
         source_events:
           - evdev:
@@ -320,15 +341,16 @@ let
         target_event:
           gamepad:
             button: Guide
-      - name: Function 5 Right Stick Click
+      - name: Function 5 Right Trigger
         source_events:
           - evdev:
               event_type: KEY
               event_code: BTN_TRIGGER_HAPPY5
-              value_type: button
+              value_type: trigger
         target_event:
           gamepad:
-            button: RightStick
+            trigger:
+              name: RightTrigger
       - name: Function 6 Start Button
         source_events:
           - evdev:
@@ -530,10 +552,12 @@ let
               event_type: ABS
               event_code: ABS_Z
               value_type: joystick_x
+              invert: true
           - evdev:
               event_type: ABS
               event_code: ABS_RX
               value_type: joystick_y
+              invert: true
         target_event:
           gamepad:
             axis:
@@ -554,26 +578,57 @@ let
               name: RightStick
   '';
 
-  rk3326PanelFirmware =
-    pkgs.runCommand "rk3326-panel-firmware"
+  esp8089FirmwareSrc = pkgs.fetchFromGitHub {
+    owner = "armbian";
+    repo = "firmware";
+    rev = "490722a3c9181d6fee6ad75682aaba4afd9d4b24";
+    sparseCheckout = [
+      "eagle_fw_ate_config_v19.bin"
+      "eagle_fw_first_init_v19.bin"
+      "eagle_fw_second_init_v19.bin"
+    ];
+    hash = "sha256-FpCsvTq382lDowExnDLpLNGnTeZNg6lypRGuLb/YH4k=";
+  };
+
+  rk3326Firmware =
+    pkgs.runCommand "rk3326-firmware"
       {
         passthru.compressFirmware = false;
       }
       ''
-        mkdir -p "$out/lib/firmware/panels"
-        cp -a "${pkgs.rocknix-rk3326}/projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/panels/." "$out/lib/firmware/panels/"
+        mkdir -p "$out/lib/firmware/rtl_bt"
+        cp -a "${esp8089FirmwareSrc}/eagle_fw_"*.bin "$out/lib/firmware/"
+        cp -a "${pkgs.rocknix-rk3566}/projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/rtl_bt/rtl8723ds_"*.bin "$out/lib/firmware/rtl_bt/"
       '';
 
   rk3326AlsaUcm = lib.hiPrio (
     pkgs.runCommand "rk3326-alsa-ucm-conf" { } ''
       mkdir -p "$out/share/alsa/ucm2/Rockchip/rk817-sound"
       mkdir -p "$out/share/alsa/ucm2/conf.d/simple-card"
-      cp "${pkgs.alsa-ucm-conf}/share/alsa/ucm2/Rockchip/rk817-sound/rk817-sound.conf" \
-        "$out/share/alsa/ucm2/Rockchip/rk817-sound/rk817-sound.conf"
       cp "${pkgs.alsa-ucm-conf}/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf" \
         "$out/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf"
       chmod u+w "$out/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf"
       patch -p2 -d "$out/share/alsa/ucm2" < "${pkgs.rocknix-rk3326}/projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/RK3326/0001_fix_speaker_when_booting_with_headphones.patch"
+      cat >> "$out/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf" << 'EOF'
+
+      FixedBootSequence [
+      	cset "name='Master Playback Volume' 255"
+      ]
+      EOF
+      sed \
+        -e 's/^Define\.pbk_mux "SPK"$/Define.pbk_mux "HP"/' \
+        -e "s/cset \"name='Playback Mux' HP\"/cset \"name='Playback Mux' SPK\"/" \
+        "$out/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf" \
+        > "$out/share/alsa/ucm2/Rockchip/rk817-sound/HiFi-inverted.conf"
+      ln -sf /run/extra-life-rk817-HiFi.conf "$out/share/alsa/ucm2/Rockchip/rk817-sound/HiFi-active.conf"
+      cat > "$out/share/alsa/ucm2/Rockchip/rk817-sound/rk817-sound.conf" << 'EOF'
+      Syntax 4
+
+      SectionUseCase."HiFi" {
+      	File "/Rockchip/rk817-sound/HiFi-active.conf"
+      	Comment "Play HiFi quality music"
+      }
+      EOF
       for conf in rk817_int.conf rk817_ext.conf rk817-sound.conf; do
         ln -sf ../../Rockchip/rk817-sound/rk817-sound.conf "$out/share/alsa/ucm2/conf.d/simple-card/$conf"
       done
@@ -614,7 +669,7 @@ in
   hardware = {
     deviceTree.enable = true;
     firmware = [
-      rk3326PanelFirmware
+      rk3326Firmware
     ];
   };
 
@@ -628,19 +683,6 @@ in
     ];
 
     initrd = {
-      extraFirmwarePaths = [
-        "panels/anbernic,rg28xx-panel.panel"
-        "panels/anbernic,rg34xx-panel.panel"
-        "panels/anbernic,rg34xx-sp-panel.panel"
-        "panels/anbernic,rg34xx-sp-v2-panel.panel"
-        "panels/anbernic,rg35xx-plus-panel.panel"
-        "panels/anbernic,rg35xx-plus-rev6-panel.panel"
-        "panels/anbernic,rg35xx-sp-v2-panel.panel"
-        "panels/anbernic,rg40xx-panel.panel"
-        "panels/anbernic,rg40xx-v2-panel.panel"
-        "panels/anbernic,rgcubexx-panel.panel"
-      ];
-
       availableKernelModules = [
         "mmc_block"
         "dw_mmc"
@@ -695,11 +737,29 @@ in
 
   services.inputplumber.enable = true;
 
+  services.udev.extraHwdb = ''
+    evdev:name:*joypad*
+     ID_INPUT_TABLET=1
+     ID_INPUT_TABLET_PAD=1
+
+    evdev:name:*Gamepad*
+     ID_INPUT_TABLET=1
+     ID_INPUT_TABLET_PAD=1
+  '';
+
+  systemd.tmpfiles.rules = [
+    "L+ /run/extra-life-rk817-HiFi.conf - - - - ${rk3326AlsaUcm}/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf"
+  ];
+
   systemd.services.extra-life-rk3326-audio = {
     description = "Apply RK3326 board-specific ALSA routing quirks";
     wantedBy = [ "multi-user.target" ];
     after = [
       "extra-life-board-detect.service"
+      "sound.target"
+    ];
+    before = [
+      "cage-tty1.service"
       "sound.target"
     ];
     wants = [ "extra-life-board-detect.service" ];
@@ -709,10 +769,18 @@ in
       EnvironmentFile = [ "-/run/extra-life-board.env" ];
       ExecStart = pkgs.writeShellScript "extra-life-rk3326-audio" ''
         set -euo pipefail
-        if [[ "''${EXTRA_LIFE_BOARD:-}" == "anbernic-rg351m" ]]; then
-          ${pkgs.alsa-utils}/bin/amixer -c 0 sset 'Master' 100% || true
-          ${pkgs.alsa-utils}/bin/amixer -c 0 cset name='Playback Mux' HP || true
-        fi
+        case "''${EXTRA_LIFE_BOARD:-}" in
+          anbernic-rg351m | gameconsole-r33s | gameconsole-r36s | powkiddy-rgb20s | powkiddy-rgb10x | magicx-xu-mini-m)
+            ln -sf "${rk3326AlsaUcm}/share/alsa/ucm2/Rockchip/rk817-sound/HiFi-inverted.conf" /run/extra-life-rk817-HiFi.conf
+            ${pkgs.alsa-utils}/bin/amixer -c 0 sset 'Master' 100% || true
+            ${pkgs.alsa-utils}/bin/amixer -c 0 cset name='Playback Mux' HP || true
+            ;;
+          *)
+            ln -sf "${rk3326AlsaUcm}/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf" /run/extra-life-rk817-HiFi.conf
+            ${pkgs.alsa-utils}/bin/amixer -c 0 sset 'Master' 100% || true
+            ${pkgs.alsa-utils}/bin/amixer -c 0 cset name='Playback Mux' SPK || true
+            ;;
+        esac
       '';
     };
   };
@@ -723,6 +791,26 @@ in
       "inputplumber/devices.d/50-rk3326-handheld.yaml".source = rk3326CompositeProfile;
       "inputplumber/capability_maps.d/rk3326_gamepad.yaml".source = rk3326CapabilityMap;
       "inputplumber/capability_maps.d/rg351_gamepad.yaml".source = rg351CapabilityMap;
+      "systemd/system-sleep/rk3326-sleep".source = pkgs.writeShellScript "rk3326-sleep" ''
+        case "$1" in
+          pre)
+            for mod in esp8089 rtw88_8821cs dwc2; do
+              if [ -d "/sys/module/$mod" ]; then
+                echo "$mod" >> /run/extra-life-rk3326-sleep.modules
+                ${pkgs.kmod}/bin/modprobe -r "$mod" || true
+              fi
+            done
+            ;;
+          post)
+            if [ -f /run/extra-life-rk3326-sleep.modules ]; then
+              while read -r mod; do
+                [ -n "$mod" ] && ${pkgs.kmod}/bin/modprobe "$mod" || true
+              done < /run/extra-life-rk3326-sleep.modules
+              rm -f /run/extra-life-rk3326-sleep.modules
+            fi
+            ;;
+        esac
+      '';
     };
 
     pathsToLink = [

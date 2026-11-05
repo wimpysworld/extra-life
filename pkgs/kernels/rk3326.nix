@@ -74,6 +74,7 @@ let
         DRM_PANEL_SITRONIX_ST7703 = module;
         ESP8089 = module;
         IIO = yes;
+        INPUT_FF_MEMLESS = yes;
         INPUT_POLLDEV = yes;
         INPUT_PWM_VIBRA = module;
         JOYSTICK_ADC = module;
@@ -83,6 +84,8 @@ let
         JOYSTICK_ODROIDGO3 = yes;
         JOYSTICK_RGB20S = yes;
         JOYSTICK_XU10 = yes;
+        KEYBOARD_ADC = yes;
+        KEYBOARD_GPIO = yes;
         ROCKCHIP_CPUINFO = yes;
         ROCKCHIP_PM_CONFIG = yes;
         ROCKCHIP_SARADC = yes;
