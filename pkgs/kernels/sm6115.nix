@@ -99,15 +99,30 @@ let
         ATH10K_CE = yes;
         ATH10K_SNOC = module;
         TYPEC_FUSB302 = module;
+        TYPEC_QCOM_PMIC = module;
         PINCTRL_SM6115 = yes;
         PINCTRL_SM6115_LPASS_LPI = module;
+        PINCTRL_SM6125 = yes;
         SM_DISPCC_6115 = yes;
+        SM_DISPCC_6125 = yes;
         SM_GCC_6115 = yes;
+        SM_GCC_6125 = yes;
         SM_GPUCC_6115 = yes;
+        SM_GPUCC_6125 = yes;
         SM_LPASSCC_6115 = yes;
         INTERCONNECT_QCOM_SM6115 = yes;
         QCOM_PSCI_SUSPEND_FALLBACK = yes;
         VIDEO_QCOM_VENUS = module;
+        SOUNDWIRE = module;
+        SOUNDWIRE_QCOM = module;
+        REGMAP_SOUNDWIRE = module;
+        SND_SOC_AW88395_LIB = module;
+        SND_SOC_AW88166 = module;
+        SND_SOC_WCD937X = module;
+        SND_SOC_WCD937X_SDW = module;
+        INPUT_AW86927 = module;
+        TOUCHSCREEN_EDT_FT5X06 = module;
+        SENSORS_PWM_FAN = module;
       };
       ignoreConfigErrors = true;
       extraMeta = {
@@ -119,7 +134,7 @@ let
         postPatch = (oldAttrs.postPatch or "") + ''
           cp -v ${rocknix-sm6115}/projects/ROCKNIX/devices/SM6115/linux/dts/qcom/*.dts* arch/arm64/boot/dts/qcom/
           if ! grep -q "sm6115-mangmi-air-x-mq65.dtb" arch/arm64/boot/dts/qcom/Makefile; then
-            echo "dtb-\$(CONFIG_ARCH_QCOM) += sm6115-mangmi-air-x-mq65.dtb sm6115-mangmi-air-x-mq66.dtb sm6115-mangmi-air-x-mq66b.dtb sm6115-mangmi-air-y.dtb" >> arch/arm64/boot/dts/qcom/Makefile
+            echo "dtb-\$(CONFIG_ARCH_QCOM) += sm6115-mangmi-air-x-mq65.dtb sm6115-mangmi-air-x-mq66.dtb sm6115-mangmi-air-x-mq66b.dtb sm6115-mangmi-air-y.dtb sm6125-retroid-pocket-duo-lite.dtb" >> arch/arm64/boot/dts/qcom/Makefile
           fi
         '';
       });

@@ -4,7 +4,7 @@ Extra Life scopes each system closure to one System on a Chip (SoC) family (`VAR
 
 ## Active SoC family summary
 
-Twelve SoC targets build in the flake today. Run `just build-disk <soc>` or `just build-ota <soc>` to build an image or over-the-air (OTA) bundle.
+Thirteen SoC targets build in the flake today. Run `just build-disk <soc>` or `just build-ota <soc>` to build an image or over-the-air (OTA) bundle.
 
 | SoC key (`VARIANT_ID`) | Build commands | Kernel and GPU stack | Bootloader and partition layout | Device count in `devices.toml` |
 | --- | --- | --- | --- | --- |
@@ -16,6 +16,7 @@ Twelve SoC targets build in the flake today. Run `just build-disk <soc>` or `jus
 | `rk3566` | `just build-disk rk3566`, `just build-ota rk3566` | Linux 6.18 LTS (`linuxPackages_rk3566` with ROCKNIX `RK3566` patches and `rocknix,generic-dsi`) with `rockchipdrm` and Mesa `panfrost` | `ubootAnbernicRgxx3` or `ubootPowkiddyX55` (`u-boot-rockchip.bin` at sector 64) + `extlinux.conf` (`FDTDIR /dtbs`) on GPT (`05-uboot` + `EXTRALIFE` + `STORAGE`) | 15 |
 | `rk3588` | `just build-disk rk3588`, `just build-ota rk3588` | Linux 7.2 (`linuxPackages_rk3588` with ROCKNIX `RK3588` patches, `rockchipdrm`, `panthor`, and Mesa `panfrost`) | `ubootRk3588` (`u-boot-rockchip.bin` at sector 64) + `extlinux.conf` (`FDTDIR /dtbs`) on GPT (`05-uboot` + `EXTRALIFE` + `STORAGE`) | 4 |
 | `sm6115` | `just build-disk sm6115`, `just build-ota sm6115` | Linux 7.2 (`linuxPackages_sm6115` with ROCKNIX `SM6115` patches) and Mesa `freedreno` (`msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 4 |
+| `sm6125` | `just build-disk sm6125`, `just build-ota sm6125` | Linux 7.2 (`linuxPackages_sm6115` with ROCKNIX `SM6115` patches) and Mesa `freedreno` (`msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 1 |
 | `sm8250` | `just build-disk sm8250`, `just build-ota sm8250` | Linux 7.2 (`linuxPackages_sm8250` with ROCKNIX `SM8250` patches) and Mesa `freedreno` (`a650` and `msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 7 |
 | `sm8550` | `just build-disk sm8550`, `just build-ota sm8550` | Linux 7.2 (`linuxPackages_sm8550` with ROCKNIX `SM8550` patches) and Mesa `freedreno` (`a740` and `msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 9 |
 | `h700` | `just build-disk h700`, `just build-ota h700` | Linux 7.2 (`linuxPackages_h700` with ROCKNIX `H700` patches), `sun4i-drm`, `panel-mipi-dpi-spi`, and Mesa `panfrost` | `ubootAnbernicH700` (`u-boot-sunxi-with-spl.bin` at 8 KB offset) + `extlinux.conf` (`FDT /dtbs/allwinner/*.dtb`) on hybrid GPT/MBR (`sgdisk -d 1 -j 2016 -h 2:3`) | 10 |
@@ -164,6 +165,19 @@ The `sm6115` closure supports four Mangmi handheld variants on the Qualcomm Snap
 | `mangmi-air-x-mq66b` | Mangmi Air X (MQ66B) | `MANGMI Air X MQ66B` | `mangmi,sm6115-air-x-mq66b` | `qcom/sm6115-mangmi-air-x-mq66b.dtb` | `mangmi,bm5460bb1`, `270` |
 | `mangmi-air-y` | Mangmi Air Y | `MANGMI Air Y` | `mangmi,sm6115-air-y` | `qcom/sm6115-mangmi-air-y.dtb` | `mangmi,gh7005`, `normal` |
 
+### `sm6125` (Qualcomm Snapdragon 665 dual-screen handhelds)
+
+The `sm6125` closure supports the Retroid Pocket Duo Lite dual-screen handheld on the Qualcomm Snapdragon 665 platform.
+
+- **Kernel and bootloader**: `linuxPackages_sm6115` builds Linux 7.2 with the ROCKNIX `SM6115` patch set and `sm6125-retroid-pocket-duo-lite.dtb`. `OpenABL` (`rocknix_abl` in the Android `abl` partition) starts `systemd-boot` (`BOOTAA64.EFI`) and reads BLS entries in `/loader/entries/extra-life-*.conf`.
+- **Dual-panel display and Cage output selection**: The top panel (`retroidpocket,duolite-hx83112a`, `panel_hx83112a`) is a 1080x1920 MIPI-DSI display on connector `DSI-1` with `270` rotation. The bottom panel (`retroidpocket,duolite-bottom-panel`, `panel_retroid_duolite_bottom` behind `wl818s`) is a 1280x960 display on connector `DP-1` with `normal` orientation. Cage reads `EXTRA_LIFE_PRIMARY_OUTPUT=DSI-1`, `EXTRA_LIFE_SECONDARY_OUTPUT=DP-1`, and `EXTRA_LIFE_SECONDARY_PANEL_ORIENTATION=normal` to keep `DSI-1` active and disable `DP-1` in the single-window layout.
+- **Controls, haptics, and lid switch**: The `rsinput` UART driver on `uart0` exposes `Retroid Pocket Duo Lite Gamepad`, and `aw86927` (`aw86927-haptics`) drives rumble. `InputPlumber` loads `40-retroid_duolite.yaml` with `retroid_duolite.yaml`. On the clamshell hinge, `gpio-keys-lid` reports hall-sensor events (`SW_LID` on `gpio94`), and `systemd-logind` (`HandleLidSwitch = "suspend"`) suspends the system when the lid closes.
+- **Audio, wireless, and Qualcomm services**: Audio uses the `wcd937x` (`qcom,wcd9370-codec`) SoundWire codec and dual `aw88166` speaker amplifiers (`aw883xx_acf.bin`) with the `RetroidPocketDuoLite` UCM2 profile (`HiFi-RetroidPocketDuoLite.conf`) and the `S16LE` WirePlumber rule. Wireless uses `WCN3990` (`ath10k_snoc` Wi-Fi and `btqca` Bluetooth) with `qrtr-ns`, `pd-mapper`, `rmtfs`, and `tqftpserv`.
+
+| Device ID | Retail name | Device tree model (`dt_model`) | First `dt_compatibles` entry | DTB (`dtb`) | Panel driver and orientation |
+| --- | --- | --- | --- | --- | --- |
+| `retroid-pocket-duo-lite` | Retroid Pocket Duo Lite | `Retroid Pocket Duo Lite` | `retroidpocket,duolite` | `qcom/sm6125-retroid-pocket-duo-lite.dtb` | `duolite-hx83112a` (`DSI-1`, `270`) + `duolite-bottom-panel` (`wl818s` on `DP-1`, `normal`), `gpio-keys-lid` (`SW_LID` on `gpio94`) |
+
 ### `sm8250` (Qualcomm Snapdragon 865 handhelds)
 
 The `sm8250` closure supports seven Retroid handheld variants on the Qualcomm Snapdragon 865 platform.
@@ -237,8 +251,7 @@ Extra Life expands hardware support in priority order. Each SoC closure uses the
 | Priority | SoC key | Target devices and cases | Kernel, GPU, and bootloader stack | Known quirks and caveats |
 | --- | --- | --- | --- | --- |
 | Priority 1 | `x86_64` | Valve Steam Deck, ASUS ROG Ally, Lenovo Legion Go, AYANEO, and AYN Loki handhelds | Mainline Linux (`bzImage`) with Mesa `radeonsi` and `systemd-boot` UEFI | Requires DMI portrait-panel rotation rules and `InputPlumber` composite controller profiles. |
-| Priority 2 | `sm6125` | Qualcomm `sm6125` dual-screen (Retroid Pocket Duo Lite) | Patched Linux (`Image`) with Mesa `freedreno` (`sm6125`) and `systemd-boot` UEFI | `Retroid Pocket Duo Lite` (`sm6125-retroid-pocket-duo-lite.dtb`) needs dual-panel Cage output handling (`duolite-hx83112a` + `duolite-bottom-panel`) and SM6125 SoundWire (`wcd937x`) audio validation. |
-| Priority 3 (low priority) | `sun8i-a33`, `bcm2836`, `sun8i-h3`, `rk3288` (`armv7l-linux`) | ClockworkPi GameShell (CPI v3.1), Raspberry Pi 2 Model B, Allwinner H3 and H2+ handhelds (Retrostone), and Rockchip RK3288 boards | Mainline or patched 32-bit Linux (`zImage`) with Mesa `lima` (`sun8i-a33`, `sun8i-h3`), `vc4` (`bcm2836`), or `panfrost` (`rk3288`) and U-Boot or Raspberry Pi firmware | This tier is last on the roadmap for three reasons. `cache.nixos.org` has no `armv7l-linux` binary cache, so `binfmt` or `pkgsCross` builds must compile the kernel, `llvm`, `mesa`, `systemd`, `pipewire`, `samba`, `cage`, `ludo`, and cores from source. The build must exclude 64-bit-only Libretro cores (`dolphin_libretro`, `citra_libretro`, `mednafen_saturn_libretro`, `flycast_libretro`, `pcsx2_libretro`), and `mupen64plus_next_libretro` requires `WITH_DYNAREC=arm`. ClockworkPi GameShell needs out-of-tree `clockworkpi-cpi3` U-Boot, `sun8i-r16-clockworkpi-cpi3.dts`, and `kd027-lcd` and `ocp8178-backlight` kernel patches. |
+| Priority 2 (low priority) | `sun8i-a33`, `bcm2836`, `sun8i-h3`, `rk3288` (`armv7l-linux`) | ClockworkPi GameShell (CPI v3.1), Raspberry Pi 2 Model B, Allwinner H3 and H2+ handhelds (Retrostone), and Rockchip RK3288 boards | Mainline or patched 32-bit Linux (`zImage`) with Mesa `lima` (`sun8i-a33`, `sun8i-h3`), `vc4` (`bcm2836`), or `panfrost` (`rk3288`) and U-Boot or Raspberry Pi firmware | This tier is last on the roadmap for three reasons. `cache.nixos.org` has no `armv7l-linux` binary cache, so `binfmt` or `pkgsCross` builds must compile the kernel, `llvm`, `mesa`, `systemd`, `pipewire`, `samba`, `cage`, `ludo`, and cores from source. The build must exclude 64-bit-only Libretro cores (`dolphin_libretro`, `citra_libretro`, `mednafen_saturn_libretro`, `flycast_libretro`, `pcsx2_libretro`), and `mupen64plus_next_libretro` requires `WITH_DYNAREC=arm`. ClockworkPi GameShell needs out-of-tree `clockworkpi-cpi3` U-Boot, `sun8i-r16-clockworkpi-cpi3.dts`, and `kd027-lcd` and `ocp8178-backlight` kernel patches. |
 
 ## Unsupported hardware (will not support)
 

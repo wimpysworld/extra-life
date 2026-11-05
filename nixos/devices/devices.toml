@@ -386,6 +386,16 @@ dtb = "qcom/sm6115-mangmi-air-y.dtb"
 panel_orientation = "normal"
 debug = true
 
+[devices.retroid-pocket-duo-lite]
+name = "Retroid Pocket Duo Lite"
+soc = "sm6125"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket Duo Lite"
+dt_compatibles = ["retroidpocket,duolite", "qcom,sm6125"]
+dtb = "qcom/sm6125-retroid-pocket-duo-lite.dtb"
+panel_orientation = "270"
+debug = true
+
 [devices.retroid-pocket-5]
 name = "Retroid Pocket 5"
 soc = "sm8250"

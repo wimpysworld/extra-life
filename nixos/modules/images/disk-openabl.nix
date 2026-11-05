@@ -7,7 +7,7 @@
 let
   toplevel = config.system.build.toplevel;
   inherit (config.extraLife) variantId;
-  openablDevice = lib.toUpper variantId;
+  openablDevice = if variantId == "sm6125" then "SM6115" else lib.toUpper variantId;
 
   socDevices = lib.filterAttrs (
     _id: dev: (dev.soc or "") == variantId && (dev ? dtb)
@@ -113,6 +113,7 @@ in
     lib.optionalAttrs
       (builtins.elem variantId [
         "sm6115"
+        "sm6125"
         "sm8250"
         "sm8550"
       ])
