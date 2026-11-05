@@ -20,6 +20,7 @@ devices:
     printf "  %-10s %s\n" "rpi5"    "Broadcom BCM2712 (Raspberry Pi 5, Pi 500, CM5)"
     printf "  %-10s %s\n" "rk3326"  "Rockchip RK3326 (Odroid Go Advance/Super, Anbernic RG351M/V, GameConsole R36S/R33S, Powkiddy RGB20S)"
     printf "  %-10s %s\n" "rk3566"  "Rockchip RK3566 (Anbernic RG353/RG503/RG ARC and Powkiddy RGB20 Pro/RGB20SX/RGB30/RK2023/RGB10MAX3/X35S/X55)"
+    printf "  %-10s %s\n" "rk3588"  "Rockchip RK3588 / RK3588S (GameForce ACE, Orange Pi 5, Retro Lite CM5, RetroLED CM5)"
     printf "  %-10s %s\n" "sm6115"  "Qualcomm Snapdragon 662 (Mangmi Air X MQ65/MQ66/MQ66B and Mangmi Air Y)"
     printf "  %-10s %s\n" "sm8250"  "Qualcomm Snapdragon 865 (Retroid Pocket 5, Pocket Flip 2, Pocket Mini/Mini V2, Pocket 6)"
     printf "  %-10s %s\n" "sm8550"  "Qualcomm Snapdragon 8 Gen 2 (AYN Odin 2/Mini/Portal, AYN Thor, AYANEO Pocket ACE/DMG/DS/EVO/S)"
@@ -166,7 +167,7 @@ build-disk target="":
         out_link="result-disk"
     else
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|sm6115|sm8250|sm8550|h700)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|rk3588|sm6115|sm8250|sm8550|h700)
                 variant="${target}"
                 ;;
             *)
@@ -215,6 +216,14 @@ build-disk target="":
             attr=".#disk-image-powkiddy-x35s"
         elif [[ "${target}" == "powkiddy-x55" ]]; then
             attr=".#disk-image-powkiddy-x55"
+        elif [[ "${target}" == "gameforce-ace" ]]; then
+            attr=".#disk-image-gameforce-ace"
+        elif [[ "${target}" == "orangepi-5" ]]; then
+            attr=".#disk-image-orangepi-5"
+        elif [[ "${target}" == "retro-lite-cm5" ]]; then
+            attr=".#disk-image-retro-lite-cm5"
+        elif [[ "${target}" == "retroled-cm5" ]]; then
+            attr=".#disk-image-retroled-cm5"
         else
             attr=".#disk-image-${variant}"
         fi
@@ -242,7 +251,7 @@ build-ota target="":
         out_link="result-ota"
     else
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|sm6115|sm8250|sm8550|h700)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|rk3588|sm6115|sm8250|sm8550|h700)
                 variant="${target}"
                 ;;
             *)
@@ -300,7 +309,7 @@ build-device target="":
         fi
     else
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|sm6115|sm8250|sm8550|h700)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|rk3588|sm6115|sm8250|sm8550|h700)
                 variant="${target}"
                 ;;
             *)
@@ -355,6 +364,14 @@ build-device target="":
         disk_attr=".#disk-image-powkiddy-x35s"
     elif [[ "${target}" == "powkiddy-x55" ]]; then
         disk_attr=".#disk-image-powkiddy-x55"
+    elif [[ "${target}" == "gameforce-ace" ]]; then
+        disk_attr=".#disk-image-gameforce-ace"
+    elif [[ "${target}" == "orangepi-5" ]]; then
+        disk_attr=".#disk-image-orangepi-5"
+    elif [[ "${target}" == "retro-lite-cm5" ]]; then
+        disk_attr=".#disk-image-retro-lite-cm5"
+    elif [[ "${target}" == "retroled-cm5" ]]; then
+        disk_attr=".#disk-image-retroled-cm5"
     else
         disk_attr=".#disk-image-${variant}"
     fi
@@ -497,7 +514,7 @@ publish-ota target="":
 
     if [[ -n "${target}" ]]; then
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|sm6115|sm8250|sm8550|h700)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|rk3588|sm6115|sm8250|sm8550|h700)
                 variant="${target}"
                 ;;
             *)

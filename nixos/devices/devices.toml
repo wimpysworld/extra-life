@@ -306,6 +306,46 @@ dtb = "rockchip/rk3566-powkiddy-x55.dtb"
 panel_orientation = "normal"
 debug = true
 
+[devices.gameforce-ace]
+name = "GameForce ACE"
+soc = "rk3588"
+arch = "aarch64-linux"
+dt_model = "GameForce Ace"
+dt_compatibles = ["gameforce,ace", "rockchip,rk3588s"]
+dtb = "rockchip/rk3588s-gameforce-ace.dtb"
+panel_orientation = "90"
+debug = true
+
+[devices.orangepi-5]
+name = "Orange Pi 5"
+soc = "rk3588"
+arch = "aarch64-linux"
+dt_model = "Xunlong Orange Pi 5"
+dt_compatibles = ["xunlong,orangepi-5", "rockchip,rk3588s"]
+dtb = "rockchip/rk3588s-orangepi-5.dtb"
+panel_orientation = "normal"
+debug = true
+
+[devices.retro-lite-cm5]
+name = "Retro Lite CM5"
+soc = "rk3588"
+arch = "aarch64-linux"
+dt_model = "Retro Lite CM5"
+dt_compatibles = ["retro-lite,cm5", "radxa,cm5-io", "radxa,cm5", "rockchip,rk3588"]
+dtb = "rockchip/rk3588-retro-lite-cm5.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.retroled-cm5]
+name = "RetroLED CM5"
+soc = "rk3588"
+arch = "aarch64-linux"
+dt_model = "RetrOLED CM5"
+dt_compatibles = ["retroled,cm5", "radxa,cm5-io", "radxa,cm5", "rockchip,rk3588"]
+dtb = "rockchip/rk3588-retroled-cm5.dtb"
+panel_orientation = "270"
+debug = true
+
 [devices.mangmi-air-x-mq65]
 name = "Mangmi Air X (MQ65)"
 soc = "sm6115"

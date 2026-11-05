@@ -92,11 +92,14 @@
           ubootPowkiddyX55 =
             applied.ubootPowkiddyX55 or (final.callPackage ./pkgs/uboot/powkiddy-x55.nix { });
           ubootRk3326 = applied.ubootRk3326 or (final.callPackage ./pkgs/uboot/rk3326.nix { });
+          ubootRk3588 = applied.ubootRk3588 or (final.callPackage ./pkgs/uboot/rk3588.nix { });
           linuxPackages_h700 = applied.linuxPackages_h700 or (final.callPackage ./pkgs/kernels/h700.nix { });
           linuxPackages_rk3326 =
             applied.linuxPackages_rk3326 or (final.callPackage ./pkgs/kernels/rk3326.nix { });
           linuxPackages_rk3566 =
             applied.linuxPackages_rk3566 or (final.callPackage ./pkgs/kernels/rk3566.nix { });
+          linuxPackages_rk3588 =
+            applied.linuxPackages_rk3588 or (final.callPackage ./pkgs/kernels/rk3588.nix { });
           linuxPackages_rpi = applied.linuxPackages_rpi or (final.callPackage ./pkgs/kernels/rpi.nix { });
           linuxPackages_sm6115 =
             applied.linuxPackages_sm6115 or (final.callPackage ./pkgs/kernels/sm6115.nix { });
@@ -118,6 +121,7 @@
         disk-openabl = import ./nixos/modules/images/disk-openabl.nix;
         disk-rk3326 = import ./nixos/modules/images/disk-rk3326.nix;
         disk-rk3566 = import ./nixos/modules/images/disk-rk3566.nix;
+        disk-rk3588 = import ./nixos/modules/images/disk-rk3588.nix;
         disk-rpi = import ./nixos/modules/images/disk-rpi.nix;
         iso = import ./nixos/modules/images/iso.nix;
         pc = import ./nixos/modules/hardware/pc.nix;
@@ -126,6 +130,7 @@
         soc-qcom-common = import ./nixos/modules/hardware/soc/qcom-common.nix;
         soc-rk3326 = import ./nixos/modules/hardware/soc/rk3326.nix;
         soc-rk3566 = import ./nixos/modules/hardware/soc/rk3566.nix;
+        soc-rk3588 = import ./nixos/modules/hardware/soc/rk3588.nix;
         soc-rpi-common = import ./nixos/modules/hardware/soc/rpi-common.nix;
         soc-rpi02w = import ./nixos/modules/hardware/soc/rpi02w.nix;
         soc-rpi4 = import ./nixos/modules/hardware/soc/rpi4.nix;
@@ -196,6 +201,15 @@
         };
 
         rk3566 = self.nixosConfigurations.rk3566-appliance;
+
+        rk3588-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/rk3588-appliance
+          ];
+        };
+
+        rk3588 = self.nixosConfigurations.rk3588-appliance;
 
         rpi02w-appliance = lib.nixosSystem {
           modules = [
@@ -275,9 +289,11 @@
                           ubootAnbernicRgxx3
                           ubootPowkiddyX55
                           ubootRk3326
+                          ubootRk3588
                           linuxPackages_h700
                           linuxPackages_rk3326
                           linuxPackages_rk3566
+                          linuxPackages_rk3588
                           linuxPackages_rpi
                           linuxPackages_sm6115
                           linuxPackages_sm8250
@@ -335,6 +351,11 @@
             (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyRgb20sx;
           disk-image-powkiddy-x35s = (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyX35s;
           disk-image-powkiddy-x55 = (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyX55;
+          disk-image-rk3588 = (aarch64HostConfig "rk3588").config.system.build.diskImage;
+          disk-image-gameforce-ace = (aarch64HostConfig "rk3588").config.system.build.diskImageGameforceAce;
+          disk-image-orangepi-5 = (aarch64HostConfig "rk3588").config.system.build.diskImageOrangepi5;
+          disk-image-retro-lite-cm5 = (aarch64HostConfig "rk3588").config.system.build.diskImageRetroLiteCm5;
+          disk-image-retroled-cm5 = (aarch64HostConfig "rk3588").config.system.build.diskImageRetroledCm5;
           disk-image-rpi02w = (aarch64HostConfig "rpi02w").config.system.build.diskImage;
           disk-image-rpi4 = (aarch64HostConfig "rpi4").config.system.build.diskImage;
           disk-image-rpi5 = (aarch64HostConfig "rpi5").config.system.build.diskImage;
@@ -347,6 +368,8 @@
           ota-bundle-rk3326 = (aarch64HostConfig "rk3326").config.system.build.otaBundle;
           ota-rk3326 = self.packages.${system}.ota-bundle-rk3326;
           ota-bundle-rk3566 = (aarch64HostConfig "rk3566").config.system.build.otaBundle;
+          ota-bundle-rk3588 = (aarch64HostConfig "rk3588").config.system.build.otaBundle;
+          ota-rk3588 = self.packages.${system}.ota-bundle-rk3588;
           ota-bundle-rpi02w = (aarch64HostConfig "rpi02w").config.system.build.otaBundle;
           ota-bundle-rpi4 = (aarch64HostConfig "rpi4").config.system.build.otaBundle;
           ota-bundle-rpi5 = (aarch64HostConfig "rpi5").config.system.build.otaBundle;
@@ -365,6 +388,7 @@
             ubootAnbernicRgxx3
             ubootPowkiddyX55
             ubootRk3326
+            ubootRk3588
             ;
         }
         // lib.optionalAttrs (system == "x86_64-linux") {
@@ -373,6 +397,7 @@
             ubootAnbernicRgxx3
             ubootPowkiddyX55
             ubootRk3326
+            ubootRk3588
             ;
         }
       );

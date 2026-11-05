@@ -136,6 +136,8 @@ let
 
     ubootRk3326 = final.callPackage ../pkgs/uboot/rk3326.nix { };
 
+    ubootRk3588 = final.callPackage ../pkgs/uboot/rk3588.nix { };
+
     rocknix-h700 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";
@@ -183,6 +185,19 @@ let
       hash = "sha256-Aq33TGwj/lwtztrgXAIEmynRQwSJAymM1es0GBWyceU=";
     };
 
+    rocknix-rk3588 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/RK3588"
+        "projects/ROCKNIX/packages/linux/patches/mainline"
+        "projects/ROCKNIX/packages/linux-drivers/generic-dsi"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2"
+      ];
+      hash = "sha256-EkE55LsnGQifC2j1s9wdejuqKHg2kUyT8gwe+GB9RgM=";
+    };
+
     rocknix-sm6115 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";
@@ -225,6 +240,8 @@ let
     linuxPackages_rk3326 = final.callPackage ../pkgs/kernels/rk3326.nix { };
 
     linuxPackages_rk3566 = final.callPackage ../pkgs/kernels/rk3566.nix { };
+
+    linuxPackages_rk3588 = final.callPackage ../pkgs/kernels/rk3588.nix { };
 
     linuxPackages_rpi = final.callPackage ../pkgs/kernels/rpi.nix { };
 
@@ -371,6 +388,7 @@ in
     ubootAnbernicRgxx3 = final.callPackage ../pkgs/uboot/anbernic-rgxx3.nix { };
     ubootPowkiddyX55 = final.callPackage ../pkgs/uboot/powkiddy-x55.nix { };
     ubootRk3326 = final.callPackage ../pkgs/uboot/rk3326.nix { };
+    ubootRk3588 = final.callPackage ../pkgs/uboot/rk3588.nix { };
     rocknix-h700 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";
@@ -414,6 +432,18 @@ in
       ];
       hash = "sha256-Aq33TGwj/lwtztrgXAIEmynRQwSJAymM1es0GBWyceU=";
     };
+    rocknix-rk3588 = final.fetchFromGitHub {
+      owner = "ROCKNIX";
+      repo = "distribution";
+      rev = "2a01f59e3329fd14923ccbe6f703cd84f0367196";
+      sparseCheckout = [
+        "projects/ROCKNIX/devices/RK3588"
+        "projects/ROCKNIX/packages/linux/patches/mainline"
+        "projects/ROCKNIX/packages/linux-drivers/generic-dsi"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2"
+      ];
+      hash = "sha256-EkE55LsnGQifC2j1s9wdejuqKHg2kUyT8gwe+GB9RgM=";
+    };
     rocknix-sm6115 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";
@@ -451,6 +481,7 @@ in
     linuxPackages_h700 = final.callPackage ../pkgs/kernels/h700.nix { };
     linuxPackages_rk3326 = final.callPackage ../pkgs/kernels/rk3326.nix { };
     linuxPackages_rk3566 = final.callPackage ../pkgs/kernels/rk3566.nix { };
+    linuxPackages_rk3588 = final.callPackage ../pkgs/kernels/rk3588.nix { };
     linuxPackages_rpi = final.callPackage ../pkgs/kernels/rpi.nix { };
     linuxPackages_sm6115 = final.callPackage ../pkgs/kernels/sm6115.nix { };
     linuxPackages_sm8250 = final.callPackage ../pkgs/kernels/sm8250.nix { };

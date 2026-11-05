@@ -4,7 +4,7 @@ Extra Life scopes each system closure to one System on a Chip (SoC) family (`VAR
 
 ## Active SoC family summary
 
-Eleven SoC targets build in the flake today. Run `just build-disk <soc>` or `just build-ota <soc>` to build an image or over-the-air (OTA) bundle.
+Twelve SoC targets build in the flake today. Run `just build-disk <soc>` or `just build-ota <soc>` to build an image or over-the-air (OTA) bundle.
 
 | SoC key (`VARIANT_ID`) | Build commands | Kernel and GPU stack | Bootloader and partition layout | Device count in `devices.toml` |
 | --- | --- | --- | --- | --- |
@@ -14,6 +14,7 @@ Eleven SoC targets build in the flake today. Run `just build-disk <soc>` or `jus
 | `rpi5` | `just build-disk rpi5`, `just build-ota rpi5` | Raspberry Pi Linux 6.12 LTS (`linuxPackages_rpi`) with VideoCore KMS and Mesa `vc4` and `v3d` | Raspberry Pi VPU firmware (`bootcode.bin`, `start*.elf`, or Pi 5 EEPROM) + `config.txt` and `cmdline.txt` on a hybrid GPT/MBR (`sgdisk -h 1`) two-partition layout (`EXTRALIFE` `vfat` + `STORAGE` `ext4`) | 3 |
 | `rk3326` | `just build-disk rk3326`, `just build-ota rk3326` | Linux 7.2 (`linuxPackages_rk3326` with ROCKNIX `RK3326` patches, `rockchipdrm`, `rocknix,generic-dsi`, and Mesa `panfrost`) | `ubootRk3326` (`u-boot-rockchip.bin` at sector 64) + `extlinux.conf` (`FDTDIR /dtbs`) on GPT (`05-uboot` + `EXTRALIFE` + `STORAGE`) | 7 |
 | `rk3566` | `just build-disk rk3566`, `just build-ota rk3566` | Linux 6.18 LTS (`linuxPackages_rk3566` with ROCKNIX `RK3566` patches and `rocknix,generic-dsi`) with `rockchipdrm` and Mesa `panfrost` | `ubootAnbernicRgxx3` or `ubootPowkiddyX55` (`u-boot-rockchip.bin` at sector 64) + `extlinux.conf` (`FDTDIR /dtbs`) on GPT (`05-uboot` + `EXTRALIFE` + `STORAGE`) | 15 |
+| `rk3588` | `just build-disk rk3588`, `just build-ota rk3588` | Linux 7.2 (`linuxPackages_rk3588` with ROCKNIX `RK3588` patches, `rockchipdrm`, `panthor`, and Mesa `panfrost`) | `ubootRk3588` (`u-boot-rockchip.bin` at sector 64) + `extlinux.conf` (`FDTDIR /dtbs`) on GPT (`05-uboot` + `EXTRALIFE` + `STORAGE`) | 4 |
 | `sm6115` | `just build-disk sm6115`, `just build-ota sm6115` | Linux 7.2 (`linuxPackages_sm6115` with ROCKNIX `SM6115` patches) and Mesa `freedreno` (`msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 4 |
 | `sm8250` | `just build-disk sm8250`, `just build-ota sm8250` | Linux 7.2 (`linuxPackages_sm8250` with ROCKNIX `SM8250` patches) and Mesa `freedreno` (`a650` and `msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 7 |
 | `sm8550` | `just build-disk sm8550`, `just build-ota sm8550` | Linux 7.2 (`linuxPackages_sm8550` with ROCKNIX `SM8550` patches) and Mesa `freedreno` (`a740` and `msm`) | `OpenABL` (`rocknix_abl` in Android `abl` partition) + `systemd-boot` (`BOOTAA64.EFI`) BLS entries (`/dtbs/qcom/*.dtb`) on GPT | 9 |
@@ -131,6 +132,22 @@ The `rk3566` closure supports 15 Anbernic and Powkiddy handhelds.
 | `powkiddy-x35s` | Powkiddy X35S | `Powkiddy x35s` | `powkiddy,x35s` | `rockchip/rk3566-powkiddy-x35s.dtb` | `normal` |
 | `powkiddy-x55` | Powkiddy X55 | `Powkiddy x55` | `powkiddy,x55` | `rockchip/rk3566-powkiddy-x55.dtb` | `normal` |
 
+### `rk3588` (Rockchip RK3588 and RK3588S handhelds and boards)
+
+The `rk3588` closure supports three handhelds and one single-board computer (SBC) on the Rockchip RK3588 and RK3588S platform.
+
+- **Bootloader and per-board images**: `disk-rk3588.nix` writes `ubootRk3588` (`gameforce-ace-rk3588s_defconfig` `u-boot-rockchip.bin`) at sector 64 on a GPT layout (`05-uboot` + `EXTRALIFE` + `STORAGE`). The generic `diskImage` sets `FDTDIR /dtbs` in `extlinux.conf`. The board-specific `diskImageGameforceAce`, `diskImageOrangepi5`, `diskImageRetroLiteCm5`, and `diskImageRetroledCm5` outputs set explicit `FDT /dtbs/rockchip/*.dtb` entries in `extlinux.conf`. The `EXTRALIFE` partition also stages `/extlinux/extlinux-*.conf` override files for all four boards.
+- **Kernel, display, and GPU**: `linuxPackages_rk3588` builds Linux 7.2 with the ROCKNIX `RK3588` patch set, `rockchipdrm` (`ROCKCHIP_VOP2`), `dw_hdmi_qp_rockchip`, `dw_dp`, and `rocknix,generic-dsi`. The kernel enables the `panthor` driver for the Arm Mali-G610 GPU alongside Mesa `panfrost`. The `rocknix,generic-dsi` driver adds `huiling,hl055fhav028c` (GameForce ACE, `90` rotation) and `raydium,rm67199` (RetrOLED CM5, `270` rotation) MIPI-DSI panel matches. The Retro Lite CM5 uses `270` rotation, and the Orange Pi 5 outputs over High-Definition Multimedia Interface (HDMI) and USB Type-C (USB-C) DisplayPort with `normal` orientation.
+- **Controls**: `InputPlumber` loads `50-rk3588-handheld.yaml` and `rk3588_gamepad.yaml` to map `GameForce ACE Gamepad`, `Retro Lite CM5 Gamepad`, `adc-joystick`, `gpio-keys`, and `adc-keys` to a virtual `xb360` controller. The kernel also builds `rocknix-joypad`, `ti_ads1015`, `rockchip_saradc`, `pwm_vibra`, and `goodix_ts`. The `rk3588_gamepad.yaml` capability map routes `BTN_DPAD_*` events to directional pad buttons and `KEY_VOLUMEUP` and `KEY_VOLUMEDOWN` to volume keys.
+- **Audio, power, and wireless**: Audio uses `es8388` (`snd_soc_es8328_i2c` with the `rockchip,es8388-codec` UCM2 profile) on the GameForce ACE and Orange Pi 5. The Retro Lite CM5 and RetrOLED CM5 use the `wm8960` (`snd_soc_wm8960`) codec. The closure also loads `snd_soc_rockchip_i2s_tdm`, `snd_soc_hdmi_codec`, `snd_soc_simple_card`, and `snd_soc_simple_amplifier`. Power and wireless modules include `cw2015_battery`, `max17042_battery`, `bq257xx_charger`, `fusb302`, `rtc_hym8563`, `brcmfmac` Wi-Fi, and `btbcm` (`hci_uart`) Bluetooth.
+
+| Device ID | Retail name | Device tree model (`dt_model`) | First `dt_compatibles` entry | DTB (`dtb`) | Panel orientation and notes |
+| --- | --- | --- | --- | --- | --- |
+| `gameforce-ace` | GameForce ACE | `GameForce Ace` | `gameforce,ace` | `rockchip/rk3588s-gameforce-ace.dtb` | `90`, `huiling,hl055fhav028c` (`rocknix,generic-dsi`), `GameForce ACE Gamepad`, `es8388` (`rockchip,es8388-codec` UCM2), `diskImageGameforceAce` |
+| `orangepi-5` | Orange Pi 5 | `Xunlong Orange Pi 5` | `xunlong,orangepi-5` | `rockchip/rk3588s-orangepi-5.dtb` | `normal`, HDMI (`dw_hdmi_qp_rockchip`) and USB-C DisplayPort (`dw_dp`), `es8388` (`rockchip,es8388-codec` UCM2), `diskImageOrangepi5` |
+| `retro-lite-cm5` | Retro Lite CM5 | `Retro Lite CM5` | `retro-lite,cm5` | `rockchip/rk3588-retro-lite-cm5.dtb` | `270`, `Retro Lite CM5 Gamepad`, `wm8960` audio, `diskImageRetroLiteCm5` |
+| `retroled-cm5` | RetroLED CM5 | `RetrOLED CM5` | `retroled,cm5` | `rockchip/rk3588-retroled-cm5.dtb` | `270`, `raydium,rm67199` (`rocknix,generic-dsi`) OLED panel, `wm8960` audio, `diskImageRetroledCm5` |
+
 ### `sm6115` (Qualcomm Snapdragon 662 handhelds)
 
 The `sm6115` closure supports four Mangmi handheld variants on the Qualcomm Snapdragon 662 platform.
@@ -220,7 +237,7 @@ Extra Life expands hardware support in priority order. Each SoC closure uses the
 | Priority | SoC key | Target devices and cases | Kernel, GPU, and bootloader stack | Known quirks and caveats |
 | --- | --- | --- | --- | --- |
 | Priority 1 | `x86_64` | Valve Steam Deck, ASUS ROG Ally, Lenovo Legion Go, AYANEO, and AYN Loki handhelds | Mainline Linux (`bzImage`) with Mesa `radeonsi` and `systemd-boot` UEFI | Requires DMI portrait-panel rotation rules and `InputPlumber` composite controller profiles. |
-| Priority 2 | `rk3588`, `sm6125` | Rockchip `rk3588` (GameForce Ace, Orange Pi 5, Retro Lite CM5, RetrOLED CM5) and Qualcomm `sm6125` dual-screen (Retroid Pocket Duo Lite) | Pinned Linux 6.1 vendor BSP (`pkgs/kernels/rk3588.nix`) with Mesa `panfrost`, or patched Linux (`Image`) with Mesa `freedreno` (`sm6125`) | `rk3588` can use a pinned Linux 6.1 vendor BSP kernel in `pkgs/kernels/rk3588.nix` with Mesa `panfrost` until mainline MIPI-DSI and High-Definition Multimedia Interface (HDMI) parity matures. `Retroid Pocket Duo Lite` (`sm6125-retroid-pocket-duo-lite.dtb`) needs dual-panel Cage output handling (`duolite-hx83112a` + `duolite-bottom-panel`) and SM6125 SoundWire (`wcd937x`) audio validation. |
+| Priority 2 | `sm6125` | Qualcomm `sm6125` dual-screen (Retroid Pocket Duo Lite) | Patched Linux (`Image`) with Mesa `freedreno` (`sm6125`) and `systemd-boot` UEFI | `Retroid Pocket Duo Lite` (`sm6125-retroid-pocket-duo-lite.dtb`) needs dual-panel Cage output handling (`duolite-hx83112a` + `duolite-bottom-panel`) and SM6125 SoundWire (`wcd937x`) audio validation. |
 | Priority 3 (low priority) | `sun8i-a33`, `bcm2836`, `sun8i-h3`, `rk3288` (`armv7l-linux`) | ClockworkPi GameShell (CPI v3.1), Raspberry Pi 2 Model B, Allwinner H3 and H2+ handhelds (Retrostone), and Rockchip RK3288 boards | Mainline or patched 32-bit Linux (`zImage`) with Mesa `lima` (`sun8i-a33`, `sun8i-h3`), `vc4` (`bcm2836`), or `panfrost` (`rk3288`) and U-Boot or Raspberry Pi firmware | This tier is last on the roadmap for three reasons. `cache.nixos.org` has no `armv7l-linux` binary cache, so `binfmt` or `pkgsCross` builds must compile the kernel, `llvm`, `mesa`, `systemd`, `pipewire`, `samba`, `cage`, `ludo`, and cores from source. The build must exclude 64-bit-only Libretro cores (`dolphin_libretro`, `citra_libretro`, `mednafen_saturn_libretro`, `flycast_libretro`, `pcsx2_libretro`), and `mupen64plus_next_libretro` requires `WITH_DYNAREC=arm`. ClockworkPi GameShell needs out-of-tree `clockworkpi-cpi3` U-Boot, `sun8i-r16-clockworkpi-cpi3.dts`, and `kd027-lcd` and `ocp8178-backlight` kernel patches. |
 
 ## Unsupported hardware (will not support)
