@@ -38,7 +38,7 @@ let
         done
       '';
 
-  sm8250AlsaUcm =
+  sm8250AlsaUcm = lib.hiPrio (
     pkgs.runCommand "sm8250-alsa-ucm-conf"
       {
         nativeBuildInputs = [ pkgs.patch ];
@@ -54,7 +54,36 @@ let
           "$out/share/alsa/ucm2/Qualcomm/sm8250/"
         cp -a "${rocknixSm8250}/projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2/conf.d/sm8250/." \
           "$out/share/alsa/ucm2/conf.d/sm8250/"
-      '';
+        rm -f "$out/share/alsa/ucm2/conf.d/sm8250/retroid-RetroidPocket5-conf"
+        for conf in \
+          retroid-RetroidPocket5-.conf \
+          retroidpocket-RetroidPocket5-.conf \
+          retroidpocket-RetroidPocket5Visionox.conf \
+          retroidpocket-RetroidPocket5Visionox-.conf \
+          retroidpocket-RetroidPocketFlip2-.conf \
+          retroidpocket-RetroidPocketFlip2Visionox.conf \
+          retroidpocket-RetroidPocketFlip2Visionox-.conf \
+          retroidpocket-RetroidPocketMini-.conf \
+          retroidpocket-RetroidPocketMiniV2-.conf; do
+          ln -sf ../../Qualcomm/sm8250/RetroidPocket.conf "$out/share/alsa/ucm2/conf.d/sm8250/$conf"
+        done
+        for conf in \
+          ayn-AYNThorLite.conf \
+          ayn-AYNThorLite-.conf; do
+          ln -sf ../../Qualcomm/sm8250/AYN-Thor-Lite.conf "$out/share/alsa/ucm2/conf.d/sm8250/$conf"
+        done
+        for conf in \
+          mangmi-MANGMIPocketMax.conf \
+          mangmi-MANGMIPocketMax-.conf; do
+          ln -sf ../../Qualcomm/sm8250/PocketMax.conf "$out/share/alsa/ucm2/conf.d/sm8250/$conf"
+        done
+        for conf in \
+          mangmi-MANGMIAirYPro.conf \
+          mangmi-MANGMIAirYPro-.conf; do
+          ln -sf ../../Qualcomm/sm8250/AirYPro.conf "$out/share/alsa/ucm2/conf.d/sm8250/$conf"
+        done
+      ''
+  );
 in
 {
   imports = [
@@ -86,7 +115,6 @@ in
         "i2c_qcom_geni"
         "spi_geni_qcom"
         "qcom_pbs"
-        "qcom_labibb_regulator"
         "phy_qcom_qmp_combo"
         "phy_qcom_qmp_pcie"
         "phy_qcom_qmp_ufs"
@@ -121,7 +149,6 @@ in
         "i2c_qcom_geni"
         "spi_geni_qcom"
         "qcom_pbs"
-        "qcom_labibb_regulator"
         "phy_qcom_qmp_combo"
         "phy_qcom_qmp_pcie"
         "phy_qcom_qmp_ufs"
@@ -157,7 +184,6 @@ in
       "i2c_qcom_geni"
       "spi_geni_qcom"
       "qcom_pbs"
-      "qcom_labibb_regulator"
       "phy_qcom_qmp_combo"
       "phy_qcom_qmp_pcie"
       "phy_qcom_qmp_ufs"
@@ -253,9 +279,15 @@ in
       SUBSYSTEM=="input", ATTRS{name}=="Retroid Pocket Gamepad", MODE="0666", ENV{ID_INPUT_JOYSTICK}="1"
       SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT}=="1", ATTRS{name}=="pmi8998_haptics", TAG+="uaccess", ENV{FEEDBACKD_TYPE}="vibra"
       SUBSYSTEM=="input", ATTRS{name}=="MANGMI Pocket Max Joypad", MODE="0666", ENV{ID_INPUT_JOYSTICK}="1"
+      SUBSYSTEM=="input", ATTRS{name}=="MANGMI Air Y Pro Joypad", MODE="0666", ENV{ID_INPUT_JOYSTICK}="1"
       ACTION=="bind", SUBSYSTEM=="soundwire", KERNEL=="sdw:*:0217:010d:*", ATTR{power/control}="on"
       ACTION=="bind", SUBSYSTEM=="soundwire", KERNEL=="sdw:*:0217:2010:*", ATTR{power/control}="on"
     '';
+  };
+
+  systemd.services."cage-tty1" = {
+    after = [ "inputplumber.service" ];
+    wants = [ "inputplumber.service" ];
   };
 
   environment = {

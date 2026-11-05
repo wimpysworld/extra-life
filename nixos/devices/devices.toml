@@ -396,6 +396,36 @@ dtb = "qcom/sm6125-retroid-pocket-duo-lite.dtb"
 panel_orientation = "270"
 debug = true
 
+[devices.ayn-thor-lite]
+name = "AYN Thor Lite"
+soc = "sm8250"
+arch = "aarch64-linux"
+dt_model = "AYN Thor Lite"
+dt_compatibles = ["ayn,thor-lite", "qcom,sm8250"]
+dtb = "qcom/sm8250-ayn-thorlite.dtb"
+panel_orientation = "90"
+debug = true
+
+[devices.mangmi-air-y-pro]
+name = "Mangmi Air Y Pro"
+soc = "sm8250"
+arch = "aarch64-linux"
+dt_model = "MANGMI Air Y Pro"
+dt_compatibles = ["mangmi,air-y-pro", "qcom,sm8250"]
+dtb = "qcom/sm8250-mangmi-air-y-pro.dtb"
+panel_orientation = "normal"
+debug = true
+
+[devices.mangmi-pocket-max]
+name = "Mangmi Pocket Max"
+soc = "sm8250"
+arch = "aarch64-linux"
+dt_model = "MANGMI Pocket Max"
+dt_compatibles = ["mangmi,pocket-max", "qcom,sm8250"]
+dtb = "qcom/sm8250-mangmi-pocket-max.dtb"
+panel_orientation = "270"
+debug = true
+
 [devices.retroid-pocket-5]
 name = "Retroid Pocket 5"
 soc = "sm8250"
@@ -454,16 +484,6 @@ dt_model = "Retroid Pocket Mini V2"
 dt_compatibles = ["retroidpocket,rpminiv2", "qcom,sm8250"]
 dtb = "qcom/sm8250-retroidpocket-rpminiv2.dtb"
 panel_orientation = "90"
-debug = true
-
-[devices.retroid-pocket-6]
-name = "Retroid Pocket 6"
-soc = "sm8250"
-arch = "aarch64-linux"
-dt_model = "Retroid Pocket 6"
-dt_compatibles = ["retroidpocket,rp6", "qcom,sm8250"]
-dtb = "qcom/sm8250-retroidpocket-rp5-visionox.dtb"
-panel_orientation = "270"
 debug = true
 
 [devices.ayaneo-pocket-ace]
@@ -553,6 +573,16 @@ arch = "aarch64-linux"
 dt_model = "AYN Odin 2 Portal"
 dt_compatibles = ["ayn,odin2portal", "qcom,qcs8550", "qcom,sm8550"]
 dtb = "qcom/qcs8550-ayn-odin2portal.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.retroid-pocket-6]
+name = "Retroid Pocket 6"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket 6"
+dt_compatibles = ["retroidpocket,rp6", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-retroidpocket-rp6.dtb"
 panel_orientation = "270"
 debug = true
 

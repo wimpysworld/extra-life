@@ -23,8 +23,8 @@ devices:
     printf "  %-10s %s\n" "rk3588"  "Rockchip RK3588 / RK3588S (GameForce ACE, Orange Pi 5, Retro Lite CM5, RetroLED CM5)"
     printf "  %-10s %s\n" "sm6115"  "Qualcomm Snapdragon 662 (Mangmi Air X MQ65/MQ66/MQ66B and Mangmi Air Y)"
     printf "  %-10s %s\n" "sm6125"  "Qualcomm Snapdragon 665 (Retroid Pocket Duo Lite)"
-    printf "  %-10s %s\n" "sm8250"  "Qualcomm Snapdragon 865 (Retroid Pocket 5, Pocket Flip 2, Pocket Mini/Mini V2, Pocket 6)"
-    printf "  %-10s %s\n" "sm8550"  "Qualcomm Snapdragon 8 Gen 2 (AYN Odin 2/Mini/Portal, AYN Thor, AYANEO Pocket ACE/DMG/DS/EVO/S)"
+    printf "  %-10s %s\n" "sm8250"  "Qualcomm Snapdragon 865 (Retroid Pocket 5, Pocket Flip 2, Pocket Mini/Mini V2, AYN Thor Lite, Mangmi Air Y Pro/Pocket Max)"
+    printf "  %-10s %s\n" "sm8550"  "Qualcomm Snapdragon 8 Gen 2 (AYN Odin 2/Mini/Portal, AYN Thor, AYANEO Pocket ACE/DMG/DS/EVO/S, Retroid Pocket 6)"
     printf "  %-10s %s\n" "h700"    "Allwinner H700 (Anbernic RG28XX, RG34XX/SP, RG35XX Plus/H/SP/2024/Pro, RG40XX H/V, RG CubeXX)"
     echo ""
 

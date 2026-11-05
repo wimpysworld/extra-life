@@ -15,6 +15,11 @@ let
 
   dtbFiles = lib.unique (lib.mapAttrsToList (_id: dev: dev.dtb) socDevices);
 
+  loaderConf = pkgs.writeText "loader.conf" ''
+    default extra-life.conf
+    timeout 0
+  '';
+
   defaultEntryConf = pkgs.writeText "extra-life.conf" ''
     title Extra Life
     linux /KERNEL
@@ -29,7 +34,7 @@ let
         title Extra Life (${dev.name})
         linux /KERNEL
         initrd /INITRD
-        fdt /dtbs/${dev.dtb}
+        devicetree /dtbs/${dev.dtb}
         options init=/nix/store/current-system/init ${toString config.boot.kernelParams}
       '';
     in
@@ -103,6 +108,7 @@ in
 
   image.repart.partitions."10-boot".contents = {
     "/EFI/BOOT/BOOTAA64.EFI".source = "${pkgs.systemd}/lib/systemd/boot/efi/systemd-bootaa64.efi";
+    "/loader/loader.conf".source = loaderConf;
     "/loader/entries".source = entriesDir;
     "/dtbs".source = socDtbs;
     "/KERNEL".source = "${toplevel}/kernel";
