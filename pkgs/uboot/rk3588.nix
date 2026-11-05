@@ -3,9 +3,10 @@
   buildUBoot,
   armTrustedFirmwareRK3588,
   rkbin,
+  defconfig ? "orangepi-5-rk3588s_defconfig",
 }:
 buildUBoot {
-  defconfig = "gameforce-ace-rk3588s_defconfig";
+  inherit defconfig;
   extraConfig = ''
     CONFIG_PCI=y
     CONFIG_PCIE_DW_ROCKCHIP=y

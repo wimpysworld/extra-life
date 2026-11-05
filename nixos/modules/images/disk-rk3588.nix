@@ -75,6 +75,8 @@ in
       "/extlinux/extlinux-retroled-cm5.conf".source = extlinuxConfRetroledCm5;
       "/dtbs/rockchip".source = "${config.hardware.deviceTree.package}/rockchip";
       "/uboot/rk3588-u-boot-rockchip.bin".source = "${pkgs.ubootRk3588}/u-boot-rockchip.bin";
+      "/uboot/orangepi-5-u-boot-rockchip.bin".source = "${pkgs.ubootRk3588}/u-boot-rockchip.bin";
+      "/uboot/gameforce-ace-u-boot-rockchip.bin".source = "${pkgs.ubootGameforceAce}/u-boot-rockchip.bin";
       "/KERNEL".source = "${toplevel}/kernel";
       "/INITRD".source = "${toplevel}/initrd";
       "/SYSTEM".source = config.system.build.systemSquashfs;
@@ -95,7 +97,7 @@ in
         "10-boot".contents."/extlinux/extlinux.conf".source = extlinuxConfGameforceAce;
       };
       postBuild = (oldAttrs.postBuild or "") + ''
-        dd if="${pkgs.ubootRk3588}/u-boot-rockchip.bin" \
+        dd if="${pkgs.ubootGameforceAce}/u-boot-rockchip.bin" \
           of="${config.image.baseName}.raw" \
           bs=512 seek=64 conv=notrunc
       '';

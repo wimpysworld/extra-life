@@ -138,6 +138,10 @@ let
 
     ubootRk3588 = final.callPackage ../pkgs/uboot/rk3588.nix { };
 
+    ubootGameforceAce = final.callPackage ../pkgs/uboot/rk3588.nix {
+      defconfig = "gameforce-ace-rk3588s_defconfig";
+    };
+
     rocknix-h700 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";
@@ -390,6 +394,9 @@ in
     ubootPowkiddyX55 = final.callPackage ../pkgs/uboot/powkiddy-x55.nix { };
     ubootRk3326 = final.callPackage ../pkgs/uboot/rk3326.nix { };
     ubootRk3588 = final.callPackage ../pkgs/uboot/rk3588.nix { };
+    ubootGameforceAce = final.callPackage ../pkgs/uboot/rk3588.nix {
+      defconfig = "gameforce-ace-rk3588s_defconfig";
+    };
     rocknix-h700 = final.fetchFromGitHub {
       owner = "ROCKNIX";
       repo = "distribution";

@@ -93,6 +93,10 @@
             applied.ubootPowkiddyX55 or (final.callPackage ./pkgs/uboot/powkiddy-x55.nix { });
           ubootRk3326 = applied.ubootRk3326 or (final.callPackage ./pkgs/uboot/rk3326.nix { });
           ubootRk3588 = applied.ubootRk3588 or (final.callPackage ./pkgs/uboot/rk3588.nix { });
+          ubootGameforceAce =
+            applied.ubootGameforceAce or (final.callPackage ./pkgs/uboot/rk3588.nix {
+              defconfig = "gameforce-ace-rk3588s_defconfig";
+            });
           linuxPackages_h700 = applied.linuxPackages_h700 or (final.callPackage ./pkgs/kernels/h700.nix { });
           linuxPackages_rk3326 =
             applied.linuxPackages_rk3326 or (final.callPackage ./pkgs/kernels/rk3326.nix { });
@@ -300,6 +304,7 @@
                           ubootPowkiddyX55
                           ubootRk3326
                           ubootRk3588
+                          ubootGameforceAce
                           linuxPackages_h700
                           linuxPackages_rk3326
                           linuxPackages_rk3566
@@ -404,6 +409,7 @@
             ubootPowkiddyX55
             ubootRk3326
             ubootRk3588
+            ubootGameforceAce
             ;
         }
         // lib.optionalAttrs (system == "x86_64-linux") {
@@ -413,6 +419,7 @@
             ubootPowkiddyX55
             ubootRk3326
             ubootRk3588
+            ubootGameforceAce
             ;
         }
       );
