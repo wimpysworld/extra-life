@@ -23,9 +23,12 @@ let
         mkdir -p "$out/lib/firmware"
         cp -a "${rocknixExtraFirmware}/SM8550/." "$out/lib/firmware/"
         chmod -R u+w "$out/lib/firmware"
+        cp -f "$out/lib/firmware/qcom/sm8550/ayn/odin2/battmgr.jsn" \
+          "$out/lib/firmware/qcom/sm8550/ayaneo/battmgr.jsn"
+        rm -f "$out/lib/firmware/qcom/sm8550/ayaneo/vpu30_4v.mbn"
       '';
 
-  sm8550AlsaUcm =
+  sm8550AlsaUcm = lib.hiPrio (
     pkgs.runCommand "sm8550-alsa-ucm-conf"
       {
         nativeBuildInputs = [ pkgs.patch ];
@@ -43,10 +46,14 @@ let
         done
         for conf in \
           ayn-AYNOdin2Mini-.conf \
-          ayn-AYNOdin2Portal-.conf; do
+          ayn-AYNOdin2Portal-.conf \
+          retroidpocket-RetroidPocket6-.conf \
+          retroidpocket-RetroidPocket6TOP_DPAD-.conf \
+          retroidpocket-RetroidPocketNova-.conf; do
           ln -sf ../../AYN/Odin2/AYN-Odin2.conf "$out/share/alsa/ucm2/conf.d/sm8550/$conf"
         done
-      '';
+      ''
+  );
 in
 {
   imports = [
@@ -263,6 +270,7 @@ in
       "pmic_glink"
       "pmic_glink_altmode"
       "ucsi_glink"
+      "qcom_battmgr"
       "pinctrl_sm8550_lpass_lpi"
       "hci_uart"
       "btqca"
@@ -327,6 +335,15 @@ in
     };
   };
 
+  systemd.services = {
+    pd-mapper.enable = false;
+
+    "cage-tty1" = {
+      after = [ "inputplumber.service" ];
+      wants = [ "inputplumber.service" ];
+    };
+  };
+
   environment = {
     etc = {
       "inputplumber/devices.d/01-ayaneo-controller-japanese.yaml".source =
@@ -353,7 +370,6 @@ in
     ];
 
     systemPackages = [
-      pkgs.alsa-ucm-conf
       sm8550AlsaUcm
     ];
   };

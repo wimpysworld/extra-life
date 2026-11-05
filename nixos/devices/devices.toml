@@ -506,6 +506,16 @@ dtb = "qcom/qcs8550-ayaneo-pocketdmg.dtb"
 panel_orientation = "270"
 debug = true
 
+[devices.ayaneo-pocket-ds]
+name = "AYANEO Pocket DS"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYANEO Pocket DS"
+dt_compatibles = ["ayaneo,pocketds", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayaneo-pocketds.dtb"
+panel_orientation = "270"
+debug = true
+
 [devices.ayaneo-pocket-evo]
 name = "AYANEO Pocket EVO"
 soc = "sm8550"
@@ -576,6 +586,16 @@ dtb = "qcom/qcs8550-ayn-odin2portal.dtb"
 panel_orientation = "270"
 debug = true
 
+[devices.ayn-thor]
+name = "AYN Thor"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "AYN Thor"
+dt_compatibles = ["ayn,thor", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-ayn-thor.dtb"
+panel_orientation = "90"
+debug = true
+
 [devices.retroid-pocket-6]
 name = "Retroid Pocket 6"
 soc = "sm8550"
@@ -584,6 +604,26 @@ dt_model = "Retroid Pocket 6"
 dt_compatibles = ["retroidpocket,rp6", "qcom,qcs8550", "qcom,sm8550"]
 dtb = "qcom/qcs8550-retroidpocket-rp6.dtb"
 panel_orientation = "270"
+debug = true
+
+[devices.retroid-pocket-6-top-dpad]
+name = "Retroid Pocket 6 (Top D-Pad)"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket 6 TOP-DPAD"
+dt_compatibles = ["retroidpocket,rp6", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-retroidpocket-rp6-top-dpad.dtb"
+panel_orientation = "270"
+debug = true
+
+[devices.retroid-pocket-nova]
+name = "Retroid Pocket Nova"
+soc = "sm8550"
+arch = "aarch64-linux"
+dt_model = "Retroid Pocket Nova"
+dt_compatibles = ["retroidpocket,rpnova", "qcom,qcs8550", "qcom,sm8550"]
+dtb = "qcom/qcs8550-retroidpocket-rpnova.dtb"
+panel_orientation = "normal"
 debug = true
 
 [devices.anbernic-rg-cubexx]
