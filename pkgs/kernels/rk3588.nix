@@ -123,6 +123,7 @@ let
             echo "obj-y += rocknix-joypad.o" >> drivers/input/joystick/Makefile
           fi
           sed -i 's/hid->vendor == 0xcafe && hid->product == 0x5004/hid->vendor == 0xcafe \&\& (hid->product == 0x5004 || hid->product == 0x5005)/' drivers/hid/hid-input.c
+          grep -q 'hid->product == 0x5005' drivers/hid/hid-input.c
           patch -p1 << 'EOF'
           --- a/drivers/power/supply/max17042_battery.c
           +++ b/drivers/power/supply/max17042_battery.c

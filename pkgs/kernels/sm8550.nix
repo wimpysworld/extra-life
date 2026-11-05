@@ -185,6 +185,7 @@ let
         SND_SOC_LPASS_VA_MACRO = module;
         SND_SOC_LPASS_RX_MACRO = module;
         SND_SOC_LPASS_TX_MACRO = module;
+        SOUNDWIRE = module;
         SOUNDWIRE_QCOM = module;
         SLIMBUS = module;
         SLIM_QCOM_NGD_CTRL = module;

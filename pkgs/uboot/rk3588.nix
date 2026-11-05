@@ -3,6 +3,9 @@
   buildUBoot,
   armTrustedFirmwareRK3588,
   rkbin,
+  # Orange Pi 5, Retro Lite CM5, and RetrOLED CM5 share the RK3588S SoC and
+  # boot media layout; board-specific kernel DTBs are selected via extlinux.conf
+  # (GameForce ACE overrides defconfig with gameforce-ace-rk3588s_defconfig).
   defconfig ? "orangepi-5-rk3588s_defconfig",
 }:
 buildUBoot {

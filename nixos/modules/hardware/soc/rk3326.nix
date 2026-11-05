@@ -760,7 +760,6 @@ in
     ];
     before = [
       "cage-tty1.service"
-      "sound.target"
     ];
     wants = [ "extra-life-board-detect.service" ];
     serviceConfig = {

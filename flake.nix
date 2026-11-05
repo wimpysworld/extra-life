@@ -353,6 +353,10 @@
           disk-image-anbernic-rg34xx-sp =
             (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg34xxSp;
           disk-image-rk3326 = (aarch64HostConfig "rk3326").config.system.build.diskImage;
+          disk-image-hardkernel-odroid-go-advance =
+            (aarch64HostConfig "rk3326").config.system.build.diskImageHardkernelOdroidGoAdvance;
+          disk-image-hardkernel-odroid-go-super =
+            (aarch64HostConfig "rk3326").config.system.build.diskImageHardkernelOdroidGoSuper;
           disk-image-anbernic-rg351m =
             (aarch64HostConfig "rk3326").config.system.build.diskImageAnbernicRg351m;
           disk-image-anbernic-rg351v =

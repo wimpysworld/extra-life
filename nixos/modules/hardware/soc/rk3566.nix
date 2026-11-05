@@ -407,6 +407,9 @@ let
       - xb360
   '';
 
+  # ROCKNIX's anbernic_gen1.yaml and powkiddy.yaml capability maps invert ABS_Y
+  # and ABS_RY to match the physical adc-joystick wiring on Anbernic RG353/RG503
+  # and Powkiddy RGB10MAX3/RGB20 Pro/RGB20SX/RGB30/RK2023 handhelds.
   rk3566CapabilityMap = mkRk3566CapabilityMap {
     fileName = "rk3566_gpio_keys.yaml";
     name = "RK3566 Gamepad";

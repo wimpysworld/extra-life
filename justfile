@@ -158,6 +158,18 @@ build-iso:
     cp -f "${iso_src}" .vm/extra-life.iso
     chmod 644 .vm/extra-life.iso
 
+_disk-attr target variant:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    case {{ quote(target) }} in
+        anbernic-rg35xx-plus|anbernic-rg35xx-2024|anbernic-rg35xx-pro|anbernic-rg35xx-h|anbernic-rg35xx-sp|anbernic-rg40xx-h|anbernic-rg40xx-v|anbernic-rg-cubexx|anbernic-rg28xx|anbernic-rg34xx|anbernic-rg34xx-sp|hardkernel-odroid-go-advance|hardkernel-odroid-go-super|anbernic-rg351m|anbernic-rg351v|gameconsole-r33s|gameconsole-r36s|powkiddy-rgb20s|powkiddy-rgb20sx|powkiddy-x35s|powkiddy-x55|gameforce-ace|orangepi-5|retro-lite-cm5|retroled-cm5)
+            printf '.#disk-image-%s\n' {{ quote(target) }}
+            ;;
+        *)
+            printf '.#disk-image-%s\n' {{ quote(variant) }}
+            ;;
+    esac
+
 # Build the Extra Life GPT disk image (optionally for a specific device or SoC target)
 build-disk target="":
     #!/usr/bin/env bash
@@ -181,56 +193,12 @@ build-disk target="":
                 echo "Resolved device '${target}' -> variant '${variant}'"
                 ;;
         esac
-        if [[ "${target}" == "anbernic-rg35xx-plus" ]]; then
-            attr=".#disk-image-anbernic-rg35xx-plus"
-        elif [[ "${target}" == "anbernic-rg35xx-2024" ]]; then
-            attr=".#disk-image-anbernic-rg35xx-2024"
-        elif [[ "${target}" == "anbernic-rg35xx-pro" ]]; then
-            attr=".#disk-image-anbernic-rg35xx-pro"
-        elif [[ "${target}" == "anbernic-rg35xx-h" ]]; then
-            attr=".#disk-image-anbernic-rg35xx-h"
-        elif [[ "${target}" == "anbernic-rg35xx-sp" ]]; then
-            attr=".#disk-image-anbernic-rg35xx-sp"
-        elif [[ "${target}" == "anbernic-rg40xx-h" ]]; then
-            attr=".#disk-image-anbernic-rg40xx-h"
-        elif [[ "${target}" == "anbernic-rg40xx-v" ]]; then
-            attr=".#disk-image-anbernic-rg40xx-v"
-        elif [[ "${target}" == "anbernic-rg-cubexx" ]]; then
-            attr=".#disk-image-anbernic-rg-cubexx"
-        elif [[ "${target}" == "anbernic-rg28xx" ]]; then
-            attr=".#disk-image-anbernic-rg28xx"
-        elif [[ "${target}" == "anbernic-rg34xx" ]]; then
-            attr=".#disk-image-anbernic-rg34xx"
-        elif [[ "${target}" == "anbernic-rg34xx-sp" ]]; then
-            attr=".#disk-image-anbernic-rg34xx-sp"
-        elif [[ "${target}" == "anbernic-rg351m" ]]; then
-            attr=".#disk-image-anbernic-rg351m"
-        elif [[ "${target}" == "anbernic-rg351v" ]]; then
-            attr=".#disk-image-anbernic-rg351v"
-        elif [[ "${target}" == "gameconsole-r33s" ]]; then
-            attr=".#disk-image-gameconsole-r33s"
-        elif [[ "${target}" == "gameconsole-r36s" ]]; then
-            attr=".#disk-image-gameconsole-r36s"
-        elif [[ "${target}" == "powkiddy-rgb20s" ]]; then
-            attr=".#disk-image-powkiddy-rgb20s"
-        elif [[ "${target}" == "powkiddy-rgb20sx" ]]; then
-            attr=".#disk-image-powkiddy-rgb20sx"
-        elif [[ "${target}" == "powkiddy-x35s" ]]; then
-            attr=".#disk-image-powkiddy-x35s"
-        elif [[ "${target}" == "powkiddy-x55" ]]; then
-            attr=".#disk-image-powkiddy-x55"
-        elif [[ "${target}" == "gameforce-ace" ]]; then
-            attr=".#disk-image-gameforce-ace"
-        elif [[ "${target}" == "orangepi-5" ]]; then
-            attr=".#disk-image-orangepi-5"
-        elif [[ "${target}" == "retro-lite-cm5" ]]; then
-            attr=".#disk-image-retro-lite-cm5"
-        elif [[ "${target}" == "retroled-cm5" ]]; then
-            attr=".#disk-image-retroled-cm5"
+        attr="$(just --quiet _disk-attr "${target}" "${variant}")"
+        if [[ "${attr}" != ".#disk-image-${variant}" ]]; then
+            out_link="result-disk-${target}"
         else
-            attr=".#disk-image-${variant}"
+            out_link="result-disk-${variant}"
         fi
-        out_link="result-disk-${variant}"
     fi
     echo "Disk 󰋊 Building: ${attr}"
     if command -v nom >/dev/null 2>&1; then
@@ -331,55 +299,7 @@ build-device target="":
     dist_dir="dist/v${version}/${variant}"
     mkdir -p "${dist_dir}"
 
-    if [[ "${target}" == "anbernic-rg35xx-plus" ]]; then
-        disk_attr=".#disk-image-anbernic-rg35xx-plus"
-    elif [[ "${target}" == "anbernic-rg35xx-2024" ]]; then
-        disk_attr=".#disk-image-anbernic-rg35xx-2024"
-    elif [[ "${target}" == "anbernic-rg35xx-pro" ]]; then
-        disk_attr=".#disk-image-anbernic-rg35xx-pro"
-    elif [[ "${target}" == "anbernic-rg35xx-h" ]]; then
-        disk_attr=".#disk-image-anbernic-rg35xx-h"
-    elif [[ "${target}" == "anbernic-rg35xx-sp" ]]; then
-        disk_attr=".#disk-image-anbernic-rg35xx-sp"
-    elif [[ "${target}" == "anbernic-rg40xx-h" ]]; then
-        disk_attr=".#disk-image-anbernic-rg40xx-h"
-    elif [[ "${target}" == "anbernic-rg40xx-v" ]]; then
-        disk_attr=".#disk-image-anbernic-rg40xx-v"
-    elif [[ "${target}" == "anbernic-rg-cubexx" ]]; then
-        disk_attr=".#disk-image-anbernic-rg-cubexx"
-    elif [[ "${target}" == "anbernic-rg28xx" ]]; then
-        disk_attr=".#disk-image-anbernic-rg28xx"
-    elif [[ "${target}" == "anbernic-rg34xx" ]]; then
-        disk_attr=".#disk-image-anbernic-rg34xx"
-    elif [[ "${target}" == "anbernic-rg34xx-sp" ]]; then
-        disk_attr=".#disk-image-anbernic-rg34xx-sp"
-    elif [[ "${target}" == "anbernic-rg351m" ]]; then
-        disk_attr=".#disk-image-anbernic-rg351m"
-    elif [[ "${target}" == "anbernic-rg351v" ]]; then
-        disk_attr=".#disk-image-anbernic-rg351v"
-    elif [[ "${target}" == "gameconsole-r33s" ]]; then
-        disk_attr=".#disk-image-gameconsole-r33s"
-    elif [[ "${target}" == "gameconsole-r36s" ]]; then
-        disk_attr=".#disk-image-gameconsole-r36s"
-    elif [[ "${target}" == "powkiddy-rgb20s" ]]; then
-        disk_attr=".#disk-image-powkiddy-rgb20s"
-    elif [[ "${target}" == "powkiddy-rgb20sx" ]]; then
-        disk_attr=".#disk-image-powkiddy-rgb20sx"
-    elif [[ "${target}" == "powkiddy-x35s" ]]; then
-        disk_attr=".#disk-image-powkiddy-x35s"
-    elif [[ "${target}" == "powkiddy-x55" ]]; then
-        disk_attr=".#disk-image-powkiddy-x55"
-    elif [[ "${target}" == "gameforce-ace" ]]; then
-        disk_attr=".#disk-image-gameforce-ace"
-    elif [[ "${target}" == "orangepi-5" ]]; then
-        disk_attr=".#disk-image-orangepi-5"
-    elif [[ "${target}" == "retro-lite-cm5" ]]; then
-        disk_attr=".#disk-image-retro-lite-cm5"
-    elif [[ "${target}" == "retroled-cm5" ]]; then
-        disk_attr=".#disk-image-retroled-cm5"
-    else
-        disk_attr=".#disk-image-${variant}"
-    fi
+    disk_attr=".#disk-image-${variant}"
     disk_link="result-disk-${variant}"
     echo "Disk 󰋊 Building: ${disk_attr}"
     if command -v nom >/dev/null 2>&1; then
@@ -400,6 +320,31 @@ build-device target="":
     img_sha256="$(sha256sum "${dist_dir}/${img_xz}" | cut -d' ' -f1)"
     printf '%s  %s\n' "${img_sha256}" "${img_xz}" > "${dist_dir}/${img_xz}.sha256"
     chmod 0644 "${dist_dir}/${img_xz}.sha256"
+
+    if [[ -n "${target}" ]]; then
+        target_disk_attr="$(just --quiet _disk-attr "${target}" "${variant}")"
+        if [[ "${target_disk_attr}" != "${disk_attr}" ]]; then
+            target_disk_link="result-disk-${target}"
+            echo "Disk 󰋊 Building: ${target_disk_attr}"
+            if command -v nom >/dev/null 2>&1; then
+                nom build "${target_disk_attr}" --out-link "${target_disk_link}"
+            else
+                nix build "${target_disk_attr}" --out-link "${target_disk_link}"
+            fi
+            target_disk_src="$(find -L "${target_disk_link}" -maxdepth 1 \( -name '*.raw*' -o -name '*.img*' \) | head -n 1)"
+            if [[ -z "${target_disk_src}" ]]; then
+                echo "No disk image found under ${target_disk_link}" >&2
+                exit 1
+            fi
+            target_img_xz="extra-life-${target}-${version}.img.xz"
+            echo "Disk 󰋊 Compressing: ${dist_dir}/${target_img_xz}"
+            xz -T0 -6 -f -c "${target_disk_src}" > "${dist_dir}/${target_img_xz}"
+            chmod 0644 "${dist_dir}/${target_img_xz}"
+            target_img_sha256="$(sha256sum "${dist_dir}/${target_img_xz}" | cut -d' ' -f1)"
+            printf '%s  %s\n' "${target_img_sha256}" "${target_img_xz}" > "${dist_dir}/${target_img_xz}.sha256"
+            chmod 0644 "${dist_dir}/${target_img_xz}.sha256"
+        fi
+    fi
 
     ota_attr=".#ota-bundle-${variant}"
     ota_link="result-ota-${variant}"

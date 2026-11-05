@@ -126,6 +126,28 @@ in
       '';
     });
 
+    diskImageHardkernelOdroidGoAdvance = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+      finalPartitions = lib.recursiveUpdate oldAttrs.finalPartitions {
+        "10-boot".contents."/extlinux/extlinux.conf".source = extlinuxConfOdroidGoAdvance;
+      };
+      postBuild = (oldAttrs.postBuild or "") + ''
+        dd if="${pkgs.ubootRk3326}/u-boot-rockchip.bin" \
+          of="${config.image.baseName}.raw" \
+          bs=512 seek=64 conv=notrunc
+      '';
+    });
+
+    diskImageHardkernelOdroidGoSuper = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+      finalPartitions = lib.recursiveUpdate oldAttrs.finalPartitions {
+        "10-boot".contents."/extlinux/extlinux.conf".source = extlinuxConfOdroidGoSuper;
+      };
+      postBuild = (oldAttrs.postBuild or "") + ''
+        dd if="${pkgs.ubootRk3326}/u-boot-rockchip.bin" \
+          of="${config.image.baseName}.raw" \
+          bs=512 seek=64 conv=notrunc
+      '';
+    });
+
     diskImageAnbernicRg351m = config.system.build.repartImage.overrideAttrs (oldAttrs: {
       finalPartitions = lib.recursiveUpdate oldAttrs.finalPartitions {
         "10-boot".contents."/extlinux/extlinux.conf".source = extlinuxConfAnbernicRg351m;

@@ -39,6 +39,7 @@
       	compatible = "powkiddy,rgb20-pro", "rockchip,rk3566";
       };
       EOF
+      grep -q '^CONFIG_OF_LIST="' configs/anbernic-rgxx3-rk3566_defconfig
       sed -i 's|^CONFIG_OF_LIST="\(.*\)"|CONFIG_OF_LIST="\1 rockchip/rk3566-powkiddy-rgb20-pro"|' configs/anbernic-rgxx3-rk3566_defconfig
     '';
   })

@@ -23,28 +23,56 @@
   },
 }:
 let
-  patchesFromDir =
-    dir:
-    let
-      entries = builtins.readDir dir;
-      names = builtins.filter (
-        n:
-        lib.hasSuffix ".patch" n
-        && !builtins.elem n [
-          "0003-Update-sun8i_tcon_top.c.patch"
-          "0204-dts-Enable-hdmi-sound.patch"
-        ]
-      ) (builtins.attrNames entries);
-      sorted = builtins.sort builtins.lessThan names;
-    in
+  mkPatches =
+    dir: names:
     map (n: {
       name = n;
       patch = "${dir}/${n}";
-    }) sorted;
+    }) names;
+
+  mainlinePatchNames = [
+    "0003-pwm-add-pwm_set_period.patch"
+    "0004-input-adc-keys-redirect-keycode-316-to-rocknix-joypa.patch"
+    "0005-Bluetooth-btrtl-Add-the-support-for-RTL8733BU.patch"
+  ];
+
+  # 0003-Update-sun8i_tcon_top.c.patch is applied via substituteInPlace in
+  # postPatch; 0204-dts-Enable-hdmi-sound.patch depends on disabled 0203.
+  devicePatchNames = [
+    "0002-rg35xx-enable-HDMI-LCD.patch"
+    "0007-rg35xx-add-GPU-opp.patch"
+    "0008-v8_20260804_james_hilliard1_introduce_allwinner_h616_pwm_controller.patch"
+    "0010-rg35xx-enable-pwm-backlight.patch"
+    "0040-Revert-usb-musb-Fix-hardware-lockup-on-first-Rx-endp.patch"
+    "0110-v2_20250226_kikuchan98_drm_panel_add_generic_mipi_panel_driver.patch"
+    "0111-rg35xx-2024-use-panel-mipi-dpi-spi-driver.patch"
+    "0124-battery-name.patch"
+    "0126-20241018_macroalpha82_rg35xx_add_additional_hardware_support.patch"
+    "0127-enable-mmc1-for-RG35XX-2024.patch"
+    "0140-rg35xx-2024-use-rocknix-joypad-driver.patch"
+    "0144-Update-sun50i-h700-anbernic-rg35xx-h.dts.patch"
+    "0150-add-forcefeedback.patch"
+    "0151-phy-fix-OTG-host-mode.patch"
+    "0152-rg35xx-2024-enable-usb-otg.patch"
+    "0153-enable-rgb-leds.patch"
+    "0154-rocknix-dt-id.patch"
+    "0155-sun4i-set-rgb-connector-as-DSI.patch"
+    "0156-rg35xx-plus-add-pcf8563-rtc.patch"
+    "0157-input-axp20x-pek-do-not-report-the-key-press-that-woke-the-system.patch"
+    "0158-mmc-sunxi-mmc-mask-data0-when-updating-the-clock-on-h616-emmc.patch"
+    "0159-arm64-dts-rg35xx-2024-keep-the-second-sd-card-powered.patch"
+    "0160-phy-sun4i-usb-disable-the-clock-that-was-enabled.patch"
+    "0161-drm-sun4i-gate-the-display-pipeline-across-system-suspend.patch"
+    "0162-pinctrl-sunxi-release-the-lcd0-pads-while-the-panel-is-off.patch"
+    "0163-asoc-sun4i-codec-suspend-the-codec-and-switch-the-amplifier-supply.patch"
+    "0200-h700-update-opps.patch"
+    "0210-h616-cpu-opp-mark-480MHz-as-suspend-opp.patch"
+    "0901-dts-rg35xx-2024-fix-led-1-color.patch"
+  ];
 
   rocknixPatches =
-    patchesFromDir "${rocknix-h700}/projects/ROCKNIX/packages/linux/patches/mainline"
-    ++ patchesFromDir "${rocknix-h700}/projects/ROCKNIX/devices/H700/patches/linux";
+    mkPatches "${rocknix-h700}/projects/ROCKNIX/packages/linux/patches/mainline" mainlinePatchNames
+    ++ mkPatches "${rocknix-h700}/projects/ROCKNIX/devices/H700/patches/linux" devicePatchNames;
 
   h700Dtbs = [
     "sun50i-h700-anbernic-rg-sp.dtb"
@@ -130,6 +158,8 @@ let
         BT_HCIUART_3WIRE = yes;
         BT_HCIUART_RTL = yes;
       };
+      # nixpkgs's generic common-config.nix sets desktop/x86 options whose
+      # transitive Kconfig dependencies differ on patched ARM SoC trees.
       ignoreConfigErrors = true;
       extraMeta = {
         platforms = [ "aarch64-linux" ];

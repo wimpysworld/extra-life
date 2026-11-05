@@ -47,13 +47,14 @@ let
         mkdir -p "$out/share/alsa/ucm2/Qualcomm/sm8250"
         mkdir -p "$out/share/alsa/ucm2/conf.d/sm8250"
         mkdir -p "$out/share/alsa/ucm2/codecs/wsa881x"
-        for p in "${rocknixSm8250}"/projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/SM8250/*.patch; do
-          patch -d "$out/share/alsa" -p1 < "$p"
-        done
         cp -a "${rocknixSm8250}/projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2/Qualcomm/sm8250/." \
           "$out/share/alsa/ucm2/Qualcomm/sm8250/"
         cp -a "${rocknixSm8250}/projects/ROCKNIX/packages/audio/alsa-ucm-conf/sources/ucm2/conf.d/sm8250/." \
           "$out/share/alsa/ucm2/conf.d/sm8250/"
+        chmod -R u+w "$out/share/alsa"
+        for p in "${rocknixSm8250}"/projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/SM8250/*.patch; do
+          patch -d "$out/share/alsa" -p1 < "$p"
+        done
         rm -f "$out/share/alsa/ucm2/conf.d/sm8250/retroid-RetroidPocket5-conf"
         for conf in \
           retroid-RetroidPocket5-.conf \

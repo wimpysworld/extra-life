@@ -25,22 +25,62 @@
   },
 }:
 let
-  patchesFromDir =
-    dir:
-    let
-      entries = builtins.readDir dir;
-      names = builtins.filter (n: lib.hasSuffix ".patch" n) (builtins.attrNames entries);
-      sorted = builtins.sort builtins.lessThan names;
-    in
+  mkPatches =
+    dir: names:
     map (n: {
       name = n;
       patch = "${dir}/${n}";
-    }) sorted;
+    }) names;
+
+  mainlinePatchNames = [
+    "0003-pwm-add-pwm_set_period.patch"
+    "0004-input-adc-keys-redirect-keycode-316-to-rocknix-joypa.patch"
+    "0005-Bluetooth-btrtl-Add-the-support-for-RTL8733BU.patch"
+  ];
+
+  rockchipPatchNames = [
+    "001-power-supply-rk817-charger-Fix-NVRAM-SoC-Value.patch"
+    "002-power-supply-rk817-battery-resolve-boot-soc-from-counter.patch"
+    "005-power-supply-rk817-charger-correct-gauge-across-sleep.patch"
+    "006-dt-bindings-power-supply-rk817-charger-add-rockchip-gate-function-disable.patch"
+    "007-power-supply-rk817-clear-sys-can-sd-register-by-default.patch"
+    "008-power-supply-rk817-bound-the-boot-soc-with-the-ocv-table.patch"
+  ];
+
+  devicePatchNames = [
+    "0008-mmc-sd-retry-a-failed-resume-after-a-power-cycle.patch"
+    "001-panel-updates.patch"
+    "002-gpiolib-of-legacy-api.patch"
+    "003-input-add-input-polldev-driver.patch"
+    "003-usb-dwc2-gadget-fix-null-deref-on-register-restore.patch"
+    "004-input-drivers.patch"
+    "004-usb-dwc2-skip-pm-callbacks-after-failed-core-reset.patch"
+    "005-unigue-gpio-guid.patch"
+    "007-ogs-panel-timings.patch"
+    "008-esp-8089-wifi.patch"
+    "010-dwc2-track-vbus-supply-state.patch"
+    "023-px30s-tsadc-support.patch"
+    "024-px30s-gpu-power-domain-workaround.patch"
+    "025-px30s-dsi-dphy-timing-table.patch"
+    "026-px30s-cpuinfo-soc-detection.patch"
+    "027-px30s-io-domain-pmuio1.patch"
+    "028-px30s-usb2phy-tuning.patch"
+    "030-pwm-vibra-kick-stuck-boot-state.patch"
+    "031-px30s-suspend-wakeup-config.patch"
+    "032-px30s-otp-read-protocol.patch"
+    "033-px30s-ddrphy-clock-topology.patch"
+    "034-px30s-cru-suspend-resume-restore.patch"
+    "035-dwc2-release-vbus-supply-on-role-switch.patch"
+    "036-px30-dmc-devfreq.patch"
+    "037-px30-dmc-pass-dram-settings-to-bl31.patch"
+    "038-dwc2-no-pullup-on-id-change-without-gadget.patch"
+    "039-drm-rockchip-vop-add-afbc-support-for-px30.patch"
+  ];
 
   rocknixPatches =
-    patchesFromDir "${rocknix-rk3326}/projects/ROCKNIX/packages/linux/patches/mainline"
-    ++ patchesFromDir "${rocknix-rk3326}/projects/ROCKNIX/packages/linux/patches/mainline-rockchip"
-    ++ patchesFromDir "${rocknix-rk3326}/projects/ROCKNIX/devices/RK3326/patches/linux";
+    mkPatches "${rocknix-rk3326}/projects/ROCKNIX/packages/linux/patches/mainline" mainlinePatchNames
+    ++ mkPatches "${rocknix-rk3326}/projects/ROCKNIX/packages/linux/patches/mainline-rockchip" rockchipPatchNames
+    ++ mkPatches "${rocknix-rk3326}/projects/ROCKNIX/devices/RK3326/patches/linux" devicePatchNames;
 
   rk3326Dtbs = [
     "rk3326-anbernic-rg351m.dtb"
@@ -90,6 +130,8 @@ let
         ROCKCHIP_PM_CONFIG = yes;
         ROCKCHIP_SARADC = yes;
       };
+      # nixpkgs's generic common-config.nix sets desktop/x86 options whose
+      # transitive Kconfig dependencies differ on patched ARM SoC trees.
       ignoreConfigErrors = true;
       extraMeta = {
         platforms = [ "aarch64-linux" ];
@@ -106,6 +148,10 @@ let
           if ! grep -q "rocknix-singleadc-joypad.o" drivers/input/joystick/Makefile; then
             echo "obj-y += rocknix-joypad.o rocknix-singleadc-joypad.o" >> drivers/input/joystick/Makefile
           fi
+          # Overwrite rk3326.dtsi and rk3326-odroid-go.dtsi alongside the 16 board
+          # .dts files and ROCKNIX .dtsi includes: the board trees reference &dmc
+          # and &dfi from ROCKNIX's rk3326.dtsi and replace mainline gpio-keys in
+          # rk3326-odroid-go.dtsi with rocknix-joypad / odroidgo2-joypad nodes.
           cp -vf ${rocknix-rk3326}/projects/ROCKNIX/devices/RK3326/linux/dts/rockchip/*.dts* arch/arm64/boot/dts/rockchip/
           if ! grep -q "rk3326-gameconsole-r36s.dtb" arch/arm64/boot/dts/rockchip/Makefile; then
             echo "dtb-\$(CONFIG_ARCH_ROCKCHIP) += ${lib.concatStringsSep " " rk3326Dtbs}" >> arch/arm64/boot/dts/rockchip/Makefile

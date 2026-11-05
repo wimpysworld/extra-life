@@ -18,7 +18,8 @@ let
     _id: dev: ((dev.dt_model or "") != "") || ((dev.dt_models or [ ]) != [ ])
   ) devices;
   dtDevices = lib.filterAttrs (_id: dev: (dev.dt_compatibles or [ ]) != [ ]) devices;
-  primaryDtCompatibles = lib.mapAttrsToList (_id: dev: builtins.head dev.dt_compatibles) dtDevices;
+  dtDeviceList = builtins.attrValues dtDevices;
+  isUniqueDtCompatible = c: lib.count (dev: builtins.elem c dev.dt_compatibles) dtDeviceList == 1;
   dmiDevices = lib.filterAttrs (
     _id: dev: (dev ? dmi_vendor) && ((dev.dmi_products or [ ]) != [ ])
   ) devices;
@@ -53,9 +54,7 @@ let
         headCompat = builtins.head dev.dt_compatibles;
         extraCompats =
           if builtins.length dev.dt_compatibles > 2 then
-            builtins.filter (c: !(builtins.elem c primaryDtCompatibles)) (
-              lib.init (builtins.tail dev.dt_compatibles)
-            )
+            builtins.filter isUniqueDtCompatible (lib.init (builtins.tail dev.dt_compatibles))
           else
             [ ];
         compatPattern = lib.concatMapStringsSep "|" lib.escapeShellArg ([ headCompat ] ++ extraCompats);
