@@ -63,6 +63,10 @@ let
         BACKLIGHT_WL818S = module;
         REGULATOR_AW37503 = yes;
         REGULATOR_QCOM_LCDB = yes;
+        REGULATOR_QCOM_USB_VBUS = yes;
+        UHID = yes;
+        HID_PLAYSTATION = yes;
+        PLAYSTATION_FF = yes;
         SND_SOC_AW88261 = module;
         SND_SOC_ES8326 = module;
         SND_SOC_SM8250 = module;
