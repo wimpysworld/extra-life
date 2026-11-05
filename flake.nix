@@ -324,6 +324,12 @@
             (aarch64HostConfig "rk3326").config.system.build.diskImageAnbernicRg351m;
           disk-image-anbernic-rg351v =
             (aarch64HostConfig "rk3326").config.system.build.diskImageAnbernicRg351v;
+          disk-image-gameconsole-r33s =
+            (aarch64HostConfig "rk3326").config.system.build.diskImageGameconsoleR33s;
+          disk-image-gameconsole-r36s =
+            (aarch64HostConfig "rk3326").config.system.build.diskImageGameconsoleR36s;
+          disk-image-powkiddy-rgb20s =
+            (aarch64HostConfig "rk3326").config.system.build.diskImagePowkiddyRgb20s;
           disk-image-rk3566 = (aarch64HostConfig "rk3566").config.system.build.diskImage;
           disk-image-powkiddy-rgb20sx =
             (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyRgb20sx;

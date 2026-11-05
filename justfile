@@ -203,6 +203,12 @@ build-disk target="":
             attr=".#disk-image-anbernic-rg351m"
         elif [[ "${target}" == "anbernic-rg351v" ]]; then
             attr=".#disk-image-anbernic-rg351v"
+        elif [[ "${target}" == "gameconsole-r33s" ]]; then
+            attr=".#disk-image-gameconsole-r33s"
+        elif [[ "${target}" == "gameconsole-r36s" ]]; then
+            attr=".#disk-image-gameconsole-r36s"
+        elif [[ "${target}" == "powkiddy-rgb20s" ]]; then
+            attr=".#disk-image-powkiddy-rgb20s"
         elif [[ "${target}" == "powkiddy-rgb20sx" ]]; then
             attr=".#disk-image-powkiddy-rgb20sx"
         elif [[ "${target}" == "powkiddy-x35s" ]]; then
@@ -337,6 +343,12 @@ build-device target="":
         disk_attr=".#disk-image-anbernic-rg351m"
     elif [[ "${target}" == "anbernic-rg351v" ]]; then
         disk_attr=".#disk-image-anbernic-rg351v"
+    elif [[ "${target}" == "gameconsole-r33s" ]]; then
+        disk_attr=".#disk-image-gameconsole-r33s"
+    elif [[ "${target}" == "gameconsole-r36s" ]]; then
+        disk_attr=".#disk-image-gameconsole-r36s"
+    elif [[ "${target}" == "powkiddy-rgb20s" ]]; then
+        disk_attr=".#disk-image-powkiddy-rgb20s"
     elif [[ "${target}" == "powkiddy-rgb20sx" ]]; then
         disk_attr=".#disk-image-powkiddy-rgb20sx"
     elif [[ "${target}" == "powkiddy-x35s" ]]; then

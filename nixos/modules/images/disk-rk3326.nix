@@ -147,5 +147,38 @@ in
           bs=512 seek=64 conv=notrunc
       '';
     });
+
+    diskImageGameconsoleR33s = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+      finalPartitions = lib.recursiveUpdate oldAttrs.finalPartitions {
+        "10-boot".contents."/extlinux/extlinux.conf".source = extlinuxConfGameconsoleR33s;
+      };
+      postBuild = (oldAttrs.postBuild or "") + ''
+        dd if="${pkgs.ubootRk3326}/u-boot-rockchip.bin" \
+          of="${config.image.baseName}.raw" \
+          bs=512 seek=64 conv=notrunc
+      '';
+    });
+
+    diskImageGameconsoleR36s = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+      finalPartitions = lib.recursiveUpdate oldAttrs.finalPartitions {
+        "10-boot".contents."/extlinux/extlinux.conf".source = extlinuxConfGameconsoleR36s;
+      };
+      postBuild = (oldAttrs.postBuild or "") + ''
+        dd if="${pkgs.ubootRk3326}/u-boot-rockchip.bin" \
+          of="${config.image.baseName}.raw" \
+          bs=512 seek=64 conv=notrunc
+      '';
+    });
+
+    diskImagePowkiddyRgb20s = config.system.build.repartImage.overrideAttrs (oldAttrs: {
+      finalPartitions = lib.recursiveUpdate oldAttrs.finalPartitions {
+        "10-boot".contents."/extlinux/extlinux.conf".source = extlinuxConfPowkiddyRgb20s;
+      };
+      postBuild = (oldAttrs.postBuild or "") + ''
+        dd if="${pkgs.ubootRk3326}/u-boot-rockchip.bin" \
+          of="${config.image.baseName}.raw" \
+          bs=512 seek=64 conv=notrunc
+      '';
+    });
   };
 }

@@ -92,6 +92,26 @@ let
         capability_map_id: rk3326_gamepad
       - group: gamepad
         evdev:
+          name: r36s_Gamepad
+          handler: event*
+        capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
+          name: r33s_joypad
+          handler: event*
+        capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
+          name: retrogame_joypad
+          handler: event*
+        capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
+          name: rocknix-joypad
+          handler: event*
+        capability_map_id: rk3326_gamepad
+      - group: gamepad
+        evdev:
           name: OpenSimHardware OSH PB Controller
           vendor_id: "1209"
           product_id: "3100"
@@ -287,6 +307,15 @@ let
           - evdev:
               event_type: KEY
               event_code: BTN_TRIGGER_HAPPY3
+              value_type: button
+        target_event:
+          gamepad:
+            button: Guide
+      - name: Function 4 Guide Button
+        source_events:
+          - evdev:
+              event_type: KEY
+              event_code: BTN_TRIGGER_HAPPY4
               value_type: button
         target_event:
           gamepad:
@@ -598,24 +627,39 @@ in
       "cma=256M"
     ];
 
-    initrd.availableKernelModules = [
-      "mmc_block"
-      "dw_mmc"
-      "dw_mmc_pltfm"
-      "dw_mmc_rockchip"
-      "rk8xx_core"
-      "rk8xx_i2c"
-      "rk808_regulator"
-      "phy_rockchip_inno_dsidphy"
-      "rockchipdrm"
-      "panfrost"
-      "panel_elida_kd35t133"
-      "panel_newvision_nv3051d"
-      "panel_sitronix_st7701"
-      "panel_sitronix_st7703"
-      "pwm_bl"
-      "usbhid"
-    ];
+    initrd = {
+      extraFirmwarePaths = [
+        "panels/anbernic,rg28xx-panel.panel"
+        "panels/anbernic,rg34xx-panel.panel"
+        "panels/anbernic,rg34xx-sp-panel.panel"
+        "panels/anbernic,rg34xx-sp-v2-panel.panel"
+        "panels/anbernic,rg35xx-plus-panel.panel"
+        "panels/anbernic,rg35xx-plus-rev6-panel.panel"
+        "panels/anbernic,rg35xx-sp-v2-panel.panel"
+        "panels/anbernic,rg40xx-panel.panel"
+        "panels/anbernic,rg40xx-v2-panel.panel"
+        "panels/anbernic,rgcubexx-panel.panel"
+      ];
+
+      availableKernelModules = [
+        "mmc_block"
+        "dw_mmc"
+        "dw_mmc_pltfm"
+        "dw_mmc_rockchip"
+        "rk8xx_core"
+        "rk8xx_i2c"
+        "rk808_regulator"
+        "phy_rockchip_inno_dsidphy"
+        "rockchipdrm"
+        "panfrost"
+        "panel_elida_kd35t133"
+        "panel_newvision_nv3051d"
+        "panel_sitronix_st7701"
+        "panel_sitronix_st7703"
+        "pwm_bl"
+        "usbhid"
+      ];
+    };
 
     kernelModules = [
       "panfrost"

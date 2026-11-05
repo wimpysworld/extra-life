@@ -126,6 +126,36 @@ dtb = "rockchip/rk3326-anbernic-rg351v.dtb"
 panel_orientation = "normal"
 debug = true
 
+[devices.gameconsole-r33s]
+name = "GameConsole R33S"
+soc = "rk3326"
+arch = "aarch64-linux"
+dt_model = "Game Console R33S"
+dt_compatibles = ["gameconsole,r33s", "rockchip,rk3326"]
+dtb = "rockchip/rk3326-gameconsole-r33s.dtb"
+panel_orientation = "normal"
+debug = true
+
+[devices.gameconsole-r36s]
+name = "GameConsole R36S"
+soc = "rk3326"
+arch = "aarch64-linux"
+dt_model = "Game Console R36S"
+dt_compatibles = ["gameconsole,r35s", "gameconsole,r36s", "rockchip,rk3326"]
+dtb = "rockchip/rk3326-gameconsole-r36s.dtb"
+panel_orientation = "normal"
+debug = true
+
+[devices.powkiddy-rgb20s]
+name = "Powkiddy RGB20S"
+soc = "rk3326"
+arch = "aarch64-linux"
+dt_model = "Powkiddy RGB20S"
+dt_compatibles = ["powkiddy,rgb20s", "rockchip,rk3326"]
+dtb = "rockchip/rk3326-powkiddy-rgb20s.dtb"
+panel_orientation = "normal"
+debug = true
+
 [devices.anbernic-rg353m]
 name = "Anbernic RG353M"
 soc = "rk3566"
