@@ -180,9 +180,10 @@ let
       sparseCheckout = [
         "projects/ROCKNIX/devices/RK3566"
         "projects/ROCKNIX/packages/linux-drivers/generic-dsi"
-        "projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/panels"
+        "projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/rtl_bt"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/RK3326"
       ];
-      hash = "sha256-Aq33TGwj/lwtztrgXAIEmynRQwSJAymM1es0GBWyceU=";
+      hash = "sha256-pI/gC+HxASbVF/XwBI4qMrWSATB3lfaV2MVjzCAdAD4=";
     };
 
     rocknix-rk3588 = final.fetchFromGitHub {
@@ -428,9 +429,10 @@ in
       sparseCheckout = [
         "projects/ROCKNIX/devices/RK3566"
         "projects/ROCKNIX/packages/linux-drivers/generic-dsi"
-        "projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/panels"
+        "projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/rtl_bt"
+        "projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/RK3326"
       ];
-      hash = "sha256-Aq33TGwj/lwtztrgXAIEmynRQwSJAymM1es0GBWyceU=";
+      hash = "sha256-pI/gC+HxASbVF/XwBI4qMrWSATB3lfaV2MVjzCAdAD4=";
     };
     rocknix-rk3588 = final.fetchFromGitHub {
       owner = "ROCKNIX";

@@ -10,9 +10,10 @@
     sparseCheckout = [
       "projects/ROCKNIX/devices/RK3566"
       "projects/ROCKNIX/packages/linux-drivers/generic-dsi"
-      "projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/panels"
+      "projects/ROCKNIX/packages/linux-firmware/kernel-firmware/extra-firmware/rtl_bt"
+      "projects/ROCKNIX/packages/audio/alsa-ucm-conf/patches/RK3326"
     ];
-    hash = "sha256-Aq33TGwj/lwtztrgXAIEmynRQwSJAymM1es0GBWyceU=";
+    hash = "sha256-pI/gC+HxASbVF/XwBI4qMrWSATB3lfaV2MVjzCAdAD4=";
   },
 }:
 let
@@ -23,21 +24,27 @@ let
     "0004-arm64-dts-rockchip-fix-wifi-sdio-errors.patch"
     "0005-arm64-dts-rockchip-fixup-anbernic-controls.patch"
     "0006-drm-panel-nv3051d-fix-panel-timings-and-display-mode.patch"
+    "0008-mmc-sd-retry-a-failed-resume-after-a-power-cycle.patch"
     "0009-arm64-dts-rockchip-fix-shoulders-triggers-on-powkidd.patch"
     "0010-drm-panel-st7703-request-higher-pixelclock-for-RGB30.patch"
+    "0013-Bluetooth-Check-key-sizes-only-when-Secure-Simple-Pa.patch"
     "0014-drm-panel-st7701-fixup-Anbernic-RG-Arc-panel-timings.patch"
     "0015-arm64-dts-rockchip-use-linear-backlight-levels-to-im.patch"
     "0016-arm64-dts-rockchip-add-device-tree-for-powkiddy-x35s.patch"
     "0018-arm64-dts-rockchip-add-device-tree-for-powkiddy-rgb2.patch"
     "0019-arm64-dts-rockchip-add-system-power-controller-attri.patch"
+    "0021-arm64-dts-rockchip-fix-missing-dma-names.patch"
     "0024-sdmmc1-card-detect-delay.patch"
+    "0025-arc-swap-touch-axes.patch"
     "0028-regulator-fan53555-accept-the-STI8070A-on-the-Silergy-path.patch"
     "0029-anbernic-fix-adc-key.patch"
+    "1001-arm64-dts-rockchip-Add-idle-states-for-rk356x.patch"
     "1002-arm64-dts-rockchip-Add-spk_amp-regulator-for-Anberni.patch"
     "1004-arm64-dts-rockchip-Add-avdd_0v9-and-avdd_1v8-for-RGx.patch"
     "1006-arm64-dts-rockchip-Correct-boot-enabled-regulators-f.patch"
     "1008-arm64-dts-rockchip-Enable-DMA-for-uart1-on-RGxx3.patch"
     "1009-arm64-dts-rockchip-Map-wifi-host-wake-interrupt-for-.patch"
+    "1011-input-touchscreen-goodix-usability-fixes.patch"
   ];
 
   rocknixPatches = map (n: {
@@ -49,6 +56,10 @@ let
     (linux_6_18.override {
       kernelPatches = (linux_6_18.kernelPatches or [ ]) ++ rocknixPatches;
       structuredExtraConfig = with lib.kernel; {
+        BT_HCIUART = module;
+        BT_HCIUART_SERDEV = yes;
+        BT_HCIUART_3WIRE = yes;
+        BT_HCIUART_RTL = yes;
         INPUT_PWM_VIBRA = module;
         REGULATOR_FAN53555 = yes;
       };
