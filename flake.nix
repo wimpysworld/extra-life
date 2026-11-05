@@ -85,11 +85,32 @@
           homebrew-roms = applied.homebrew-roms or (final.callPackage ./pkgs/homebrew-roms { });
           libretro-cores = applied.libretro-cores or (final.callPackage ./pkgs/libretro-cores { });
           pd-mapper = applied.pd-mapper or (final.callPackage ./pkgs/pd-mapper { });
+          ubootAnbernicH700 =
+            applied.ubootAnbernicH700 or (final.callPackage ./pkgs/uboot/anbernic-h700.nix { });
           ubootAnbernicRgxx3 =
             applied.ubootAnbernicRgxx3 or (final.callPackage ./pkgs/uboot/anbernic-rgxx3.nix { });
+          ubootPowkiddyX55 =
+            applied.ubootPowkiddyX55 or (final.callPackage ./pkgs/uboot/powkiddy-x55.nix { });
+          ubootRk3326 = applied.ubootRk3326 or (final.callPackage ./pkgs/uboot/rk3326.nix { });
+          ubootRk3588 = applied.ubootRk3588 or (final.callPackage ./pkgs/uboot/rk3588.nix { });
+          ubootGameforceAce =
+            applied.ubootGameforceAce or (final.callPackage ./pkgs/uboot/rk3588.nix {
+              defconfig = "gameforce-ace-rk3588s_defconfig";
+            });
+          linuxPackages_h700 = applied.linuxPackages_h700 or (final.callPackage ./pkgs/kernels/h700.nix { });
+          linuxPackages_rk3326 =
+            applied.linuxPackages_rk3326 or (final.callPackage ./pkgs/kernels/rk3326.nix { });
+          linuxPackages_rk3566 =
+            applied.linuxPackages_rk3566 or (final.callPackage ./pkgs/kernels/rk3566.nix { });
+          linuxPackages_rk3588 =
+            applied.linuxPackages_rk3588 or (final.callPackage ./pkgs/kernels/rk3588.nix { });
           linuxPackages_rpi = applied.linuxPackages_rpi or (final.callPackage ./pkgs/kernels/rpi.nix { });
           linuxPackages_sm6115 =
             applied.linuxPackages_sm6115 or (final.callPackage ./pkgs/kernels/sm6115.nix { });
+          linuxPackages_sm8250 =
+            applied.linuxPackages_sm8250 or (final.callPackage ./pkgs/kernels/sm8250.nix { });
+          linuxPackages_sm8550 =
+            applied.linuxPackages_sm8550 or (final.callPackage ./pkgs/kernels/sm8550.nix { });
           vm-retro = applied.vm-retro or (final.callPackage ./pkgs/vm-retro { });
         }
         // applied;
@@ -100,19 +121,28 @@
         cases = import ./nixos/modules/hardware/cases;
         disk-base = import ./nixos/modules/images/disk-base.nix;
         disk-efi = import ./nixos/modules/images/disk-efi.nix;
+        disk-h700 = import ./nixos/modules/images/disk-h700.nix;
         disk-openabl = import ./nixos/modules/images/disk-openabl.nix;
+        disk-rk3326 = import ./nixos/modules/images/disk-rk3326.nix;
         disk-rk3566 = import ./nixos/modules/images/disk-rk3566.nix;
+        disk-rk3588 = import ./nixos/modules/images/disk-rk3588.nix;
         disk-rpi = import ./nixos/modules/images/disk-rpi.nix;
         iso = import ./nixos/modules/images/iso.nix;
         pc = import ./nixos/modules/hardware/pc.nix;
         qemu-guest = import ./nixos/modules/hardware/qemu-guest.nix;
+        soc-h700 = import ./nixos/modules/hardware/soc/h700.nix;
         soc-qcom-common = import ./nixos/modules/hardware/soc/qcom-common.nix;
+        soc-rk3326 = import ./nixos/modules/hardware/soc/rk3326.nix;
         soc-rk3566 = import ./nixos/modules/hardware/soc/rk3566.nix;
+        soc-rk3588 = import ./nixos/modules/hardware/soc/rk3588.nix;
         soc-rpi-common = import ./nixos/modules/hardware/soc/rpi-common.nix;
         soc-rpi02w = import ./nixos/modules/hardware/soc/rpi02w.nix;
         soc-rpi4 = import ./nixos/modules/hardware/soc/rpi4.nix;
         soc-rpi5 = import ./nixos/modules/hardware/soc/rpi5.nix;
         soc-sm6115 = import ./nixos/modules/hardware/soc/sm6115.nix;
+        soc-sm6125 = import ./nixos/modules/hardware/soc/sm6125.nix;
+        soc-sm8250 = import ./nixos/modules/hardware/soc/sm8250.nix;
+        soc-sm8550 = import ./nixos/modules/hardware/soc/sm8550.nix;
         soc-x86_64 = import ./nixos/modules/hardware/soc/x86_64.nix;
         default = self.nixosModules.appliance;
       };
@@ -150,6 +180,24 @@
           ];
         };
 
+        h700-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/h700-appliance
+          ];
+        };
+
+        h700 = self.nixosConfigurations.h700-appliance;
+
+        rk3326-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/rk3326-appliance
+          ];
+        };
+
+        rk3326 = self.nixosConfigurations.rk3326-appliance;
+
         rk3566-appliance = lib.nixosSystem {
           modules = [
             nixpkgsModule
@@ -158,6 +206,15 @@
         };
 
         rk3566 = self.nixosConfigurations.rk3566-appliance;
+
+        rk3588-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/rk3588-appliance
+          ];
+        };
+
+        rk3588 = self.nixosConfigurations.rk3588-appliance;
 
         rpi02w-appliance = lib.nixosSystem {
           modules = [
@@ -194,6 +251,33 @@
         };
 
         sm6115 = self.nixosConfigurations.sm6115-appliance;
+
+        sm6125-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/sm6125-appliance
+          ];
+        };
+
+        sm6125 = self.nixosConfigurations.sm6125-appliance;
+
+        sm8250-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/sm8250-appliance
+          ];
+        };
+
+        sm8250 = self.nixosConfigurations.sm8250-appliance;
+
+        sm8550-appliance = lib.nixosSystem {
+          modules = [
+            nixpkgsModule
+            ./nixos/hosts/sm8550-appliance
+          ];
+        };
+
+        sm8550 = self.nixosConfigurations.sm8550-appliance;
       };
 
       packages = forAllSystems (
@@ -215,9 +299,20 @@
                     nixpkgs.overlays = [
                       (_final: _prev: {
                         inherit (crossAarch64)
+                          ubootAnbernicH700
                           ubootAnbernicRgxx3
+                          ubootPowkiddyX55
+                          ubootRk3326
+                          ubootRk3588
+                          ubootGameforceAce
+                          linuxPackages_h700
+                          linuxPackages_rk3326
+                          linuxPackages_rk3566
+                          linuxPackages_rk3588
                           linuxPackages_rpi
                           linuxPackages_sm6115
+                          linuxPackages_sm8250
+                          linuxPackages_sm8550
                           ;
                       })
                     ];
@@ -236,26 +331,100 @@
           disk-image-x86_64 = self.nixosConfigurations.x86_64.config.system.build.diskImage;
           ota-bundle-x86_64 = self.nixosConfigurations.x86_64.config.system.build.otaBundle;
           disk-image-aarch64 = (aarch64HostConfig "aarch64").config.system.build.diskImage;
+          disk-image-h700 = (aarch64HostConfig "h700").config.system.build.diskImage;
+          disk-image-anbernic-rg35xx-plus =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg35xxPlus;
+          disk-image-anbernic-rg35xx-2024 =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg35xx2024;
+          disk-image-anbernic-rg35xx-pro =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg35xxPro;
+          disk-image-anbernic-rg35xx-h =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg35xxH;
+          disk-image-anbernic-rg35xx-sp =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg35xxSp;
+          disk-image-anbernic-rg40xx-h =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg40xxH;
+          disk-image-anbernic-rg40xx-v =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg40xxV;
+          disk-image-anbernic-rg-cubexx =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRgCubexx;
+          disk-image-anbernic-rg28xx = (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg28xx;
+          disk-image-anbernic-rg34xx = (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg34xx;
+          disk-image-anbernic-rg34xx-sp =
+            (aarch64HostConfig "h700").config.system.build.diskImageAnbernicRg34xxSp;
+          disk-image-rk3326 = (aarch64HostConfig "rk3326").config.system.build.diskImage;
+          disk-image-hardkernel-odroid-go-advance =
+            (aarch64HostConfig "rk3326").config.system.build.diskImageHardkernelOdroidGoAdvance;
+          disk-image-hardkernel-odroid-go-super =
+            (aarch64HostConfig "rk3326").config.system.build.diskImageHardkernelOdroidGoSuper;
+          disk-image-anbernic-rg351m =
+            (aarch64HostConfig "rk3326").config.system.build.diskImageAnbernicRg351m;
+          disk-image-anbernic-rg351v =
+            (aarch64HostConfig "rk3326").config.system.build.diskImageAnbernicRg351v;
+          disk-image-gameconsole-r33s =
+            (aarch64HostConfig "rk3326").config.system.build.diskImageGameconsoleR33s;
+          disk-image-gameconsole-r36s =
+            (aarch64HostConfig "rk3326").config.system.build.diskImageGameconsoleR36s;
+          disk-image-powkiddy-rgb20s =
+            (aarch64HostConfig "rk3326").config.system.build.diskImagePowkiddyRgb20s;
           disk-image-rk3566 = (aarch64HostConfig "rk3566").config.system.build.diskImage;
+          disk-image-powkiddy-rgb20sx =
+            (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyRgb20sx;
+          disk-image-powkiddy-x35s = (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyX35s;
+          disk-image-powkiddy-x55 = (aarch64HostConfig "rk3566").config.system.build.diskImagePowkiddyX55;
+          disk-image-rk3588 = (aarch64HostConfig "rk3588").config.system.build.diskImage;
+          disk-image-gameforce-ace = (aarch64HostConfig "rk3588").config.system.build.diskImageGameforceAce;
+          disk-image-orangepi-5 = (aarch64HostConfig "rk3588").config.system.build.diskImageOrangepi5;
+          disk-image-retro-lite-cm5 = (aarch64HostConfig "rk3588").config.system.build.diskImageRetroLiteCm5;
+          disk-image-retroled-cm5 = (aarch64HostConfig "rk3588").config.system.build.diskImageRetroledCm5;
           disk-image-rpi02w = (aarch64HostConfig "rpi02w").config.system.build.diskImage;
           disk-image-rpi4 = (aarch64HostConfig "rpi4").config.system.build.diskImage;
           disk-image-rpi5 = (aarch64HostConfig "rpi5").config.system.build.diskImage;
           disk-image-sm6115 = (aarch64HostConfig "sm6115").config.system.build.diskImage;
+          disk-image-sm6125 = (aarch64HostConfig "sm6125").config.system.build.diskImage;
+          disk-image-sm8250 = (aarch64HostConfig "sm8250").config.system.build.diskImage;
+          disk-image-sm8550 = (aarch64HostConfig "sm8550").config.system.build.diskImage;
           ota-bundle-aarch64 = (aarch64HostConfig "aarch64").config.system.build.otaBundle;
+          ota-bundle-h700 = (aarch64HostConfig "h700").config.system.build.otaBundle;
+          ota-h700 = self.packages.${system}.ota-bundle-h700;
+          ota-bundle-rk3326 = (aarch64HostConfig "rk3326").config.system.build.otaBundle;
+          ota-rk3326 = self.packages.${system}.ota-bundle-rk3326;
           ota-bundle-rk3566 = (aarch64HostConfig "rk3566").config.system.build.otaBundle;
+          ota-bundle-rk3588 = (aarch64HostConfig "rk3588").config.system.build.otaBundle;
+          ota-rk3588 = self.packages.${system}.ota-bundle-rk3588;
           ota-bundle-rpi02w = (aarch64HostConfig "rpi02w").config.system.build.otaBundle;
           ota-bundle-rpi4 = (aarch64HostConfig "rpi4").config.system.build.otaBundle;
           ota-bundle-rpi5 = (aarch64HostConfig "rpi5").config.system.build.otaBundle;
           ota-bundle-sm6115 = (aarch64HostConfig "sm6115").config.system.build.otaBundle;
+          ota-bundle-sm6125 = (aarch64HostConfig "sm6125").config.system.build.otaBundle;
+          ota-sm6125 = self.packages.${system}.ota-bundle-sm6125;
+          ota-bundle-sm8250 = (aarch64HostConfig "sm8250").config.system.build.otaBundle;
+          ota-sm8250 = self.packages.${system}.ota-bundle-sm8250;
+          ota-bundle-sm8550 = (aarch64HostConfig "sm8550").config.system.build.otaBundle;
+          ota-sm8550 = self.packages.${system}.ota-bundle-sm8550;
         }
         // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
           inherit (pkgs) ludo libretro-cores pd-mapper;
         }
         // lib.optionalAttrs (system == "aarch64-linux") {
-          inherit (pkgs) ubootAnbernicRgxx3;
+          inherit (pkgs)
+            ubootAnbernicH700
+            ubootAnbernicRgxx3
+            ubootPowkiddyX55
+            ubootRk3326
+            ubootRk3588
+            ubootGameforceAce
+            ;
         }
         // lib.optionalAttrs (system == "x86_64-linux") {
-          inherit (crossAarch64) ubootAnbernicRgxx3;
+          inherit (crossAarch64)
+            ubootAnbernicH700
+            ubootAnbernicRgxx3
+            ubootPowkiddyX55
+            ubootRk3326
+            ubootRk3588
+            ubootGameforceAce
+            ;
         }
       );
 

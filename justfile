@@ -18,8 +18,14 @@ devices:
     printf "  %-10s %s\n" "rpi02w"  "Broadcom BCM2710 (Raspberry Pi Zero 2 W, Pi 3B/3B+/3A+, CM3)"
     printf "  %-10s %s\n" "rpi4"    "Broadcom BCM2711 (Raspberry Pi 4B, Pi 400, CM4, CM4S)"
     printf "  %-10s %s\n" "rpi5"    "Broadcom BCM2712 (Raspberry Pi 5, Pi 500, CM5)"
-    printf "  %-10s %s\n" "rk3566"  "Rockchip RK3566 (Anbernic RG353/RG503/RG ARC and Powkiddy RGB30/RK2023/RGB10MAX3)"
+    printf "  %-10s %s\n" "rk3326"  "Rockchip RK3326 (Odroid Go Advance/Super, Anbernic RG351M/V, GameConsole R36S/R33S, Powkiddy RGB20S)"
+    printf "  %-10s %s\n" "rk3566"  "Rockchip RK3566 (Anbernic RG353/RG503/RG ARC and Powkiddy RGB20 Pro/RGB20SX/RGB30/RK2023/RGB10MAX3/X35S/X55)"
+    printf "  %-10s %s\n" "rk3588"  "Rockchip RK3588 / RK3588S (GameForce ACE, Orange Pi 5, Retro Lite CM5, RetroLED CM5)"
     printf "  %-10s %s\n" "sm6115"  "Qualcomm Snapdragon 662 (Mangmi Air X MQ65/MQ66/MQ66B and Mangmi Air Y)"
+    printf "  %-10s %s\n" "sm6125"  "Qualcomm Snapdragon 665 (Retroid Pocket Duo Lite)"
+    printf "  %-10s %s\n" "sm8250"  "Qualcomm Snapdragon 865 (Retroid Pocket 5, Pocket Flip 2, Pocket Mini/Mini V2, AYN Thor Lite, Mangmi Air Y Pro/Pocket Max)"
+    printf "  %-10s %s\n" "sm8550"  "Qualcomm Snapdragon 8 Gen 2 (AYN Odin 2/Mini/Portal, AYN Thor, AYANEO Pocket ACE/DMG/DS/EVO/S, Retroid Pocket 6)"
+    printf "  %-10s %s\n" "h700"    "Allwinner H700 (Anbernic RG28XX, RG34XX/SP, RG35XX Plus/H/SP/2024/Pro, RG40XX H/V, RG CubeXX)"
     echo ""
 
     echo "Device IDs (nixos/devices/devices.toml):"
@@ -152,6 +158,18 @@ build-iso:
     cp -f "${iso_src}" .vm/extra-life.iso
     chmod 644 .vm/extra-life.iso
 
+_disk-attr target variant:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    case {{ quote(target) }} in
+        anbernic-rg35xx-plus|anbernic-rg35xx-2024|anbernic-rg35xx-pro|anbernic-rg35xx-h|anbernic-rg35xx-sp|anbernic-rg40xx-h|anbernic-rg40xx-v|anbernic-rg-cubexx|anbernic-rg28xx|anbernic-rg34xx|anbernic-rg34xx-sp|hardkernel-odroid-go-advance|hardkernel-odroid-go-super|anbernic-rg351m|anbernic-rg351v|gameconsole-r33s|gameconsole-r36s|powkiddy-rgb20s|powkiddy-rgb20sx|powkiddy-x35s|powkiddy-x55|gameforce-ace|orangepi-5|retro-lite-cm5|retroled-cm5)
+            printf '.#disk-image-%s\n' {{ quote(target) }}
+            ;;
+        *)
+            printf '.#disk-image-%s\n' {{ quote(variant) }}
+            ;;
+    esac
+
 # Build the Extra Life GPT disk image (optionally for a specific device or SoC target)
 build-disk target="":
     #!/usr/bin/env bash
@@ -162,7 +180,7 @@ build-disk target="":
         out_link="result-disk"
     else
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|rk3588|sm6115|sm6125|sm8250|sm8550|h700)
                 variant="${target}"
                 ;;
             *)
@@ -175,8 +193,12 @@ build-disk target="":
                 echo "Resolved device '${target}' -> variant '${variant}'"
                 ;;
         esac
-        attr=".#disk-image-${variant}"
-        out_link="result-disk-${variant}"
+        attr="$(just --quiet _disk-attr "${target}" "${variant}")"
+        if [[ "${attr}" != ".#disk-image-${variant}" ]]; then
+            out_link="result-disk-${target}"
+        else
+            out_link="result-disk-${variant}"
+        fi
     fi
     echo "Disk 󰋊 Building: ${attr}"
     if command -v nom >/dev/null 2>&1; then
@@ -200,7 +222,7 @@ build-ota target="":
         out_link="result-ota"
     else
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|rk3588|sm6115|sm6125|sm8250|sm8550|h700)
                 variant="${target}"
                 ;;
             *)
@@ -258,7 +280,7 @@ build-device target="":
         fi
     else
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|rk3588|sm6115|sm6125|sm8250|sm8550|h700)
                 variant="${target}"
                 ;;
             *)
@@ -298,6 +320,31 @@ build-device target="":
     img_sha256="$(sha256sum "${dist_dir}/${img_xz}" | cut -d' ' -f1)"
     printf '%s  %s\n' "${img_sha256}" "${img_xz}" > "${dist_dir}/${img_xz}.sha256"
     chmod 0644 "${dist_dir}/${img_xz}.sha256"
+
+    if [[ -n "${target}" ]]; then
+        target_disk_attr="$(just --quiet _disk-attr "${target}" "${variant}")"
+        if [[ "${target_disk_attr}" != "${disk_attr}" ]]; then
+            target_disk_link="result-disk-${target}"
+            echo "Disk 󰋊 Building: ${target_disk_attr}"
+            if command -v nom >/dev/null 2>&1; then
+                nom build "${target_disk_attr}" --out-link "${target_disk_link}"
+            else
+                nix build "${target_disk_attr}" --out-link "${target_disk_link}"
+            fi
+            target_disk_src="$(find -L "${target_disk_link}" -maxdepth 1 \( -name '*.raw*' -o -name '*.img*' \) | head -n 1)"
+            if [[ -z "${target_disk_src}" ]]; then
+                echo "No disk image found under ${target_disk_link}" >&2
+                exit 1
+            fi
+            target_img_xz="extra-life-${target}-${version}.img.xz"
+            echo "Disk 󰋊 Compressing: ${dist_dir}/${target_img_xz}"
+            xz -T0 -6 -f -c "${target_disk_src}" > "${dist_dir}/${target_img_xz}"
+            chmod 0644 "${dist_dir}/${target_img_xz}"
+            target_img_sha256="$(sha256sum "${dist_dir}/${target_img_xz}" | cut -d' ' -f1)"
+            printf '%s  %s\n' "${target_img_sha256}" "${target_img_xz}" > "${dist_dir}/${target_img_xz}.sha256"
+            chmod 0644 "${dist_dir}/${target_img_xz}.sha256"
+        fi
+    fi
 
     ota_attr=".#ota-bundle-${variant}"
     ota_link="result-ota-${variant}"
@@ -417,7 +464,7 @@ publish-ota target="":
 
     if [[ -n "${target}" ]]; then
         case "${target}" in
-            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3566|sm6115)
+            x86_64|aarch64|rpi02w|rpi4|rpi5|rk3326|rk3566|rk3588|sm6115|sm6125|sm8250|sm8550|h700)
                 variant="${target}"
                 ;;
             *)

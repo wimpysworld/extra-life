@@ -15,7 +15,7 @@
  #if WLR_HAS_X11_BACKEND
  #include <wlr/backend/x11.h>
  #endif
-@@ -240,6 +244,44 @@
+@@ -240,6 +244,104 @@
  	output_destroy(output);
  }
  
@@ -56,20 +56,79 @@
 +	return false;
 +}
 +
++static bool
++resolve_output_orientation(const char *output_name, enum wl_output_transform *out)
++{
++	if (!output_name || !*output_name) {
++		return false;
++	}
++
++	const char *env_orient = getenv("EXTRA_LIFE_PANEL_ORIENTATION");
++	const char *primary_output = getenv("EXTRA_LIFE_PRIMARY_OUTPUT");
++	const char *secondary_output = getenv("EXTRA_LIFE_SECONDARY_OUTPUT");
++	const char *secondary_orient = getenv("EXTRA_LIFE_SECONDARY_PANEL_ORIENTATION");
++
++	if (env_orient && (strchr(env_orient, ':') != NULL || strchr(env_orient, '=') != NULL)) {
++		char *copy = strdup(env_orient);
++		if (copy) {
++			char *saveptr = NULL;
++			for (char *token = strtok_r(copy, ",;", &saveptr); token != NULL;
++			     token = strtok_r(NULL, ",;", &saveptr)) {
++				char *sep = strchr(token, ':');
++				if (!sep) {
++					sep = strchr(token, '=');
++				}
++				if (!sep) {
++					continue;
++				}
++				*sep = '\0';
++				const char *key = token;
++				const char *val = sep + 1;
++				if (strcmp(key, output_name) == 0 && parse_panel_orientation(val, out)) {
++					free(copy);
++					return true;
++				}
++			}
++			free(copy);
++		}
++		return false;
++	}
++
++	if (secondary_output && *secondary_output && strcmp(output_name, secondary_output) == 0) {
++		if (secondary_orient && *secondary_orient) {
++			return parse_panel_orientation(secondary_orient, out);
++		}
++		return false;
++	}
++
++	if (primary_output && *primary_output && strcmp(output_name, primary_output) == 0) {
++		if (env_orient && *env_orient) {
++			return parse_panel_orientation(env_orient, out);
++		}
++		return false;
++	}
++
++	if (env_orient && *env_orient && is_internal_panel(output_name)) {
++		if (!secondary_output || !*secondary_output || strcmp(output_name, secondary_output) != 0) {
++			return parse_panel_orientation(env_orient, out);
++		}
++	}
++
++	return false;
++}
++
  void
  handle_new_output(struct wl_listener *listener, void *data)
  {
-@@ -308,6 +350,24 @@
+@@ -308,6 +410,64 @@
  		}
  	}
  
-+	const char *env_orient = getenv("EXTRA_LIFE_PANEL_ORIENTATION");
 +	enum wl_output_transform env_transform = WL_OUTPUT_TRANSFORM_NORMAL;
-+	bool has_env_orient = env_orient && *env_orient && is_internal_panel(wlr_output->name) &&
-+			      parse_panel_orientation(env_orient, &env_transform);
++	bool has_env_orient = resolve_output_orientation(wlr_output->name, &env_transform);
 +	if (has_env_orient && env_transform != WL_OUTPUT_TRANSFORM_NORMAL) {
-+		wlr_log(WLR_INFO, "Applying EXTRA_LIFE_PANEL_ORIENTATION=%s (transform %d) to %s",
-+			env_orient, env_transform, wlr_output->name);
++		wlr_log(WLR_INFO, "Applying panel orientation transform %d to %s",
++			env_transform, wlr_output->name);
 +		wlr_output_state_set_transform(&state, env_transform);
 +	} else {
 +#if WLR_HAS_DRM_BACKEND
@@ -86,6 +145,41 @@
 +#endif
 +		if (has_env_orient) {
 +			wlr_output_state_set_transform(&state, env_transform);
++		}
++	}
++
++	const char *primary_output = getenv("EXTRA_LIFE_PRIMARY_OUTPUT");
++	const char *secondary_output = getenv("EXTRA_LIFE_SECONDARY_OUTPUT");
++	if (primary_output && *primary_output) {
++		if (strcmp(wlr_output->name, primary_output) != 0) {
++			bool primary_present = false;
++			struct cg_output *other;
++			wl_list_for_each (other, &server->outputs, link) {
++				if (other != output && strcmp(other->wlr_output->name, primary_output) == 0) {
++					primary_present = true;
++					break;
++				}
++			}
++			if ((secondary_output && *secondary_output &&
++			     strcmp(wlr_output->name, secondary_output) == 0) ||
++			    primary_present) {
++				wlr_log(WLR_INFO,
++					"Disabling secondary panel %s in favour of primary output %s",
++					wlr_output->name, primary_output);
++				wlr_output_state_set_enabled(&state, false);
++				wlr_output_commit_state(wlr_output, &state);
++				update_output_manager_config(output->server);
++				return;
++			}
++		} else {
++			struct cg_output *other;
++			wl_list_for_each (other, &server->outputs, link) {
++				if (other != output && strcmp(other->wlr_output->name, primary_output) != 0) {
++					wlr_log(WLR_INFO, "Disabling non-primary output %s because %s is active",
++						other->wlr_output->name, primary_output);
++					output_disable(other);
++				}
++			}
 +		}
 +	}
 +

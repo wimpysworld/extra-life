@@ -7,12 +7,18 @@
 let
   toplevel = config.system.build.toplevel;
   inherit (config.extraLife) variantId;
+  openablDevice = if variantId == "sm6125" then "SM6115" else lib.toUpper variantId;
 
   socDevices = lib.filterAttrs (
     _id: dev: (dev.soc or "") == variantId && (dev ? dtb)
   ) config.extraLife.devices;
 
   dtbFiles = lib.unique (lib.mapAttrsToList (_id: dev: dev.dtb) socDevices);
+
+  loaderConf = pkgs.writeText "loader.conf" ''
+    default extra-life.conf
+    timeout 0
+  '';
 
   defaultEntryConf = pkgs.writeText "extra-life.conf" ''
     title Extra Life
@@ -21,17 +27,49 @@ let
     options init=/nix/store/current-system/init ${toString config.boot.kernelParams}
   '';
 
+  boardEntries = lib.mapAttrsToList (
+    id: dev:
+    let
+      entryFile = pkgs.writeText "extra-life-${id}.conf" ''
+        title Extra Life (${dev.name})
+        linux /KERNEL
+        initrd /INITRD
+        devicetree /dtbs/${dev.dtb}
+        options init=/nix/store/current-system/init ${toString config.boot.kernelParams}
+      '';
+    in
+    "cp ${entryFile} \"$out/extra-life-${id}.conf\""
+  ) socDevices;
+
   entriesDir = pkgs.runCommand "extra-life-bls-entries-${variantId}" { } ''
     mkdir -p "$out"
     cp ${defaultEntryConf} "$out/extra-life.conf"
+    ${lib.concatStringsSep "\n" boardEntries}
   '';
 
   socDtbs = pkgs.runCommand "extra-life-${variantId}-dtbs" { } ''
     mkdir -p "$out/qcom"
-    ${lib.concatMapStringsSep "\n" (dtb: ''
-      cp -f "${config.hardware.deviceTree.package}/${dtb}" "$out/${dtb}"
-      cp -f "${config.hardware.deviceTree.package}/${dtb}" "$out/$(basename "${dtb}")"
-    '') dtbFiles}
+    ${
+      if dtbFiles != [ ] then
+        lib.concatMapStringsSep "\n" (dtb: ''
+          cp -f "${config.hardware.deviceTree.package}/${dtb}" "$out/${dtb}"
+          cp -f "${config.hardware.deviceTree.package}/${dtb}" "$out/$(basename "${dtb}")"
+        '') dtbFiles
+      else
+        ''
+          for f in ${
+            if variantId == "sm8550" then
+              ''"${config.hardware.deviceTree.package}"/qcom/qcs8550-*.dtb "${config.hardware.deviceTree.package}"/qcom/sm8550-*.dtb''
+            else
+              ''"${config.hardware.deviceTree.package}"/qcom/${variantId}-*.dtb''
+          }; do
+            if [ -e "$f" ]; then
+              cp -f "$f" "$out/qcom/$(basename "$f")"
+              cp -f "$f" "$out/$(basename "$f")"
+            fi
+          done
+        ''
+    }
   '';
 
   openablTarball = pkgs.fetchurl {
@@ -41,7 +79,7 @@ let
 
   openablDir = pkgs.runCommand "extra-life-openabl-${variantId}" { } ''
     mkdir -p "$out"
-    tar -xzf "${openablTarball}" --strip-components=2 -C "$out" "openabl-v1.2/SM6115/abl_signed-SM6115.elf"
+    tar -xzf "${openablTarball}" --strip-components=2 -C "$out" "openabl-v1.2/${openablDevice}/abl_signed-${openablDevice}.elf"
     cat > "$out/backup_abl.sh" << 'EOF'
     #!/bin/sh
 
@@ -51,8 +89,8 @@ let
     cat > "$out/flash_abl.sh" << 'EOF'
     #!/bin/sh
 
-    dd if="/sdcard/openabl/abl_signed-SM6115.elf" of="/dev/block/by-name/abl_a" bs=1M
-    dd if="/sdcard/openabl/abl_signed-SM6115.elf" of="/dev/block/by-name/abl_b" bs=1M
+    dd if="/sdcard/openabl/abl_signed-${openablDevice}.elf" of="/dev/block/by-name/abl_a" bs=1M
+    dd if="/sdcard/openabl/abl_signed-${openablDevice}.elf" of="/dev/block/by-name/abl_b" bs=1M
     EOF
     cat > "$out/restore_backup_abl.sh" << 'EOF'
     #!/bin/sh
@@ -69,13 +107,23 @@ in
   ];
 
   image.repart.partitions."10-boot".contents = {
+    "/EFI/BOOT/BOOTAA64.EFI".source = "${pkgs.systemd}/lib/systemd/boot/efi/systemd-bootaa64.efi";
+    "/loader/loader.conf".source = loaderConf;
     "/loader/entries".source = entriesDir;
     "/dtbs".source = socDtbs;
     "/KERNEL".source = "${toplevel}/kernel";
     "/INITRD".source = "${toplevel}/initrd";
     "/SYSTEM".source = config.system.build.systemSquashfs;
   }
-  // lib.optionalAttrs (variantId == "sm6115") {
-    "/openabl".source = openablDir;
-  };
+  //
+    lib.optionalAttrs
+      (builtins.elem variantId [
+        "sm6115"
+        "sm6125"
+        "sm8250"
+        "sm8550"
+      ])
+      {
+        "/openabl".source = openablDir;
+      };
 }

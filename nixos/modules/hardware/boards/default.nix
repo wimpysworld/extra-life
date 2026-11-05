@@ -14,8 +14,12 @@ let
     else
       "${config.extraLife.variantId}-generic";
 
-  dtModelDevices = lib.filterAttrs (_id: dev: (dev.dt_model or "") != "") devices;
+  dtModelDevices = lib.filterAttrs (
+    _id: dev: ((dev.dt_model or "") != "") || ((dev.dt_models or [ ]) != [ ])
+  ) devices;
   dtDevices = lib.filterAttrs (_id: dev: (dev.dt_compatibles or [ ]) != [ ]) devices;
+  dtDeviceList = builtins.attrValues dtDevices;
+  isUniqueDtCompatible = c: lib.count (dev: builtins.elem c dev.dt_compatibles) dtDeviceList == 1;
   dmiDevices = lib.filterAttrs (
     _id: dev: (dev ? dmi_vendor) && ((dev.dmi_products or [ ]) != [ ])
   ) devices;
@@ -25,11 +29,15 @@ let
     lib.mapAttrsToList (
       id: dev:
       let
+        models = lib.unique (
+          (lib.optional ((dev.dt_model or "") != "") dev.dt_model) ++ (dev.dt_models or [ ])
+        );
+        modelsPattern = lib.concatMapStringsSep "|" lib.escapeShellArg models;
         orient = dev.panel_orientation or "normal";
         debugFlag = if (dev.debug or false) then "1" else "0";
       in
       ''
-        ${lib.escapeShellArg dev.dt_model})
+        ${modelsPattern})
           board_id=${lib.escapeShellArg id}
           panel_orientation=${lib.escapeShellArg orient}
           board_debug=${debugFlag}
@@ -43,12 +51,18 @@ let
     lib.mapAttrsToList (
       id: dev:
       let
-        boardCompat = builtins.head dev.dt_compatibles;
+        headCompat = builtins.head dev.dt_compatibles;
+        extraCompats =
+          if builtins.length dev.dt_compatibles > 2 then
+            builtins.filter isUniqueDtCompatible (lib.init (builtins.tail dev.dt_compatibles))
+          else
+            [ ];
+        compatPattern = lib.concatMapStringsSep "|" lib.escapeShellArg ([ headCompat ] ++ extraCompats);
         orient = dev.panel_orientation or "normal";
         debugFlag = if (dev.debug or false) then "1" else "0";
       in
       ''
-        ${lib.escapeShellArg boardCompat})
+        ${compatPattern})
           board_id=${lib.escapeShellArg id}
           panel_orientation=${lib.escapeShellArg orient}
           board_debug=${debugFlag}

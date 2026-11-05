@@ -11,11 +11,12 @@
  
  	"github.com/go-gl/glfw/v3.4/glfw"
  	lr "github.com/libretro/ludo/libretro"
-@@ -49,11 +52,54 @@
+@@ -49,11 +52,62 @@
  	ActionLast uint32 = lr.DeviceIDJoypadR3 + 5
  )
  
 +const defaultLinuxGamepadMapping = "a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,platform:Linux,"
++const aynOdin2GamepadMapping = "a:b1,b:b2,back:b7,dpdown:b13,dpleft:b14,dpright:b15,dpup:b12,guide:b9,leftshoulder:b5,leftstick:b10,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b6,rightstick:b11,righttrigger:a5,rightx:a3,righty:a4,start:b8,x:b3,y:b4,platform:Linux,"
 +
 +func isGenericGamepadName(name string) bool {
 +	lower := strings.ToLower(name)
@@ -46,6 +47,9 @@
 +		return false
 +	}
 +	if joy.IsGamepad() {
++		if joy.GetName() == "AYN Odin2 Gamepad" && joy.GetGamepadName() != "AYN Odin2 Gamepad" {
++			glfw.UpdateGamepadMappings(fmt.Sprintf("%s,AYN Odin2 Gamepad,%s\n", joy.GetGUID(), aynOdin2GamepadMapping))
++		}
 +		return true
 +	}
 +	guid := joy.GetGUID()
@@ -54,7 +58,11 @@
 +		return false
 +	}
 +	safeName := strings.ReplaceAll(name, ",", " ")
-+	glfw.UpdateGamepadMappings(fmt.Sprintf("%s,%s,%s\n", guid, safeName, defaultLinuxGamepadMapping))
++	mapping := defaultLinuxGamepadMapping
++	if name == "AYN Odin2 Gamepad" {
++		mapping = aynOdin2GamepadMapping
++	}
++	glfw.UpdateGamepadMappings(fmt.Sprintf("%s,%s,%s\n", guid, safeName, mapping))
 +	return joy.IsGamepad()
 +}
 +
@@ -67,7 +75,7 @@
  			ntf.DisplayAndLogf(ntf.Info, "Input", "Joystick #%d plugged: %s.", joy, glfw.Joystick.GetName(joy))
  		} else {
  			ntf.DisplayAndLogf(ntf.Warning, "Input", "Joystick #%d plugged: %s but not configured.", joy, glfw.Joystick.GetName(joy))
-@@ -73,6 +119,15 @@
+@@ -73,6 +127,15 @@
  	if !glfw.UpdateGamepadMappings(mappings) {
  		log.Println("Failed to update mappings")
  	}
@@ -83,7 +91,7 @@
  	glfw.SetJoystickCallback(joystickCallback)
  }
  
-@@ -83,7 +138,7 @@
+@@ -83,7 +146,7 @@
  // JoypadPlugged returns true if at least one joypad is plugged
  func JoypadPlugged() bool {
  	for joy := glfw.Joystick(0); joy < glfw.JoystickLast; joy++ {
@@ -92,7 +100,7 @@
  			return true
  		}
  	}
-@@ -94,7 +149,7 @@
+@@ -94,7 +157,7 @@
  func pollJoypads(state States, analogState AnalogStates) (States, AnalogStates) {
  	p := 0
  	for joy := glfw.Joystick(0); joy < glfw.JoystickLast; joy++ {
@@ -103,7 +111,7 @@
  		pad := joy.GetGamepadState()
 --- a/input/mappings.go
 +++ b/input/mappings.go
-@@ -1788,6 +1788,38 @@
+@@ -1788,6 +1788,51 @@
  xinput,XInput Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,platform:Linux,
  03000000120c0000100e000011010000,Zeroplus P4,a:b1,b:b2,back:b8,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b4,leftstick:b10,lefttrigger:a3,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b11,righttrigger:a4,rightx:a2,righty:a5,start:b9,x:b0,y:b3,platform:Linux,
  03000000120c0000101e000011010000,Zeroplus P4,a:b1,b:b2,back:b8,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b4,leftstick:b10,lefttrigger:a3,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b11,righttrigger:a4,rightx:a2,righty:a5,start:b9,x:b0,y:b3,platform:Linux,
@@ -128,10 +136,13 @@
 +030000005e0400008e02000000020000,InputPlumber Xbox 360 Controller,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,platform:Linux,
 +030000005e0400008e02000021010000,Microsoft X-Box 360 pad,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,platform:Linux,
 +030000005e040000120b000001000000,InputPlumber GameController,a:b0,b:b1,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b4,leftstick:b9,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b10,righttrigger:a5,rightx:a3,righty:a4,start:b7,x:b2,y:b3,platform:Linux,
-+03000000091200000031000011010000,OpenSimHardware OSH PB Controller,a:b0,b:b1,back:b7,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,leftshoulder:b4,leftstick:b8,lefttrigger:b10,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b9,righttrigger:b11,rightx:a2,righty:a3,start:b6,x:b2,y:b3,platform:Linux,
++03000000091200000031000011010000,OpenSimHardware OSH PB Controller,a:b1,b:b0,back:b7,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,leftshoulder:b4,leftstick:b8,lefttrigger:b10,leftx:a0~,lefty:a1~,rightshoulder:b5,rightstick:b9,righttrigger:b11,rightx:a2,righty:a3,start:b6,x:b3,y:b2,platform:Linux,
 +030000004b4800000111000000010000,retrogame_joypad,a:b1,b:b0,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,guide:b10,leftshoulder:b4,leftstick:b11,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b12,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b2,y:b3,platform:Linux,
 +190000004b4800001211000000010000,retrogame_joypad_s1_f2,a:b1,b:b0,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,guide:b10,leftshoulder:b4,leftstick:b11,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b12,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b2,y:b3,platform:Linux,
-+190000004b480000df14000000010000,H700 Gamepad,a:b1,b:b0,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,guide:b10,leftshoulder:b4,leftstick:b11,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b12,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b3,y:b2,platform:Linux,
++19000000010000008811000088010000,r36s_Gamepad,a:b1,b:b0,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,guide:b10,leftshoulder:b4,leftstick:b11,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b12,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b2,y:b3,platform:Linux,
++1900000001000000a20a000000010000,r33s_joypad,a:b1,b:b0,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,leftshoulder:b4,lefttrigger:b6,rightshoulder:b5,righttrigger:b7,start:b9,x:b2,y:b3,platform:Linux,
++19000000010000000100000001010000,odroidgo3_joypad,a:b1,b:b0,back:b8,dpdown:b13,dpleft:b14,dpright:b15,dpup:b12,guide:b17,leftshoulder:b4,leftstick:b10,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b11,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b2,y:b3,platform:Linux,
++190000004b480000df14000000010000,H700 Gamepad,a:b0,b:b1,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,guide:b10,leftshoulder:b4,leftstick:b11,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b12,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b3,y:b2,platform:Linux,
 +190000004b4800000111000034020000,Anbernic rg552_joypad,a:b1,b:b0,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,leftshoulder:b4,leftstick:b11,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b12,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b2,y:b3,platform:Linux,
 +19000000010000002c0a000000010000,Anbernic rg_arc_joypad,a:b0,b:b1,back:b10,dpdown:b13,dpleft:b14,dpright:b15,dpup:b12,leftshoulder:b6,leftstick:b5,lefttrigger:b8,rightshoulder:b7,rightstick:b2,righttrigger:b9,start:b11,x:b4,y:b3,platform:Linux,
 +19000000010000000200000001010000,odroidgo2_v11_joypad,a:b1,b:b0,back:b8,dpdown:b13,dpleft:b14,dpright:b15,dpup:b12,leftshoulder:b4,leftstick:b10,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b11,righttrigger:b7,start:b9,x:b2,y:b3,platform:Linux,
@@ -139,6 +150,16 @@
 +19000000726f636b6e69782d6a6f7900,rocknix-joypad,a:b1,b:b0,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,guide:b10,leftshoulder:b4,leftstick:b11,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b12,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b2,y:b3,platform:Linux,
 +03000000726574726f67616d655f6a00,retrogame_joypad,a:b1,b:b0,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,guide:b10,leftshoulder:b4,leftstick:b11,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b12,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b2,y:b3,platform:Linux,
 +19000000726574726f67616d655f6a00,retrogame_joypad,a:b1,b:b0,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,guide:b10,leftshoulder:b4,leftstick:b11,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b12,righttrigger:b7,rightx:a2,righty:a3,start:b9,x:b2,y:b3,platform:Linux,
++03000000242f00000100000001000000,Retroid Pocket Duo Lite Gamepad,a:b1,b:b2,back:b9,dpdown:b15,dpleft:b16,dpright:b17,dpup:b14,guide:b11,leftshoulder:b5,leftstick:b12,lefttrigger:b7,leftx:a0,lefty:a1,rightshoulder:b6,rightstick:b13,righttrigger:b8,rightx:a2,righty:a3,start:b10,x:b3,y:b4,platform:Linux,
++03000000202000000130000001000000,Retroid Pocket Gamepad,a:b0,b:b1,back:b8,dpdown:b14,dpleft:b15,dpright:b16,dpup:b13,guide:b10,leftshoulder:b6,leftstick:b11,lefttrigger:a6,leftx:a0,lefty:a1,paddle1:b5,paddle2:b2,rightshoulder:b7,rightstick:b12,righttrigger:a7,rightx:a3,righty:a4,start:b9,x:b4,y:b3,platform:Linux,
++03000000202000000130000001010000,AYN Odin2 Gamepad,a:b1,b:b2,back:b7,dpdown:b13,dpleft:b14,dpright:b15,dpup:b12,guide:b9,leftshoulder:b5,leftstick:b10,lefttrigger:a2,leftx:a0,lefty:a1,rightshoulder:b6,rightstick:b11,righttrigger:a5,rightx:a3,righty:a4,start:b8,x:b3,y:b4,platform:Linux,
++1c000000014000002904000000010000,MANGMI Pocket Max Joypad,a:b0,b:b1,back:b4,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b6,leftshoulder:b2,leftstick:b7,lefttrigger:a4,leftx:a0,lefty:a1,paddle1:b9,paddle2:b10,rightshoulder:b3,rightstick:b8,righttrigger:a5,rightx:a2,righty:a3,start:b5,x:b3,y:b2,platform:Linux,
++1c000000014000002a04000000010000,MANGMI Air Y Pro Joypad,a:b1,b:b0,back:b6,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b8,leftshoulder:b2,leftstick:b9,lefttrigger:b4,leftx:a0,lefty:a1,rightshoulder:b3,rightstick:b10,righttrigger:b5,rightx:a2,righty:a3,start:b7,x:b2,y:b3,platform:Linux,
++03001a3447616d65466f726365204100,GameForce ACE Gamepad,a:b1,b:b0,back:b7,dpdown:b13,dpleft:b14,dpright:b15,dpup:b12,guide:b9,leftshoulder:b5,leftstick:b10,lefttrigger:-a2,leftx:a0,lefty:a1,rightshoulder:b6,rightstick:b11,righttrigger:-a5,rightx:a3,righty:a4,start:b8,x:b3,y:b4,platform:Linux,
++03000000000000000010000000010000,GameForce ACE Gamepad,a:b1,b:b0,back:b7,dpdown:b13,dpleft:b14,dpright:b15,dpup:b12,guide:b9,leftshoulder:b5,leftstick:b10,lefttrigger:-a2,leftx:a0,lefty:a1,rightshoulder:b6,rightstick:b11,righttrigger:-a5,rightx:a3,righty:a4,start:b8,x:b3,y:b4,platform:Linux,
++0300879bfeca00000550000011010000,Retro Lite CM5 Gamepad,a:b0,b:b1,back:b5,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b14,leftshoulder:b11,leftstick:b12,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b10,rightstick:b13,righttrigger:b7,rightx:a2,righty:a3,start:b4,x:b3,y:b2,platform:Linux,
++03000000feca00000550000011010000,Retro Lite CM5 Gamepad,a:b0,b:b1,back:b5,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b14,leftshoulder:b11,leftstick:b12,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b10,rightstick:b13,righttrigger:b7,rightx:a2,righty:a3,start:b4,x:b3,y:b2,platform:Linux,
++03000000feca00000450000011010000,Retro Lite CM5 Gamepad,a:b0,b:b1,back:b5,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b14,leftshoulder:b11,leftstick:b12,lefttrigger:b6,leftx:a0,lefty:a1,rightshoulder:b10,rightstick:b13,righttrigger:b7,rightx:a2,righty:a3,start:b4,x:b3,y:b2,platform:Linux,
  
  # Android
  38653964633230666463343334313533,8BitDo Adapter,a:b0,b:b1,back:b15,dpdown:b12,dpleft:b13,dpright:b14,dpup:b11,leftshoulder:b9,leftstick:b7,lefttrigger:b17,leftx:a0,lefty:a1,rightshoulder:b10,rightstick:b8,righttrigger:b18,rightx:a2,righty:a3,start:b6,x:b2,y:b3,platform:Android,
