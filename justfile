@@ -134,6 +134,98 @@ build-family soc system="":
     printf 'Building %s\n' "${targets[@]}"
     nix build --no-link --no-update-lock-file --keep-going -L --json "${targets[@]}"
 
+# Build every appliance family with its native Linux package system
+build-world logs="dist/build-world":
+    #!/usr/bin/env bash
+    set -Eeuo pipefail
+    trap 'code=$?; printf "build-world: setup or log operation failed (exit %s).\n" "${code}" >&2; exit "${code}"' ERR
+    logs={{ quote(logs) }}
+    if [[ -z "${logs}" || "${logs}" == *$'\t'* || "${logs}" == *$'\n'* || "${logs}" == *$'\r'* ]]; then
+        echo "build-world: logs must be a non-empty path without tabs or line breaks." >&2
+        exit 1
+    fi
+    mkdir -p -- "${logs}"
+    run_dir="$(mktemp -d -- "${logs}/run.XXXXXXXXXX")"
+    summary="${run_dir}/summary.tsv"
+    printf 'family\tsystem\tstage\tstatus\texit_code\tlog\n' > "${summary}"
+    trap 'code=$?; printf "Summary: %s\n" "${summary}"; cat -- "${summary}"; exit "${code}"' EXIT
+    discovery_log="${run_dir}/discovery.log"
+    exec 3>>"${discovery_log}"
+    printf 'Discovery log: %s\n' "${discovery_log}"
+    if version="$(nix --version 2>&3)"; then
+        printf '%s\n' "${version}" >&3
+    else
+        code=$?
+        printf '%s\n' "${version}" >&3
+        printf 'build-world: Nix version check failed. See %s\n' "${discovery_log}" >&2
+        exit "${code}"
+    fi
+    if [[ "${version}" != 'nix (Determinate Nix '*') '* ]]; then
+        echo "build-world: Determinate Nix is required. The installed Nix will not be changed." >&2
+        exit 1
+    fi
+    if configurations="$(nix eval --no-update-lock-file .#nixosConfigurations --apply builtins.attrNames --json 2>&3)"; then
+        code=0
+    else
+        code=$?
+    fi
+    printf '%s\n' "${configurations}" >&3
+    if (( code != 0 )); then
+        printf 'build-world: family discovery failed. See %s\n' "${discovery_log}" >&2
+        exit "${code}"
+    fi
+    if families="$(jq -ers '
+      if length != 1 then error("Expected one configuration array") else .[0] end
+      | if type != "array" then error("Expected a configuration array") else . end
+      | if all(.[]; type == "string") then . else error("Expected configuration names") end
+      | map(select(endswith("-appliance")) | rtrimstr("-appliance"))
+      | if all(.[]; test("\\A[A-Za-z0-9_][A-Za-z0-9_-]*\\z")) then . else error("Invalid family name") end
+      | unique
+      | if length > 0 then .[] else error("No appliance families found") end
+    ' <<< "${configurations}" 2>&3)"; then
+        printf 'Families:\n%s\n' "${families}" >&3
+    else
+        code=$?
+        printf 'build-world: invalid or empty family discovery. See %s\n' "${discovery_log}" >&2
+        exit "${code}"
+    fi
+    result=0
+    while IFS= read -r family; do
+        log="${run_dir}/${family}.log"
+        exec 3>>"${log}"
+        printf 'Resolving %s. Log: %s\n' "${family}" "${log}"
+        stage=system
+        code=0
+        if system="$(nix eval --no-update-lock-file ".#nixosConfigurations.${family}.config.nixpkgs.hostPlatform.system" --raw 2>&3)"; then
+            printf '%s\n' "${system}" >&3
+            case "${system}" in
+                x86_64-linux|aarch64-linux) ;;
+                *) printf 'Unsupported package system: %s\n' "${system}" >&3; system=-; code=1 ;;
+            esac
+        else
+            code=$?
+            printf '%s\n' "${system}" >&3
+            system=-
+        fi
+        if (( code == 0 )); then
+            stage=build
+            printf 'Building %s (%s). Log: %s\n' "${family}" "${system}" "${log}"
+            if just --quiet build-family "${family}" "${system}" >&3 2>&1; then
+                code=0
+            else
+                code=$?
+            fi
+        fi
+        status=ok
+        if (( code != 0 )); then
+            status=failed
+            result=1
+        fi
+        printf '%s\t%s\t%s\t%s\t%s\t%s\n' "${family}" "${system}" "${stage}" "${status}" "${code}" "${log}" >> "${summary}"
+        printf '%s: %s at %s (exit %s). Log: %s\n' "${family}" "${status}" "${stage}" "${code}" "${log}"
+    done <<< "${families}"
+    exit "${result}"
+
 # Format Nix files
 fmt *paths:
     #!/usr/bin/env bash

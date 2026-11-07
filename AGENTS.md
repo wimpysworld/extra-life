@@ -4,15 +4,20 @@ Extra Life (`extra-life`) is a NixOS retro game appliance flake that runs `ludo 
 
 ## Build and test
 
+- Run all project tooling through `just` recipes. Use `justfile`, its imports, and existing scripts as the command source of truth.
+- Keep direct Nix commands as implementation details, not user-facing automation. Add missing automation to the justfile rather than bypassing it.
+- Use Determinate Nix exclusively. Never use Cachix.
+- Do not use GitHub Actions for builds, validation, publishing, or image hosting.
 - Evaluate the flake outputs: `just check`
 - Format Nix files: `just fmt`
-- Build the default package (`ludo` on Linux, `vm-retro` on macOS): `nix build`
-- Build the `ludo` package on Linux: `nix build .#ludo`
+- Build the `ludo` package on Linux: `just build-pkg ludo`. Build `vm-retro` on macOS: `just build-pkg vm-retro`.
+- Underlying Nix reference: `nix build` selects the default package (`ludo` on Linux, `vm-retro` on macOS). `nix build .#ludo` selects `ludo`.
 - Build the installer ISO or disk image for the host architecture (`x86_64` or `aarch64`): `just build-iso` or `just build-disk`
-- Boot the local development VM from the built disk image or ISO: `just boot-disk`, `just boot-iso`, or `nix run .#vm-retro`. Local VMs use `kvm` on Linux, `hvf` with Cocoa on Apple Silicon macOS, and `linux-builder` on macOS for image builds.
+- Boot the local development VM from the built disk image or ISO: `just boot-disk`, `just boot-iso`, or `just vm` (which wraps `nix run .#vm-retro`). Local VMs use `kvm` on Linux, `hvf` with Cocoa on Apple Silicon macOS, and `linux-builder` on macOS for image builds.
 
 ## Architecture notes
 
+- Publish release images, update bundles, and release metadata to Cloudflare R2 through `just publish-ota`.
 - Track `nixos-26.05` as the primary `nixpkgs` input. Expose `nixos-unstable` at `pkgs.unstable` for package overrides. Keep the flake structure ready to switch to `nixos-26.11` when that release branches.
 - Keep the system a pure appliance. Boot straight into `cage`. Run `ludo -ludos` as user `ludo` (user identifier (UID) 1000).
 - Do not add a desktop environment, display manager, X11 server, Xwayland layer, or RetroArch user interface (UI).

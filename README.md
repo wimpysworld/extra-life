@@ -32,3 +32,17 @@ Check compatibility for your hardware and systems before you install:
 ## Documentation and Contributing
 
 Read the [Extra Life Wiki](https://github.com/wimpysworld/extra-life/wiki) for player guides, folder layouts, and setup instructions. Contributors who want to build images or run the local virtual machine for development can read the [Architecture Guide](https://github.com/wimpysworld/extra-life/wiki/Architecture) and the [Developer Guide](https://github.com/wimpysworld/extra-life/wiki/Development).
+
+For a local build of all discovered appliance families, use Determinate Nix and run:
+
+```bash
+just build-world
+# Optional custom log directory:
+just build-world /tmp/extra-life-build-logs
+```
+
+The recipe builds families sequentially through `build-family`. Each family build includes the kernel, initrd, `toplevel` system closure, and all exposed disk images for that family and its devices. It does not build ISO images or over-the-air (OTA) bundles, publish or upload artefacts, or create tags.
+
+Each run creates a unique `run.*` directory under `dist/build-world` or the custom log directory. The directory contains `discovery.log`, per-family `<family>.log` files, and `summary.tsv` with each family's status, exit code, and log path. After a family error, the recipe continues with the remaining families, then exits with a non-zero status.
+
+Provide native `x86_64-linux` and `aarch64-linux` builders, or configured emulation for those Linux systems. The recipe does not configure builders or use cross-compilation. On macOS, configure Linux builders before you run it.
