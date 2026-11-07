@@ -79,7 +79,7 @@ check:
 
     echo "󰸞 Flake check passed for ${system}"
 
-# Build a family's kernel, initrd, system closure, and all published disk images
+# Build a family's native kernel, initrd, system closure, and all published disk images
 build-family soc system="":
     #!/usr/bin/env bash
     set -euo pipefail
@@ -116,6 +116,12 @@ build-family soc system="":
         else error("Missing family disk image: \($soc)") end
       | .[] | select(.soc == $soc) | .attr
     ' <<< "${packages}")"
+
+    family_system="$(nix eval --no-update-lock-file ".#nixosConfigurations.${soc}.config.nixpkgs.hostPlatform.system" --raw)"
+    if [[ "${system}" != "${family_system}" ]]; then
+        echo "Unsupported package system ${system} for ${soc}: build-family requires ${family_system}. Cross-image kernel, initrd, and toplevel targets are not exposed by the flake." >&2
+        exit 1
+    fi
 
     targets=(
         ".#nixosConfigurations.${soc}.config.system.build.kernel"
