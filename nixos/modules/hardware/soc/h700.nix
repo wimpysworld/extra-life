@@ -322,6 +322,7 @@ in
       ];
 
       availableKernelModules = [
+        "panel_mipi"
         "panfrost"
         "pwm_bl"
         "spi_gpio"
@@ -332,6 +333,7 @@ in
     };
 
     kernelModules = [
+      "panel_mipi"
       "panfrost"
       "pwm_bl"
       "spi_gpio"

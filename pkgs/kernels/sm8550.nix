@@ -136,7 +136,7 @@ let
         QRTR_MHI = yes;
         BATTERY_QCOM_BATTMGR = module;
         UHID = yes;
-        HID_PLAYSTATION = yes;
+        HID_PLAYSTATION = module;
         PLAYSTATION_FF = yes;
         TYPEC_MUX_FSA4480 = module;
         TYPEC_MUX_GPIO_SBU = module;
@@ -145,10 +145,10 @@ let
         PHY_SNPS_EUSB2 = yes;
         PHY_QCOM_EUSB2_REPEATER = yes;
         PHY_QCOM_EDP = module;
-        PHY_QCOM_QMP_COMBO = yes;
-        PHY_QCOM_QMP_PCIE = yes;
-        PHY_QCOM_QMP_UFS = yes;
-        PHY_QCOM_QMP_USB = yes;
+        PHY_QCOM_QMP_COMBO = module;
+        PHY_QCOM_QMP_PCIE = module;
+        PHY_QCOM_QMP_UFS = module;
+        PHY_QCOM_QMP_USB = module;
         NVMEM_QCOM_QFPROM = yes;
         NVMEM_QCOM_SEC_QFPROM = yes;
         NVMEM_SPMI_SDAM = yes;

@@ -112,7 +112,8 @@ let
         DRM_SUN8I_MIXER = yes;
         DRM_SUN8I_TCON_TOP = yes;
         DRM_PANFROST = module;
-        DRM_PANEL_MIPI = yes;
+        DRM_PANEL_MIPI = module;
+        DRM_PANEL_NEWVISION_NV3052C = no;
         PWM_SUN4I = yes;
         PWM_SUN8I = yes;
         BACKLIGHT_GPIO = yes;

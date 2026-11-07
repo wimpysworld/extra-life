@@ -65,7 +65,7 @@ let
         REGULATOR_QCOM_LCDB = yes;
         REGULATOR_QCOM_USB_VBUS = yes;
         UHID = yes;
-        HID_PLAYSTATION = yes;
+        HID_PLAYSTATION = module;
         PLAYSTATION_FF = yes;
         SND_SOC_AW88261 = module;
         SND_SOC_ES8326 = module;

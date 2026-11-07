@@ -3,6 +3,7 @@
   fetchFromGitHub,
   linux_7_2,
   linuxPackagesFor,
+  writeText,
   rocknix-sm8250 ? fetchFromGitHub {
     owner = "ROCKNIX";
     repo = "distribution";
@@ -31,7 +32,14 @@ let
     in
     map (n: {
       name = n;
-      patch = "${dir}/${n}";
+      patch =
+        if n == "0058_DDIC-CH13726A-panel.patch" then
+          # The short hunk omits the final MODULE_LICENSE declaration.
+          writeText n (
+            lib.replaceStrings [ "@@ -0,0 +1,326 @@" ] [ "@@ -0,0 +1,327 @@" ] (builtins.readFile "${dir}/${n}")
+          )
+        else
+          "${dir}/${n}";
     }) sorted;
 
   rocknixPatches =

@@ -79,6 +79,55 @@ check:
 
     echo "󰸞 Flake check passed for ${system}"
 
+# Build a family's kernel, initrd, system closure, and all published disk images
+build-family soc system="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    soc={{ quote(soc) }}
+    system={{ quote(system) }}
+    if [[ -z "${system}" ]]; then
+        system="$(nix eval --impure --raw --expr 'builtins.currentSystem')"
+    fi
+    case "${system}" in
+        x86_64-linux|aarch64-linux) ;;
+        *) echo "Unsupported package system: ${system}" >&2; exit 1 ;;
+    esac
+
+    catalogue="$(nix eval --impure --json --expr 'builtins.fromTOML (builtins.readFile ./nixos/devices/devices.toml)')"
+    configurations="$(nix eval --no-update-lock-file .#nixosConfigurations --apply builtins.attrNames --json)"
+    packages="$(nix eval --no-update-lock-file ".#packages.${system}" --apply builtins.attrNames --json)"
+    images="$(jq -er --arg soc "${soc}" --argjson catalogue "${catalogue}" --argjson configurations "${configurations}" '
+      ($configurations | map(select(endswith("-appliance")) | rtrimstr("-appliance"))) as $families
+      | if ($families | index($soc)) == null then
+          error("Unknown SoC family: \($soc)")
+        else . end
+      | map(
+          select(startswith("disk-image-"))
+          | . as $attr
+          | ltrimstr("disk-image-") as $id
+          | (if ($families | index($id)) != null then $id
+             else $catalogue.devices[$id].soc // error("Unmapped disk image: \($attr)")
+             end) as $family
+          | if ($families | index($family)) == null then
+              error("Unknown family for disk image: \($attr)")
+            else {attr: $attr, soc: $family} end
+        )
+      | if any(.[]; .attr == ("disk-image-" + $soc)) then .
+        else error("Missing family disk image: \($soc)") end
+      | .[] | select(.soc == $soc) | .attr
+    ' <<< "${packages}")"
+
+    targets=(
+        ".#nixosConfigurations.${soc}.config.system.build.kernel"
+        ".#nixosConfigurations.${soc}.config.system.build.initialRamdisk"
+        ".#nixosConfigurations.${soc}.config.system.build.toplevel"
+    )
+    while IFS= read -r image; do
+        targets+=(".#packages.${system}.${image}")
+    done <<< "${images}"
+    printf 'Building %s\n' "${targets[@]}"
+    nix build --no-link --no-update-lock-file --keep-going -L --json "${targets[@]}"
+
 # Format Nix files
 fmt *paths:
     #!/usr/bin/env bash
