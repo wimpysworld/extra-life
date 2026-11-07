@@ -7,6 +7,19 @@
 let
   deviceCatalogue = fromTOML (builtins.readFile ../../../devices/devices.toml);
 
+  i2cset =
+    pkgs.runCommand "i2cset-${pkgs.i2c-tools.version}"
+      {
+        nativeBuildInputs = [ pkgs.patchelf ];
+        disallowedReferences = [ pkgs.i2c-tools ];
+      }
+      ''
+        install -Dm755 "${pkgs.i2c-tools}/bin/i2cset" "$out/bin/i2cset"
+        install -Dm644 "${pkgs.i2c-tools}/lib/libi2c.so.0" "$out/lib/libi2c.so.0"
+        rpath="$(patchelf --print-rpath "$out/bin/i2cset")"
+        patchelf --set-rpath "$(echo "$rpath" | sed "s|${pkgs.i2c-tools}|$out|g")" "$out/bin/i2cset"
+      '';
+
   resolveCaseSnippet = ''
     case_id=${lib.escapeShellArg config.extraLife.case}
 
@@ -125,7 +138,7 @@ in
 
   config = {
     environment.systemPackages = [
-      pkgs.i2c-tools
+      i2cset
     ];
 
     systemd.services.extra-life-case = {
