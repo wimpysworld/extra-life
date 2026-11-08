@@ -118,7 +118,7 @@ let
         INPUT_POLLDEV = yes;
         INPUT_PWM_VIBRA = module;
         JOYSTICK_ADC = module;
-        JOYSTICK_GAMEFORCE_CHI = yes;
+        JOYSTICK_GAMEFORCE_CHI = no;
         JOYSTICK_ODROIDGO2 = yes;
         JOYSTICK_ODROIDGO2_V11 = yes;
         JOYSTICK_ODROIDGO3 = yes;
